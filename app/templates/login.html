@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Authentication & Onboarding | CrossDomain AI Mission Control</title>
+
+    <!-- Tailwind CSS v3 CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- KaTeX CDN -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+
+    <!-- GSAP -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+
+    <!-- Design System CSS -->
+    <link rel="stylesheet" href="/static/css/design-system.css">
+
+    <script>
+        (function() {
+            const saved = localStorage.getItem('cd_theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', saved);
+        })();
+
+        tailwind.config = {
+            darkMode: ['class', '[data-theme="dark"]'],
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+                        display: ['Space Grotesk', '-apple-system', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="min-h-screen w-full flex flex-col lg:flex-row bg-[var(--bg-app)] font-sans antialiased text-[var(--text-main)] select-none">
+
+    <!-- Ambient Aurora Background -->
+    <div class="aurora-bg"></div>
+    <div class="grid-overlay"></div>
+
+    <!-- LEFT COLUMN: Animated Cross-Domain Transfer Manifold Visualization (50% Desktop Width) -->
+    <div class="lg:w-1/2 w-full p-8 lg:p-14 flex flex-col justify-between relative overflow-hidden shrink-0 border-b lg:border-b-0 lg:border-r border-[var(--border-color)] bg-[var(--bg-surface)]/60 backdrop-blur-xl z-10">
+        
+        <!-- Brand Header -->
+        <div class="relative z-20">
+            <a href="/" class="inline-flex items-center gap-3 group">
+                <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-indigo-600 via-indigo-500 to-cyan-400 flex items-center justify-center text-white shadow-xl shadow-indigo-500/25 group-hover:scale-105 transition-transform">
+                    <i data-lucide="cpu" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <h1 class="font-display font-extrabold text-xl tracking-tight text-[var(--text-main)] leading-tight">CrossDomain AI</h1>
+                    <span class="text-xs text-indigo-400 font-mono block">Two-Stage Hybrid Architecture v2.4</span>
+                </div>
+            </a>
+        </div>
+
+        <!-- Center: Interactive Animated Cross-Domain Transfer Simulation Canvas -->
+        <div class="my-8 relative z-20 flex flex-col items-center">
+            <div class="w-full max-w-lg aspect-[16/10] relative rounded-2xl border border-[var(--border-color)] bg-[var(--bg-elevated)]/60 backdrop-blur-md overflow-hidden shadow-2xl shadow-indigo-500/10">
+                <!-- Simulation Canvas -->
+                <canvas id="latent-flow-canvas" class="w-full h-full block"></canvas>
+                
+                <!-- Overlay HUD Labels -->
+                <div class="absolute top-3 left-4 flex items-center gap-2">
+                    <span class="pulse-dot bg-cyan-400"></span>
+                    <span class="text-[10px] font-mono font-bold text-cyan-400 uppercase tracking-wider">HVAC Source (10D)</span>
+                </div>
+
+                <div class="absolute top-3 right-4 flex items-center gap-2">
+                    <span class="pulse-dot bg-indigo-400"></span>
+                    <span class="text-[10px] font-mono font-bold text-indigo-400 uppercase tracking-wider">Machinery Target (8D)</span>
+                </div>
+
+                <div class="absolute bottom-3 inset-x-0 flex justify-center">
+                    <div class="px-3 py-1 rounded-full bg-[var(--bg-surface)]/90 border border-[var(--border-color)] backdrop-blur text-[11px] font-mono text-[var(--text-main)] shadow-lg flex items-center gap-2">
+                        <i data-lucide="sparkles" class="w-3.5 h-3.5 text-cyan-400"></i>
+                        <span>Latent Manifold: <strong class="text-cyan-400">z &in; &#8477;&#8312;</strong> (VAE Embedding)</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Descriptive Architecture Synopsis -->
+            <div class="mt-6 text-center max-w-lg">
+                <h2 class="font-display text-lg font-bold text-[var(--text-main)]">
+                    Continuous Thermodynamic Representation Transfer
+                </h2>
+                <p class="text-xs text-[var(--text-muted)] mt-1.5 leading-relaxed">
+                    Source domain chiller thermodynamic anomalies are projected through an 8-dimensional continuous latent space <span class="font-mono text-cyan-400">z &in; &#8477;&#8312;</span> into target CNC machinery, feeding our champion BiLSTM-BiGRU predictor with <strong>zero missed failures</strong>.
+                </p>
+            </div>
+        </div>
+
+        <!-- Left Column Footer: Production Metric Badges -->
+        <div class="relative z-20 pt-4 border-t border-[var(--border-color)] flex items-center justify-between text-xs text-[var(--text-muted)]">
+            <div class="flex items-center gap-4">
+                <div class="flex items-center gap-1.5">
+                    <i data-lucide="shield-check" class="w-4 h-4 text-emerald-400"></i>
+                    <span><strong>1.000</strong> Recall (0 FN)</span>
+                </div>
+                <div class="flex items-center gap-1.5">
+                    <i data-lucide="target" class="w-4 h-4 text-indigo-400"></i>
+                    <span><strong>98.7%</strong> Accuracy</span>
+                </div>
+            </div>
+            <span class="font-mono text-[10px] text-[var(--text-dim)]">ISO 13849-1 &bull; ISA-101</span>
+        </div>
+    </div>
+
+    <!-- RIGHT COLUMN: Authentication & Registration Glass Control Center (50% Desktop Width) -->
+    <div class="lg:w-1/2 w-full p-8 lg:p-14 flex flex-col justify-between relative z-20 overflow-y-auto">
+        <!-- Top Action Bar (Back to Home & Theme Switcher) -->
+        <div class="flex items-center justify-between pb-6">
+            <a href="/" class="btn-ghost text-xs">
+                <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                <span>Back to Architecture</span>
+            </a>
+
+            <button onclick="toggleTheme()" class="theme-toggle-btn w-9 h-9 rounded-xl flex items-center justify-center border border-[var(--border-color)] bg-[var(--bg-elevated)] hover:bg-[var(--bg-elevated-hover)] text-[var(--text-muted)] hover:text-[var(--text-main)] transition-all shadow-sm" title="Toggle Theme">
+                <i data-lucide="sun-medium" class="w-4 h-4 hidden [data-theme='light']_&:inline"></i>
+                <i data-lucide="moon" class="w-4 h-4 [data-theme='light']_&:hidden"></i>
+            </button>
+        </div>
+
+        <!-- Form Card Container -->
+        <div class="w-full max-w-md mx-auto my-auto space-y-6">
+            
+            <!-- Headline -->
+            <div>
+                <h2 class="font-display text-2xl font-extrabold text-[var(--text-main)]">Operations Access Portal</h2>
+                <p class="text-xs text-[var(--text-muted)] mt-1">Sign in with plant credentials or register a new operational tenant.</p>
+            </div>
+
+            <!-- Error and Success Banners -->
+            {% if error %}
+            <div class="p-3.5 bg-rose-500/10 border border-rose-500/30 rounded-xl text-xs text-rose-400 flex items-center gap-2.5 shadow-sm animate-shake">
+                <i data-lucide="alert-circle" class="w-4 h-4 text-rose-400 shrink-0"></i>
+                <span class="font-medium">{{ error }}</span>
+            </div>
+            {% endif %}
+
+            {% if success %}
+            <div class="p-3.5 bg-emerald-500/10 border border-emerald-500/30 rounded-xl text-xs text-emerald-400 flex items-center gap-2.5 shadow-sm">
+                <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400 shrink-0"></i>
+                <span class="font-medium">{{ success }}</span>
+            </div>
+            {% endif %}
+
+            <!-- Interactive Tab Switcher: Sign In vs Register New Account -->
+            <div class="flex bg-[var(--bg-elevated)] p-1 rounded-xl border border-[var(--border-color)] text-xs font-bold">
+                <button type="button" onclick="switchAuthTab('login')" id="tab_btn_login"
+                        class="flex-1 py-2 rounded-lg text-center transition-all flex items-center justify-center gap-2 {% if active_tab != 'register' %}bg-[var(--bg-surface)] text-[var(--text-main)] shadow-md font-extrabold border border-[var(--border-color)]{% else %}text-[var(--text-muted)] hover:text-[var(--text-main)]{% endif %}">
+                    <i data-lucide="log-in" class="w-3.5 h-3.5"></i>
+                    <span>Sign In</span>
+                </button>
+                <button type="button" onclick="switchAuthTab('register')" id="tab_btn_register"
+                        class="flex-1 py-2 rounded-lg text-center transition-all flex items-center justify-center gap-2 {% if active_tab == 'register' %}bg-[var(--bg-surface)] text-[var(--text-main)] shadow-md font-extrabold border border-[var(--border-color)]{% else %}text-[var(--text-muted)] hover:text-[var(--text-main)]{% endif %}">
+                    <i data-lucide="user-plus" class="w-3.5 h-3.5"></i>
+                    <span>Register New Account</span>
+                </button>
+            </div>
+
+            <!-- 1. SIGN IN FORM -->
+            <div id="auth_pane_login" class="{% if active_tab == 'register' %}hidden{% endif %} space-y-5">
+                <form id="login-form" action="/login" method="POST" class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-bold text-[var(--text-main)] mb-1.5">Corporate Email Address</label>
+                        <div class="relative">
+                            <i data-lucide="mail" class="w-4 h-4 absolute left-3.5 top-3 text-[var(--text-dim)]"></i>
+                            <input type="email" id="login_email" name="email" value="engineer@plant.com" required
+                                   class="input-glass pl-10" placeholder="name@company.com">
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="flex items-center justify-between mb-1.5">
+                            <label class="block text-xs font-bold text-[var(--text-main)]">Account Password</label>
+                            <span class="text-[11px] font-mono text-[var(--text-dim)]">Demo: plant123</span>
+                        </div>
+                        <div class="relative">
+                            <i data-lucide="lock" class="w-4 h-4 absolute left-3.5 top-3 text-[var(--text-dim)]"></i>
+                            <input type="password" id="login_password" name="password" value="plant123" required
+                                   class="input-glass pl-10 pr-10" placeholder="••••••••">
+                            <button type="button" onclick="togglePasswordVisibility('login_password', this)" class="absolute right-3.5 top-2.5 text-[var(--text-dim)] hover:text-[var(--text-main)]">
+                                <i data-lucide="eye" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <button type="submit" id="btn-login-submit" class="w-full btn-primary py-3">
+                        <span>Access Operational Center</span>
+                        <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                    </button>
+                </form>
+
+                <!-- Fast 1-Click Demo Persona Logins -->
+                <div class="pt-5 border-t border-[var(--border-color)]">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="text-xs font-bold text-[var(--text-dim)] uppercase tracking-wider">Fast 1-Click Personas</span>
+                        <span class="text-[11px] text-[var(--text-dim)] font-mono">Password: <code class="px-1 py-0.5 rounded bg-[var(--bg-elevated)] border border-[var(--border-color)] text-[var(--text-muted)]">plant123</code></span>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-2 text-left">
+                        <button onclick="fillPersonaLogin('engineer@plant.com')" type="button" class="p-2.5 rounded-xl border border-[var(--border-color)] hover:border-indigo-500/40 hover:bg-[var(--bg-elevated)] bg-[var(--bg-surface)] transition-all text-left group">
+                            <div class="flex items-center gap-2">
+                                <span class="w-7 h-7 rounded-lg bg-indigo-500/15 text-indigo-400 flex items-center justify-center text-xs font-bold font-mono">MV</span>
+                                <div class="overflow-hidden">
+                                    <p class="text-xs font-bold text-[var(--text-main)] truncate">Marcus Vance</p>
+                                    <p class="text-[10px] text-[var(--text-muted)] truncate">Maint. Engineer</p>
+                                </div>
+                            </div>
+                        </button>
+
+                        <button onclick="fillPersonaLogin('lead@plant.com')" type="button" class="p-2.5 rounded-xl border border-[var(--border-color)] hover:border-indigo-500/40 hover:bg-[var(--bg-elevated)] bg-[var(--bg-surface)] transition-all text-left group">
+                            <div class="flex items-center gap-2">
+                                <span class="w-7 h-7 rounded-lg bg-indigo-500/15 text-indigo-400 flex items-center justify-center text-xs font-bold font-mono">ER</span>
+                                <div class="overflow-hidden">
+                                    <p class="text-xs font-bold text-[var(--text-main)] truncate">Dr. Elena Rostova</p>
+                                    <p class="text-[10px] text-[var(--text-muted)] truncate">Reliability Lead</p>
+                                </div>
+                            </div>
+                        </button>
+
+                        <button onclick="fillPersonaLogin('manager@plant.com')" type="button" class="p-2.5 rounded-xl border border-[var(--border-color)] hover:border-indigo-500/40 hover:bg-[var(--bg-elevated)] bg-[var(--bg-surface)] transition-all text-left group">
+                            <div class="flex items-center gap-2">
+                                <span class="w-7 h-7 rounded-lg bg-cyan-500/15 text-cyan-400 flex items-center justify-center text-xs font-bold font-mono">AP</span>
+                                <div class="overflow-hidden">
+                                    <p class="text-xs font-bold text-[var(--text-main)] truncate">Arthur Pendelton</p>
+                                    <p class="text-[10px] text-[var(--text-muted)] truncate">Ops Director</p>
+                                </div>
+                            </div>
+                        </button>
+
+                        <button onclick="fillPersonaLogin('auditor@plant.com')" type="button" class="p-2.5 rounded-xl border border-[var(--border-color)] hover:border-indigo-500/40 hover:bg-[var(--bg-elevated)] bg-[var(--bg-surface)] transition-all text-left group">
+                            <div class="flex items-center gap-2">
+                                <span class="w-7 h-7 rounded-lg bg-emerald-500/15 text-emerald-400 flex items-center justify-center text-xs font-bold font-mono">CL</span>
+                                <div class="overflow-hidden">
+                                    <p class="text-xs font-bold text-[var(--text-main)] truncate">Clara Lindqvist</p>
+                                    <p class="text-[10px] text-[var(--text-muted)] truncate">ISO Auditor</p>
+                                </div>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. REGISTER NEW ACCOUNT FORM -->
+            <div id="auth_pane_register" class="{% if active_tab != 'register' %}hidden{% endif %} space-y-4">
+                <form id="register-form" action="/register" method="POST" class="space-y-3.5">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-bold text-[var(--text-main)] mb-1">Full Legal Name *</label>
+                            <div class="relative">
+                                <i data-lucide="user" class="w-4 h-4 absolute left-3.5 top-3 text-[var(--text-dim)]"></i>
+                                <input type="text" name="name" required class="input-glass pl-10" placeholder="e.g. Dr. Sarah Chen">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-[var(--text-main)] mb-1">Corporate Email Address *</label>
+                            <div class="relative">
+                                <i data-lucide="mail" class="w-4 h-4 absolute left-3.5 top-3 text-[var(--text-dim)]"></i>
+                                <input type="email" name="email" required class="input-glass pl-10" placeholder="sarah.chen@plant.com">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-bold text-[var(--text-main)] mb-1">Operational Role *</label>
+                            <select name="role" class="input-glass">
+                                <option value="engineer" class="bg-[var(--bg-surface)] text-[var(--text-main)]">Senior Maintenance Engineer</option>
+                                <option value="lead" class="bg-[var(--bg-surface)] text-[var(--text-main)]">Lead Reliability Specialist</option>
+                                <option value="manager" class="bg-[var(--bg-surface)] text-[var(--text-main)]">Plant Operations Director</option>
+                                <option value="auditor" class="bg-[var(--bg-surface)] text-[var(--text-main)]">ISO 55001 Compliance Auditor</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-[var(--text-main)] mb-1">Facility Department</label>
+                            <div class="relative">
+                                <i data-lucide="building" class="w-4 h-4 absolute left-3.5 top-3 text-[var(--text-dim)]"></i>
+                                <input type="text" name="department" value="Mechanical Reliability Unit" class="input-glass pl-10" placeholder="e.g. Bay 4 Machining">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-bold text-[var(--text-main)] mb-1">Create Password *</label>
+                            <div class="relative">
+                                <i data-lucide="lock" class="w-4 h-4 absolute left-3.5 top-3 text-[var(--text-dim)]"></i>
+                                <input type="password" name="password" required minlength="4" class="input-glass pl-10" placeholder="Min 4 chars">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-[var(--text-main)] mb-1">Confirm Password *</label>
+                            <div class="relative">
+                                <i data-lucide="shield-check" class="w-4 h-4 absolute left-3.5 top-3 text-[var(--text-dim)]"></i>
+                                <input type="password" name="confirm_password" required minlength="4" class="input-glass pl-10" placeholder="Re-enter password">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="p-3 bg-indigo-500/10 rounded-xl border border-indigo-500/20 text-xs text-indigo-300 flex items-start gap-2">
+                        <i data-lucide="info" class="w-4 h-4 text-indigo-400 mt-0.5 shrink-0"></i>
+                        <span>Registering immediately creates your account and logs you straight into the dashboard.</span>
+                    </div>
+
+                    <button type="submit" class="w-full btn-primary py-3">
+                        <i data-lucide="user-plus" class="w-4 h-4"></i>
+                        <span>Create Account & Access Center</span>
+                    </button>
+                </form>
+
+                <p class="text-center text-xs text-[var(--text-muted)] pt-2">
+                    Already registered? 
+                    <button type="button" onclick="switchAuthTab('login')" class="text-indigo-400 hover:text-indigo-300 font-bold underline ml-1">
+                        Sign in here
+                    </button>
+                </p>
+            </div>
+
+        </div>
+
+        <!-- Right Column Footer: Security Notice -->
+        <div class="pt-6 border-t border-[var(--border-color)] text-[11px] text-[var(--text-dim)] flex items-center justify-between">
+            <span>ANSI/ISA-101.01 Industrial Ergonomics</span>
+            <span class="flex items-center gap-1.5 text-emerald-400 font-mono">
+                <i data-lucide="lock" class="w-3 h-3"></i>
+                <span>SHA-256 Hashed Store</span>
+            </span>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script>
+        // Init Lucide
+        document.addEventListener('DOMContentLoaded', () => {
+            if (window.lucide) window.lucide.createIcons();
+            initLatentFlowCanvas();
+        });
+
+        function switchAuthTab(tab) {
+            const loginPane = document.getElementById('auth_pane_login');
+            const registerPane = document.getElementById('auth_pane_register');
+            const loginBtn = document.getElementById('tab_btn_login');
+            const registerBtn = document.getElementById('tab_btn_register');
+
+            if (tab === 'register') {
+                loginPane.classList.add('hidden');
+                registerPane.classList.remove('hidden');
+                loginBtn.className = 'flex-1 py-2 rounded-lg text-center transition-all flex items-center justify-center gap-2 text-[var(--text-muted)] hover:text-[var(--text-main)]';
+                registerBtn.className = 'flex-1 py-2 rounded-lg text-center transition-all flex items-center justify-center gap-2 bg-[var(--bg-surface)] text-[var(--text-main)] shadow-md font-extrabold border border-[var(--border-color)]';
+            } else {
+                loginPane.classList.remove('hidden');
+                registerPane.classList.add('hidden');
+                loginBtn.className = 'flex-1 py-2 rounded-lg text-center transition-all flex items-center justify-center gap-2 bg-[var(--bg-surface)] text-[var(--text-main)] shadow-md font-extrabold border border-[var(--border-color)]';
+                registerBtn.className = 'flex-1 py-2 rounded-lg text-center transition-all flex items-center justify-center gap-2 text-[var(--text-muted)] hover:text-[var(--text-main)]';
+            }
+            if (window.lucide) window.lucide.createIcons();
+        }
+
+        function fillPersonaLogin(email) {
+            switchAuthTab('login');
+            const emailInp = document.getElementById('login_email');
+            const passInp = document.getElementById('login_password');
+            if (emailInp) emailInp.value = email;
+            if (passInp) passInp.value = 'plant123';
+            
+            // GSAP pulse on button
+            const submitBtn = document.getElementById('btn-login-submit');
+            if (window.gsap && submitBtn) {
+                gsap.fromTo(submitBtn, { scale: 0.97 }, { scale: 1, duration: 0.25 });
+            }
+
+            const form = document.getElementById('login-form');
+            if (form) form.submit();
+        }
+
+        function togglePasswordVisibility(inputId, btn) {
+            const input = document.getElementById(inputId);
+            if (!input) return;
+            const isPassword = input.type === 'password';
+            input.type = isPassword ? 'text' : 'password';
+            btn.innerHTML = `<i data-lucide="${isPassword ? 'eye-off' : 'eye'}" class="w-4 h-4"></i>`;
+            if (window.lucide) window.lucide.createIcons();
+        }
+
+        // Animated Cross-Domain Latent Flow Simulation
+        function initLatentFlowCanvas() {
+            const canvas = document.getElementById('latent-flow-canvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            let w = canvas.width = canvas.parentElement.offsetWidth;
+            let h = canvas.height = canvas.parentElement.offsetHeight;
+
+            window.addEventListener('resize', () => {
+                if (canvas.parentElement) {
+                    w = canvas.width = canvas.parentElement.offsetWidth;
+                    h = canvas.height = canvas.parentElement.offsetHeight;
+                }
+            });
+
+            // 8D Latent Nodes in central cluster
+            const latentNodes = [];
+            for (let i = 0; i < 8; i++) {
+                const angle = (i / 8) * Math.PI * 2;
+                latentNodes.push({
+                    baseAngle: angle,
+                    radius: 35 + Math.sin(i * 1.5) * 12,
+                    speed: 0.015 + (i % 3) * 0.005,
+                    pulse: Math.random() * Math.PI
+                });
+            }
+
+            // Flowing packets from Left -> Center -> Right
+            const packets = [];
+            for (let i = 0; i < 24; i++) {
+                packets.push({
+                    progress: Math.random(),
+                    speed: 0.004 + Math.random() * 0.004,
+                    offsetY: (Math.random() - 0.5) * 20
+                });
+            }
+
+            let t = 0;
+            function render() {
+                t += 0.02;
+                ctx.clearRect(0, 0, w, h);
+
+                const leftNode = { x: w * 0.18, y: h * 0.5 };
+                const centerNode = { x: w * 0.5, y: h * 0.5 };
+                const rightNode = { x: w * 0.82, y: h * 0.5 };
+
+                // 1. Draw Connecting Curves
+                ctx.beginPath();
+                ctx.moveTo(leftNode.x, leftNode.y);
+                ctx.bezierCurveTo(w * 0.3, h * 0.35, w * 0.38, h * 0.5, centerNode.x, centerNode.y);
+                ctx.strokeStyle = 'rgba(34, 211, 238, 0.25)';
+                ctx.lineWidth = 1.5;
+                ctx.stroke();
+
+                ctx.beginPath();
+                ctx.moveTo(centerNode.x, centerNode.y);
+                ctx.bezierCurveTo(w * 0.62, h * 0.5, w * 0.7, h * 0.65, rightNode.x, rightNode.y);
+                ctx.strokeStyle = 'rgba(99, 102, 241, 0.25)';
+                ctx.lineWidth = 1.5;
+                ctx.stroke();
+
+                // 2. Draw Moving Data Packets
+                packets.forEach(p => {
+                    p.progress += p.speed;
+                    if (p.progress > 1) p.progress = 0;
+
+                    let px, py;
+                    if (p.progress < 0.5) {
+                        const localP = p.progress * 2;
+                        px = leftNode.x + (centerNode.x - leftNode.x) * localP;
+                        py = leftNode.y + Math.sin(localP * Math.PI) * -25 + p.offsetY * (1 - localP);
+                        ctx.fillStyle = '#22D3EE';
+                    } else {
+                        const localP = (p.progress - 0.5) * 2;
+                        px = centerNode.x + (rightNode.x - centerNode.x) * localP;
+                        py = centerNode.y + Math.sin(localP * Math.PI) * 25 + p.offsetY * localP;
+                        ctx.fillStyle = '#6366F1';
+                    }
+
+                    ctx.beginPath();
+                    ctx.arc(px, py, 2.5, 0, Math.PI * 2);
+                    ctx.fill();
+                });
+
+                // 3. Central 8D Latent Space Cluster
+                ctx.beginPath();
+                ctx.arc(centerNode.x, centerNode.y, 45, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(99, 102, 241, 0.06)';
+                ctx.fill();
+                ctx.strokeStyle = 'rgba(34, 211, 238, 0.3)';
+                ctx.setLineDash([4, 4]);
+                ctx.stroke();
+                ctx.setLineDash([]);
+
+                latentNodes.forEach((node, idx) => {
+                    node.pulse += 0.04;
+                    const curAngle = node.baseAngle + t * node.speed;
+                    const r = node.radius + Math.sin(node.pulse) * 4;
+                    const nx = centerNode.x + Math.cos(curAngle) * r;
+                    const ny = centerNode.y + Math.sin(curAngle) * r;
+
+                    // Connector to center
+                    ctx.beginPath();
+                    ctx.moveTo(centerNode.x, centerNode.y);
+                    ctx.lineTo(nx, ny);
+                    ctx.strokeStyle = 'rgba(99, 102, 241, 0.15)';
+                    ctx.lineWidth = 1;
+                    ctx.stroke();
+
+                    // Node dot
+                    ctx.beginPath();
+                    ctx.arc(nx, ny, 3.5, 0, Math.PI * 2);
+                    ctx.fillStyle = idx % 2 === 0 ? '#22D3EE' : '#6366F1';
+                    ctx.shadowColor = '#6366F1';
+                    ctx.shadowBlur = 8;
+                    ctx.fill();
+                    ctx.shadowBlur = 0;
+                });
+
+                // 4. Source & Target Domain Endpoint Nodes
+                [
+                    { ...leftNode, color: '#22D3EE', label: 'HVAC' },
+                    { ...rightNode, color: '#6366F1', label: 'AI4I' }
+                ].forEach(n => {
+                    ctx.beginPath();
+                    ctx.arc(n.x, n.y, 16, 0, Math.PI * 2);
+                    ctx.fillStyle = `${n.color}20`;
+                    ctx.fill();
+                    ctx.strokeStyle = n.color;
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+
+                    ctx.beginPath();
+                    ctx.arc(n.x, n.y, 6, 0, Math.PI * 2);
+                    ctx.fillStyle = n.color;
+                    ctx.shadowColor = n.color;
+                    ctx.shadowBlur = 10;
+                    ctx.fill();
+                    ctx.shadowBlur = 0;
+                });
+
+                requestAnimationFrame(render);
+            }
+
+            render();
+        }
+    </script>
+</body>
+</html>

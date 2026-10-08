@@ -1,0 +1,171 @@
+{% extends "base.html" %}
+
+{% block title %}Batch CSV Ingestion & Bulk Inspection | CrossDomain AI{% endblock %}
+{% block header_title %}Batch CSV Ingestion & Inspection{% endblock %}
+{% block header_subtitle %}Bulk multi-asset sensor telemetry processing and fleet failure screening{% endblock %}
+
+{% block content %}
+<div class="space-y-6 max-w-[1400px] mx-auto w-full pb-12">
+
+    <!-- Upload Card -->
+    <div class="glass-card spotlight-card p-6 sm:p-7 space-y-5">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-3 border-b border-[var(--border-color)]">
+            <div>
+                <h2 class="font-display text-base sm:text-lg font-bold text-[var(--text-main)] flex items-center gap-2">
+                    <i data-lucide="file-spreadsheet" class="w-4 h-4 text-indigo-400"></i>
+                    <span>Industrial Telemetry Dataset Ingestion</span>
+                </h2>
+                <p class="text-xs text-[var(--text-muted)] mt-0.5">Upload CSV file containing machine sensor readings for automated Two-Stage screening</p>
+            </div>
+            
+            <a href="/api/v1/batch/sample-csv" download="industrial_sensor_sample.csv" class="btn-glass text-xs py-2 px-3">
+                <i data-lucide="download" class="w-3.5 h-3.5 text-cyan-400"></i>
+                <span>Download Sample Template</span>
+            </a>
+        </div>
+
+        <form id="batch-upload-form" onsubmit="handleBatchUpload(event)" class="space-y-4">
+            <div class="border-2 border-dashed border-[var(--border-color)] hover:border-indigo-500/50 rounded-2xl p-8 sm:p-10 text-center transition-all bg-[var(--bg-elevated)]/40 hover:bg-[var(--bg-elevated)]/70">
+                <div class="w-12 h-12 rounded-2xl bg-indigo-500/10 text-indigo-400 flex items-center justify-center mx-auto mb-3">
+                    <i data-lucide="upload-cloud" class="w-6 h-6"></i>
+                </div>
+                <p class="text-sm font-semibold text-[var(--text-main)] mb-1">Select or drag & drop industrial telemetry CSV file</p>
+                <p class="text-xs text-[var(--text-dim)] mb-4 font-mono">Required columns: air_temperature, process_temperature, rotational_speed, torque, tool_wear, vibration_index</p>
+                
+                <input type="file" id="batch_file_input" accept=".csv" required class="text-xs text-[var(--text-muted)] file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-indigo-500/20 file:text-indigo-300 hover:file:bg-indigo-500/30 cursor-pointer">
+            </div>
+
+            <div class="flex justify-end">
+                <button type="submit" id="btn-process-batch" class="btn-primary text-xs py-2.5 px-5">
+                    <i data-lucide="cpu" class="w-4 h-4"></i>
+                    <span>Run Batch Two-Stage Evaluation</span>
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Results Section (Hidden until uploaded) -->
+    <div id="batch_results_container" class="space-y-6" style="display: none;">
+        
+        <!-- Batch KPI Summary Cards -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            <div class="stat-card stagger-card text-center">
+                <span class="stat-label">Total Records</span>
+                <span id="kpi_batch_total" class="stat-value text-[var(--text-main)] block mt-2">0</span>
+            </div>
+            <div class="stat-card stagger-card text-center">
+                <span class="stat-label">Critical Failures</span>
+                <span id="kpi_batch_critical" class="stat-value text-rose-400 block mt-2">0</span>
+            </div>
+            <div class="stat-card stagger-card text-center">
+                <span class="stat-label">Nominal Normal</span>
+                <span id="kpi_batch_normal" class="stat-value text-emerald-400 block mt-2">0</span>
+            </div>
+            <div class="stat-card stagger-card text-center">
+                <span class="stat-label">Avg Confidence</span>
+                <span id="kpi_batch_conf" class="stat-value text-indigo-400 block mt-2">0%</span>
+            </div>
+        </div>
+
+        <!-- Enriched Batch Table -->
+        <div class="glass-card p-6 space-y-4">
+            <div class="flex items-center justify-between pb-2 border-b border-[var(--border-color)]">
+                <div>
+                    <h3 class="font-display text-sm sm:text-base font-bold text-[var(--text-main)]">Enriched Failure Predictions</h3>
+                    <p class="text-xs text-[var(--text-muted)]">Predictions evaluated with Stage 1 VAE Latent Transfer + Stage 2 BiLSTM-BiGRU</p>
+                </div>
+            </div>
+
+            <div class="overflow-x-auto rounded-xl border border-[var(--border-color)]">
+                <table class="table-mission text-xs font-mono">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Asset ID</th>
+                            <th class="text-center">Failure Risk P(Y=1)</th>
+                            <th class="text-center">Stage 1 VAE</th>
+                            <th>Diagnosed Mode</th>
+                            <th class="text-center">RUL (hrs)</th>
+                            <th>Prescribed Remediations</th>
+                        </tr>
+                    </thead>
+                    <tbody id="batch_table_body">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    async function handleBatchUpload(e) {
+        e.preventDefault();
+        const fileInput = document.getElementById('batch_file_input');
+        const btn = document.getElementById('btn-process-batch');
+        if (!fileInput.files.length) return;
+
+        const formData = new FormData();
+        formData.append('file', fileInput.files[0]);
+
+        btn.disabled = true;
+        btn.innerHTML = `<i data-lucide="loader" class="w-4 h-4 animate-spin mr-2 inline-block"></i> Evaluating batch with Two-Stage Pipeline...`;
+        if (window.lucide) window.lucide.createIcons();
+
+        try {
+            const res = await fetch('/api/v1/batch/upload', {
+                method: 'POST',
+                body: formData
+            });
+
+            if (!res.ok) throw new Error("Batch processing failed");
+            const data = await res.json();
+
+            // Show results
+            document.getElementById('batch_results_container').style.display = 'block';
+
+            // Update KPI cards
+            document.getElementById('kpi_batch_total').innerText = data.total_evaluated;
+            document.getElementById('kpi_batch_critical').innerText = data.total_critical_detected;
+            document.getElementById('kpi_batch_normal').innerText = data.total_nominal_normal;
+            document.getElementById('kpi_batch_conf').innerText = `${(data.mean_confidence * 100).toFixed(1)}%`;
+
+            // Populate table
+            const tbody = document.getElementById('batch_table_body');
+            tbody.innerHTML = data.predictions.map((row, idx) => `
+                <tr class="hover:bg-[var(--bg-elevated)] transition-colors">
+                    <td class="text-[var(--text-dim)]">${idx + 1}</td>
+                    <td class="font-bold text-[var(--text-main)]">${row.asset_id}</td>
+                    <td class="text-center font-bold ${row.predicted_failure ? 'text-rose-400' : 'text-emerald-400'}">
+                        ${(row.failure_probability * 100).toFixed(1)}%
+                    </td>
+                    <td class="text-center text-cyan-400 font-mono">
+                        ${row.stage1_outputs.vae_anomaly_score.toFixed(3)}
+                    </td>
+                    <td>
+                        <span class="badge-subtle ${row.predicted_failure ? 'badge-critical' : 'badge-healthy'}">
+                            ${row.diagnosis.mode_code} - ${row.diagnosis.mode_title}
+                        </span>
+                    </td>
+                    <td class="text-center text-[var(--text-main)] font-mono">${row.diagnosis.rul_hours.toFixed(1)}</td>
+                    <td class="text-[var(--text-muted)] text-[11px] font-sans truncate max-w-xs" title="${row.diagnosis.prescriptions[0] || 'Standard maintenance'}">
+                        ${row.diagnosis.prescriptions[0] || 'Standard maintenance'}
+                    </td>
+                </tr>
+            `).join('');
+
+            showToast(`Evaluated ${data.total_evaluated} assets across Two-Stage Pipeline`, "success");
+        } catch (err) {
+            console.error(err);
+            showToast(`Batch error: ${err.message}`, "error");
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = `<i data-lucide="cpu" class="w-4 h-4 mr-2 inline-block"></i> Run Batch Two-Stage Evaluation`;
+            if (window.lucide) window.lucide.createIcons();
+        }
+    }
+</script>
+{% endblock %}

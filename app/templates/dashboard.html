@@ -1,0 +1,193 @@
+{% extends "base.html" %}
+
+{% block title %}Plant Fleet Operations Overview | CrossDomain AI{% endblock %}
+{% block header_title %}Plant Fleet Operations Overview{% endblock %}
+{% block header_subtitle %}Real-Time Multi-Asset Telemetry & Two-Stage Cross-Domain Failure Assessment{% endblock %}
+
+{% block content %}
+<div class="space-y-6 max-w-[1400px] mx-auto w-full pb-12">
+
+    <!-- KPI Metric Cards Row -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <!-- Card 1: Fleet Availability with Radial Gauge -->
+        <div class="stat-card stagger-card flex items-center justify-between">
+            <div class="space-y-1">
+                <span class="stat-label">Fleet Availability</span>
+                <div class="stat-value text-emerald-400" data-countup="{{ fleet.fleet_availability_pct }}" data-suffix="%" data-decimals="1">{{ fleet.fleet_availability_pct }}%</div>
+                <div class="flex items-center gap-1.5 text-xs text-emerald-400 font-semibold">
+                    <i data-lucide="trending-up" class="w-3.5 h-3.5"></i>
+                    <span>+1.4% vs baseline</span>
+                </div>
+                <span class="text-[11px] text-[var(--text-muted)] font-mono block mt-1">
+                    {{ fleet.healthy_assets }}/{{ fleet.total_assets }} Nominal Assets
+                </span>
+            </div>
+
+            <!-- Animated Mini SVG Gauge -->
+            <div class="relative w-16 h-16 shrink-0">
+                <svg class="w-full h-full health-ring-svg" viewBox="0 0 36 36">
+                    <path class="health-ring-bg" stroke-width="3.5" fill="none"
+                          d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                    <path class="health-ring-fill stroke-emerald-400" stroke-width="3.5" stroke-dasharray="{{ fleet.fleet_availability_pct }}, 100" stroke-linecap="round" fill="none"
+                          d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                </svg>
+                <div class="absolute inset-0 flex items-center justify-center text-xs font-mono font-bold text-emerald-400">
+                    <i data-lucide="activity" class="w-4 h-4"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card 2: Active Alerts (Pulsing Glow on Critical) -->
+        <div class="stat-card stagger-card {% if fleet.critical_assets > 0 %}glow-critical{% endif %}">
+            <div class="flex items-center justify-between">
+                <span class="stat-label">Failure Alerts</span>
+                <i data-lucide="alert-triangle" class="w-4 h-4 text-rose-400"></i>
+            </div>
+            <div class="stat-value mt-1 text-rose-400" data-countup="{{ fleet.critical_assets }}" data-suffix=" Critical">
+                {{ fleet.critical_assets }} Critical
+            </div>
+            <div class="mt-2 flex items-center justify-between text-xs">
+                <span class="badge-subtle badge-warning text-[10px]">{{ fleet.warning_assets }} Elevated Warning</span>
+                <span class="text-[10px] font-mono text-[var(--text-dim)]">BiLSTM Isolated</span>
+            </div>
+        </div>
+
+        <!-- Card 3: Champion Recall (Zero FN) -->
+        <div class="stat-card stagger-card">
+            <div class="flex items-center justify-between">
+                <span class="stat-label">Champion Recall</span>
+                <i data-lucide="shield-check" class="w-4 h-4 text-indigo-400"></i>
+            </div>
+            <div class="stat-value mt-1 text-indigo-400" data-countup="1.000" data-decimals="3">1.000</div>
+            <div class="mt-2 flex items-center justify-between text-xs">
+                <span class="badge-subtle badge-healthy text-[10px]">Zero Missed</span>
+                <span class="text-xs font-mono text-[var(--text-muted)]">98.7% Acc &bull; 0.999 AUC</span>
+            </div>
+        </div>
+
+        <!-- Card 4: Cross-Domain Transfer Alignment -->
+        <div class="stat-card stagger-card">
+            <div class="flex items-center justify-between">
+                <span class="stat-label">Source HVAC Transfer</span>
+                <i data-lucide="network" class="w-4 h-4 text-cyan-400"></i>
+            </div>
+            <div class="stat-value mt-1 text-cyan-400">8D Latent</div>
+            <div class="mt-2 flex items-center justify-between text-xs">
+                <span class="badge-subtle badge-cyan text-[10px]">MMD: 0.018</span>
+                <span class="text-[10px] font-mono text-cyan-400 font-semibold">Continuous VAE</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Active Industrial Asset Fleet Grid -->
+    <div class="glass-card p-6 space-y-5">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-[var(--border-color)]">
+            <div>
+                <div class="flex items-center gap-2">
+                    <span class="badge-subtle badge-indigo text-[10px]">FLEET MONITORING</span>
+                    <h2 class="font-display text-lg font-bold text-[var(--text-main)]">Active Industrial Asset Fleet</h2>
+                </div>
+                <p class="text-xs text-[var(--text-muted)] mt-0.5">Real-time status, health index rings, and single-click diagnostic inspection</p>
+            </div>
+            <a href="/live-prediction" class="btn-ghost text-xs self-start sm:self-auto">
+                <span>Open Live Inference Lab</span>
+                <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+            </a>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {% for asset in fleet.assets %}
+            <div class="glass-card p-4 space-y-3 relative group {% if asset.status == 'CRITICAL' %}glow-critical{% endif %}">
+                <!-- Asset Header -->
+                <div class="flex items-start justify-between">
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <span class="font-mono font-bold text-xs text-[var(--text-main)]">{{ asset.id }}</span>
+                            <span class="text-[10px] text-[var(--text-dim)] font-mono">({{ asset.zone }})</span>
+                        </div>
+                        <h3 class="text-xs font-semibold text-[var(--text-muted)] mt-0.5 truncate max-w-[200px]">{{ asset.name }}</h3>
+                    </div>
+
+                    <!-- Status Badge -->
+                    <span class="badge-subtle text-[10px] {% if asset.status == 'HEALTHY' %}badge-healthy{% elif asset.status == 'WARNING' %}badge-warning{% else %}badge-critical{% endif %}">
+                        <span class="pulse-dot {% if asset.status == 'HEALTHY' %}bg-emerald-400{% elif asset.status == 'WARNING' %}bg-amber-400{% else %}bg-rose-400{% endif %}"></span>
+                        <span>{{ asset.status }}</span>
+                    </span>
+                </div>
+
+                <!-- Live Health Ring & Sparkline -->
+                <div class="flex items-center justify-between pt-1">
+                    <div class="flex items-center gap-3">
+                        <!-- Circular Health Ring -->
+                        <div class="relative w-12 h-12 shrink-0">
+                            <svg class="w-full h-full health-ring-svg" viewBox="0 0 36 36">
+                                <path class="health-ring-bg" stroke-width="3.5" fill="none"
+                                      d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                <path class="health-ring-fill {% if asset.health_index > 85 %}stroke-emerald-400{% elif asset.health_index > 50 %}stroke-amber-400{% else %}stroke-rose-400{% endif %}"
+                                      stroke-width="3.5" stroke-dasharray="{{ asset.health_index }}, 100" stroke-linecap="round" fill="none"
+                                      d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                            </svg>
+                            <div class="absolute inset-0 flex items-center justify-center font-mono font-bold text-[11px] {% if asset.health_index > 85 %}text-emerald-400{% elif asset.health_index > 50 %}text-amber-400{% else %}text-rose-400{% endif %}">
+                                {{ asset.health_index }}%
+                            </div>
+                        </div>
+
+                        <div>
+                            <span class="text-[10px] text-[var(--text-dim)] uppercase font-semibold block">Health Metric</span>
+                            <span class="text-xs font-mono font-bold text-[var(--text-main)]">{{ asset.health_index }}/100</span>
+                        </div>
+                    </div>
+
+                    <!-- Subtle Simulated Sensor Sparkline -->
+                    <div class="w-20 h-6 flex items-end gap-1 px-1">
+                        <span class="w-1.5 bg-indigo-500/30 rounded-t h-[40%] animate-pulse"></span>
+                        <span class="w-1.5 bg-indigo-500/50 rounded-t h-[70%]"></span>
+                        <span class="w-1.5 bg-indigo-500/40 rounded-t h-[55%]"></span>
+                        <span class="w-1.5 bg-cyan-400/70 rounded-t h-[85%] animate-pulse"></span>
+                        <span class="w-1.5 bg-indigo-500/60 rounded-t h-[65%]"></span>
+                    </div>
+                </div>
+
+                <!-- Asset Footer Actions -->
+                <div class="pt-2 border-t border-[var(--border-color)] flex items-center justify-between">
+                    <button type="button" onclick="openAssetDrawer('{{ asset.id }}', '{{ asset.name }}', {{ asset.health_index }}, '{{ asset.status }}')"
+                            class="text-xs font-semibold text-indigo-400 hover:text-indigo-300 flex items-center gap-1 transition-colors">
+                        <i data-lucide="eye" class="w-3.5 h-3.5"></i>
+                        <span>Inspect Drawer</span>
+                    </button>
+
+                    <a href="/live-prediction?asset={{ asset.id }}" class="btn-glass text-[11px] py-1 px-2.5">
+                        <span>Diagnose</span>
+                        <i data-lucide="arrow-right" class="w-3 h-3"></i>
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- 1-Click Scenario Presets (Horizontally Scrollable Chips with Hover Lift) -->
+    <div class="glass-card p-6 space-y-4">
+        <div class="flex items-center justify-between pb-2 border-b border-[var(--border-color)]">
+            <div>
+                <h3 class="font-display text-sm sm:text-base font-bold text-[var(--text-main)]">1-Click Industrial Failure Scenario Presets</h3>
+                <p class="text-xs text-[var(--text-muted)]">Inject pre-calibrated multi-sensor operating states directly into the inference engine</p>
+            </div>
+            <span class="text-xs font-mono text-[var(--text-dim)]">5 Industrial Presets</span>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+            {% for s_id, sc in scenarios.items() %}
+            <a href="/live-prediction?preset={{ s_id }}" class="glass-card p-3.5 block group hover:-translate-y-1 transition-all">
+                <span class="badge-subtle text-[9px] {% if sc.badge_color == 'emerald' %}badge-healthy{% elif sc.badge_color == 'amber' %}badge-warning{% elif sc.badge_color == 'orange' %}badge-warning{% else %}badge-critical{% endif %} mb-2">
+                    {{ sc.badge }}
+                </span>
+                <h4 class="font-display text-xs font-bold text-[var(--text-main)] group-hover:text-indigo-400 transition-colors line-clamp-1">{{ sc.title }}</h4>
+                <p class="text-[11px] text-[var(--text-muted)] mt-1 line-clamp-2 leading-relaxed">{{ sc.description }}</p>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+
+</div>
+{% endblock %}

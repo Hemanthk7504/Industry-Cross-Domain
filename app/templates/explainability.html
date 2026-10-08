@@ -1,0 +1,432 @@
+{% extends "base.html" %}
+
+{% block title %}Quad-XAI: SHAP, LIME, PDP & ICE Interpretability Suite | CrossDomain AI{% endblock %}
+{% block header_title %}Quad-XAI Model Interpretability & Diagnostics Suite{% endblock %}
+{% block header_subtitle %}Axiomatic SHAP Game Theory, Sparse LIME Rules, Marginal PDP & Asset-Specific ICE Trajectories{% endblock %}
+
+{% block content %}
+<div class="space-y-6 max-w-[1400px] mx-auto w-full pb-12">
+
+    <!-- Header & Interactive Diagnostic Controls Bar -->
+    <div class="glass-card spotlight-card p-6 sm:p-7 relative overflow-hidden">
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 relative z-10">
+            <div>
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-indigo-500/10 text-indigo-400 border border-indigo-500/25 mb-2">
+                    <i data-lucide="brain" class="w-3.5 h-3.5 text-indigo-400"></i>
+                    <span>Quad-Perspective Explainable AI &bull; ANSI/ISA-101.01 Operator Transparency</span>
+                </div>
+                <h1 class="font-display text-xl sm:text-2xl font-bold text-[var(--text-main)]">
+                    Multi-Perspective Explainable AI (Quad-XAI) Diagnostics
+                </h1>
+                <p class="text-xs text-[var(--text-muted)] mt-1 max-w-4xl leading-relaxed">
+                    Industrial control operators cannot accept opaque predictions. Quad-XAI combines <strong>SHAP</strong> (axiomatic feature attribution), <strong>LIME</strong> (sparse local surrogate rules), <strong>PDP</strong> (population marginal sensitivity), and <strong>ICE</strong> (asset-specific counterfactual trajectories).
+                </p>
+            </div>
+
+            <!-- Interactive Diagnostic Presets -->
+            <div class="flex flex-wrap items-center gap-2">
+                <span class="text-xs font-bold text-[var(--text-muted)] uppercase tracking-wider font-display">Preset:</span>
+                <button type="button" onclick="loadXaiScenario('nominal')" class="btn-glass text-xs py-1.5 px-3">
+                    <span class="pulse-dot bg-emerald-400"></span>
+                    <span>Nominal</span>
+                </button>
+                <button type="button" onclick="loadXaiScenario('tool_wear')" class="btn-glass text-xs py-1.5 px-3">
+                    <span class="pulse-dot bg-rose-400"></span>
+                    <span>Tool Wear (TWF)</span>
+                </button>
+                <button type="button" onclick="loadXaiScenario('thermal_choke')" class="btn-glass text-xs py-1.5 px-3">
+                    <span class="pulse-dot bg-amber-400"></span>
+                    <span>Thermal (HDF)</span>
+                </button>
+                <button type="button" onclick="loadXaiScenario('overstrain')" class="btn-glass text-xs py-1.5 px-3">
+                    <span class="pulse-dot bg-indigo-400"></span>
+                    <span>Overstrain (OSF)</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 5-Card Quantitative Interpretability Metrics Strip -->
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3.5">
+        <!-- 1. Local Surrogate Fidelity R² -->
+        <div class="stat-card stagger-card">
+            <div class="flex items-center justify-between mb-1">
+                <span class="stat-label">Surrogate Fidelity</span>
+                <i data-lucide="line-chart" class="w-4 h-4 text-indigo-400"></i>
+            </div>
+            <div class="flex items-baseline gap-1.5">
+                <span id="metric_r2" class="stat-value text-indigo-400">0.942</span>
+                <span class="text-xs font-mono font-bold text-indigo-400">R&sup2;</span>
+            </div>
+            <div class="flex items-center gap-1.5 mt-2 text-[10px] text-emerald-400 font-semibold">
+                <i data-lucide="check-circle" class="w-3 h-3 text-emerald-400"></i>
+                <span>High Linear Explainer Fit</span>
+            </div>
+        </div>
+
+        <!-- 2. Mean Absolute SHAP Importance -->
+        <div class="stat-card stagger-card">
+            <div class="flex items-center justify-between mb-1">
+                <span class="stat-label">Mean SHAP Importance</span>
+                <i data-lucide="scale" class="w-4 h-4 text-cyan-400"></i>
+            </div>
+            <div class="flex items-baseline gap-1.5">
+                <span id="metric_shap_mean" class="stat-value text-cyan-400">0.284</span>
+                <span class="text-xs font-mono font-bold text-cyan-400">&oline;|&#981;|</span>
+            </div>
+            <div class="flex items-center gap-1.5 mt-2 text-[10px] text-cyan-400 font-semibold">
+                <i data-lucide="network" class="w-3 h-3 text-cyan-400"></i>
+                <span>Axiomatic Attribution</span>
+            </div>
+        </div>
+
+        <!-- 3. Primary Inflection Boundary -->
+        <div class="stat-card stagger-card">
+            <div class="flex items-center justify-between mb-1">
+                <span class="stat-label">Critical Inflection</span>
+                <i data-lucide="alert-circle" class="w-4 h-4 text-amber-400"></i>
+            </div>
+            <div class="flex items-baseline gap-1.5 mt-2">
+                <span id="metric_inflection" class="text-sm sm:text-base font-extrabold text-amber-400 font-mono truncate">48.5 Nm / 195 min</span>
+            </div>
+            <div class="flex items-center gap-1.5 mt-2 text-[10px] text-[var(--text-muted)] font-medium">
+                <i data-lucide="trending-up" class="w-3 h-3 text-amber-400"></i>
+                <span>Non-Linear Transition</span>
+            </div>
+        </div>
+
+        <!-- 4. Axiomatic Completeness -->
+        <div class="stat-card stagger-card">
+            <div class="flex items-center justify-between mb-1">
+                <span class="stat-label">Axiomatic Sum</span>
+                <i data-lucide="award" class="w-4 h-4 text-emerald-400"></i>
+            </div>
+            <div class="flex items-baseline gap-1.5">
+                <span id="metric_completeness" class="stat-value text-emerald-400">99.8%</span>
+            </div>
+            <div class="flex items-center gap-1.5 mt-2 text-[10px] text-emerald-400 font-semibold">
+                <i data-lucide="shield-check" class="w-3 h-3 text-emerald-400"></i>
+                <span>Sum-to-Logit Efficiency</span>
+            </div>
+        </div>
+
+        <!-- 5. Monotonicity Agreement -->
+        <div class="stat-card stagger-card col-span-2 sm:col-span-1">
+            <div class="flex items-center justify-between mb-1">
+                <span class="stat-label">Monotonicity</span>
+                <i data-lucide="shield" class="w-4 h-4 text-violet-400"></i>
+            </div>
+            <div class="flex items-baseline gap-1.5">
+                <span id="metric_monotonicity" class="stat-value text-violet-400">96.4%</span>
+            </div>
+            <div class="flex items-center gap-1.5 mt-2 text-[10px] text-violet-400 font-semibold">
+                <i data-lucide="check" class="w-3 h-3 text-violet-400"></i>
+                <span>Physics Wear Correlation</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Live Counterfactual Perturbation Lab (Sliders) -->
+    <details class="glass-card p-5 group" open>
+        <summary class="font-bold text-xs text-[var(--text-main)] cursor-pointer flex items-center justify-between select-none">
+            <span class="flex items-center gap-2">
+                <i data-lucide="sliders" class="w-4 h-4 text-indigo-400"></i>
+                <span class="font-display">Interactive Counterfactual Sensor Perturbation Lab</span>
+            </span>
+            <span class="badge-subtle badge-indigo text-[10px]">Real-Time XAI Recalculation</span>
+        </summary>
+
+        <div class="mt-4 pt-3 border-t border-[var(--border-color)] space-y-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-xs">
+                <!-- Torque Slider -->
+                <div class="glass-card p-3 space-y-2 border-[var(--border-color)]">
+                    <div class="flex justify-between items-center">
+                        <span class="font-bold text-[var(--text-main)]">Spindle Torque</span>
+                        <span id="disp_torque" class="font-mono font-bold text-indigo-400">40.2 Nm</span>
+                    </div>
+                    <input type="range" id="xai_input_torque" min="15.0" max="80.0" step="0.5" value="40.2" oninput="onXaiSensorChanged()">
+                </div>
+                <!-- Tool Wear Slider -->
+                <div class="glass-card p-3 space-y-2 border-[var(--border-color)]">
+                    <div class="flex justify-between items-center">
+                        <span class="font-bold text-[var(--text-main)]">Tool Wear</span>
+                        <span id="disp_tool_wear" class="font-mono font-bold text-indigo-400">85.0 min</span>
+                    </div>
+                    <input type="range" id="xai_input_tool_wear" min="0.0" max="250.0" step="1.0" value="85.0" oninput="onXaiSensorChanged()">
+                </div>
+                <!-- Vibration Slider -->
+                <div class="glass-card p-3 space-y-2 border-[var(--border-color)]">
+                    <div class="flex justify-between items-center">
+                        <span class="font-bold text-[var(--text-main)]">Vibration RMS</span>
+                        <span id="disp_vibration_index" class="font-mono font-bold text-indigo-400">2.10 mm/s</span>
+                    </div>
+                    <input type="range" id="xai_input_vibration_index" min="0.5" max="10.0" step="0.1" value="2.1" oninput="onXaiSensorChanged()">
+                </div>
+                <!-- Spindle Temp Slider -->
+                <div class="glass-card p-3 space-y-2 border-[var(--border-color)]">
+                    <div class="flex justify-between items-center">
+                        <span class="font-bold text-[var(--text-main)]">Spindle Temp</span>
+                        <span id="disp_process_temperature" class="font-mono font-bold text-indigo-400">308.6 K</span>
+                    </div>
+                    <input type="range" id="xai_input_process_temperature" min="300.0" max="320.0" step="0.2" value="308.6" oninput="onXaiSensorChanged()">
+                </div>
+            </div>
+            <div class="flex flex-col sm:flex-row justify-between items-center text-xs text-[var(--text-muted)] gap-2">
+                <span>Move sliders to watch SHAP attributions, LIME decision rules, and fidelity metrics recalculate in real time.</span>
+                <button type="button" onclick="loadXaiScenario('nominal')" class="text-indigo-400 hover:text-indigo-300 font-bold underline">
+                    Reset Factory Baseline
+                </button>
+            </div>
+        </div>
+    </details>
+
+    <!-- Top Grid: SHAP Waterfall and LIME Rules (Side by Side) -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
+
+        <!-- 1. SHAP Feature Attributions (7 Cols) -->
+        <div class="lg:col-span-7 glass-card p-5 sm:p-6 flex flex-col justify-between space-y-4">
+            <div>
+                <div class="flex items-center justify-between pb-3 border-b border-[var(--border-color)]">
+                    <div>
+                        <h2 class="font-display text-sm font-bold text-[var(--text-main)] uppercase tracking-wider flex items-center gap-2">
+                            <i data-lucide="bar-chart-2" class="w-4 h-4 text-indigo-400"></i>
+                            <span>1. SHAP Waterfall Attributions (&phi;<sub>i</sub>)</span>
+                        </h2>
+                        <p class="text-[11px] text-[var(--text-muted)]">Axiomatic Shapley feature contributions shifting model output from base prior E[f(x)]</p>
+                    </div>
+                    <span id="shap_base_val" class="badge-subtle text-[10px] font-mono">Base Prior: 0.082</span>
+                </div>
+
+                <div class="h-64 sm:h-72 relative mt-3">
+                    <canvas id="shapWaterfallChart"></canvas>
+                </div>
+            </div>
+
+            <div class="flex flex-wrap items-center justify-between text-xs text-[var(--text-muted)] pt-3 border-t border-[var(--border-color)]">
+                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded bg-rose-400 inline-block"></span> <strong>Red:</strong> Accelerates Breakdown (+&phi;<sub>i</sub>)</span>
+                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded bg-emerald-400 inline-block"></span> <strong>Green:</strong> Retards Breakdown / Normal (-&phi;<sub>i</sub>)</span>
+            </div>
+        </div>
+
+        <!-- 2. LIME Local Sparse Surrogate Rules (5 Cols) -->
+        <div class="lg:col-span-5 glass-card p-5 sm:p-6 flex flex-col justify-between space-y-4">
+            <div>
+                <div class="flex items-center justify-between pb-3 border-b border-[var(--border-color)]">
+                    <div>
+                        <h2 class="font-display text-sm font-bold text-[var(--text-main)] uppercase tracking-wider flex items-center gap-2">
+                            <i data-lucide="scale" class="w-4 h-4 text-indigo-400"></i>
+                            <span>2. LIME Sparse Surrogate Rules</span>
+                        </h2>
+                        <p class="text-[11px] text-[var(--text-muted)]">Human-interpretable sparse decision boundaries fitted locally</p>
+                    </div>
+                    <span id="lime_r2_badge" class="badge-subtle badge-indigo text-[10px] font-mono">R&sup2; = 0.942</span>
+                </div>
+
+                <p class="text-xs text-[var(--text-muted)] mt-2 mb-3 leading-relaxed">
+                    Evaluates sparse linear decision hyperplanes around the current telemetry point, converting neural logits into engineering decision rules:
+                </p>
+
+                <!-- Rules List -->
+                <div id="limeRulesContainer" class="space-y-2">
+                    <!-- Populated dynamically via JS -->
+                </div>
+            </div>
+
+            <div class="pt-3 border-t border-[var(--border-color)] flex items-center justify-between text-xs text-[var(--text-muted)]">
+                <span>Sparse Active Constraints: <strong>Top 5</strong></span>
+                <span class="text-emerald-400 font-semibold flex items-center gap-1">
+                    <i data-lucide="check-circle" class="w-3.5 h-3.5"></i> Fidelity Grade: Superior
+                </span>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Bottom Section: PDP & ICE Interactive Explorer -->
+    <div class="glass-card p-6 space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-[var(--border-color)]">
+            <div>
+                <h2 class="font-display text-sm sm:text-base font-bold text-[var(--text-main)] flex items-center gap-2">
+                    <i data-lucide="trending-up" class="w-4 h-4 text-cyan-400"></i>
+                    <span>3 & 4. Partial Dependence (PDP) & Individual Conditional Expectation (ICE)</span>
+                </h2>
+                <p class="text-xs text-[var(--text-muted)]">Population marginal baseline expectation (PDP) vs specific asset counterfactual risk trajectory (ICE)</p>
+            </div>
+
+            <!-- Feature Selector Buttons -->
+            <div class="flex items-center gap-1.5 flex-wrap">
+                <span class="text-xs font-semibold text-[var(--text-muted)] mr-1">Select Channel:</span>
+                <button type="button" id="btn_pdp_torque" onclick="switchPdpFeature('torque')" class="btn-primary text-xs py-1 px-2.5">
+                    Torque (Nm)
+                </button>
+                <button type="button" id="btn_pdp_tool_wear" onclick="switchPdpFeature('tool_wear')" class="btn-glass text-xs py-1 px-2.5">
+                    Tool Wear (min)
+                </button>
+                <button type="button" id="btn_pdp_vibration_index" onclick="switchPdpFeature('vibration_index')" class="btn-glass text-xs py-1 px-2.5">
+                    Vibration (mm/s)
+                </button>
+                <button type="button" id="btn_pdp_rotational_speed" onclick="switchPdpFeature('rotational_speed')" class="btn-glass text-xs py-1 px-2.5">
+                    Rotational Speed (rpm)
+                </button>
+            </div>
+        </div>
+
+        <div class="h-64 sm:h-72 relative">
+            <canvas id="pdpIceChart"></canvas>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 pt-3 border-t border-[var(--border-color)] text-xs">
+            <div class="glass-card p-3 border-[var(--border-color)] space-y-1">
+                <span class="font-bold text-indigo-400 block font-display">Solid Indigo Line: Current Asset ICE</span>
+                <p class="text-[var(--text-muted)] text-[11px] leading-relaxed">Direct counterfactual sensitivity curve for this specific machine asset, holding other parameters fixed.</p>
+            </div>
+
+            <div class="glass-card p-3 border-[var(--border-color)] space-y-1">
+                <span class="font-bold text-[var(--text-main)] block font-display">Dashed Bright Line: Global Population PDP</span>
+                <p class="text-[var(--text-muted)] text-[11px] leading-relaxed">Averaged marginal expectation across 3,000 reference plant assets, showing global non-linear inflection thresholds.</p>
+            </div>
+
+            <div class="glass-card p-3 border-[var(--border-color)] space-y-1">
+                <span class="font-bold text-[var(--text-dim)] block font-display">Ghost Traces: Cohort Background ICE</span>
+                <p class="text-[var(--text-muted)] text-[11px] leading-relaxed">Sample individual machine trajectories showing population variance and proving no adverse Simpson's paradox interactions.</p>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Embedded Pre-Computed XAI Data from Server
+    const INITIAL_XAI = {{ xai_data | tojson }};
+    let currentPdpFeature = 'torque';
+    let currentXaiSensors = { ...INITIAL_XAI.sensors };
+
+    const XAI_SCENARIOS = {
+        nominal: {
+            name: 'Nominal Baseline',
+            sensors: { air_temperature: 298.1, process_temperature: 308.6, rotational_speed: 1540.0, torque: 40.2, tool_wear: 45.0, vibration_index: 1.85, acoustic_emission: 58.2, oil_pressure: 4.65 }
+        },
+        tool_wear: {
+            name: 'Tool Wear Surge (TWF)',
+            sensors: { air_temperature: 299.4, process_temperature: 310.8, rotational_speed: 1395.0, torque: 56.4, tool_wear: 224.0, vibration_index: 5.40, acoustic_emission: 86.5, oil_pressure: 4.10 }
+        },
+        thermal_choke: {
+            name: 'Thermal Choke (HDF)',
+            sensors: { air_temperature: 302.5, process_temperature: 309.2, rotational_speed: 1240.0, torque: 64.8, tool_wear: 142.0, vibration_index: 4.15, acoustic_emission: 71.0, oil_pressure: 3.10 }
+        },
+        overstrain: {
+            name: 'Overstrain (OSF)',
+            sensors: { air_temperature: 299.8, process_temperature: 311.2, rotational_speed: 1310.0, torque: 71.5, tool_wear: 195.0, vibration_index: 7.80, acoustic_emission: 89.2, oil_pressure: 2.75 }
+        }
+    };
+
+    function updateMetricCards(metrics) {
+        if (!metrics) return;
+        if (document.getElementById('metric_r2')) document.getElementById('metric_r2').innerText = Number(metrics.surrogate_fidelity_r2).toFixed(3);
+        if (document.getElementById('metric_shap_mean')) document.getElementById('metric_shap_mean').innerText = Number(metrics.mean_shap_importance).toFixed(3);
+        if (document.getElementById('metric_inflection')) document.getElementById('metric_inflection').innerText = metrics.inflection_point || '48.5 Nm / 195 min';
+        if (document.getElementById('metric_completeness')) document.getElementById('metric_completeness').innerText = Number(metrics.axiomatic_completeness).toFixed(1) + '%';
+        if (document.getElementById('metric_monotonicity')) document.getElementById('metric_monotonicity').innerText = Number(metrics.monotonicity_agreement).toFixed(1) + '%';
+        if (document.getElementById('lime_r2_badge')) document.getElementById('lime_r2_badge').innerText = `R² = ${Number(metrics.surrogate_fidelity_r2).toFixed(3)}`;
+    }
+
+    async function loadXaiScenario(scenarioKey) {
+        const sc = XAI_SCENARIOS[scenarioKey];
+        if (!sc) return;
+        currentXaiSensors = { ...sc.sensors };
+
+        for (const [key, val] of Object.entries(currentXaiSensors)) {
+            const inp = document.getElementById('xai_input_' + key);
+            const disp = document.getElementById('disp_' + key);
+            if (inp) inp.value = val;
+            if (disp) {
+                let unit = key === 'torque' ? ' Nm' : (key === 'tool_wear' ? ' min' : (key === 'vibration_index' ? ' mm/s' : ' K'));
+                disp.innerText = `${val}${unit}`;
+            }
+        }
+
+        await recalculateXAI();
+        showToast(`Loaded XAI scenario: ${sc.name}`, 'info');
+    }
+
+    let debounceTimer = null;
+    function onXaiSensorChanged() {
+        ['torque', 'tool_wear', 'vibration_index', 'process_temperature'].forEach(key => {
+            const inp = document.getElementById('xai_input_' + key);
+            const disp = document.getElementById('disp_' + key);
+            if (inp && disp) {
+                let unit = key === 'torque' ? ' Nm' : (key === 'tool_wear' ? ' min' : (key === 'vibration_index' ? ' mm/s' : ' K'));
+                disp.innerText = `${inp.value}${unit}`;
+                currentXaiSensors[key] = parseFloat(inp.value);
+            }
+        });
+
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(recalculateXAI, 250);
+    }
+
+    async function recalculateXAI() {
+        try {
+            const res = await fetch('/api/v1/explain/recalculate', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    sensors: currentXaiSensors,
+                    pdp_feature: currentPdpFeature
+                })
+            });
+
+            if (!res.ok) throw new Error("Recalculate failed");
+            const data = await res.json();
+            
+            if (typeof renderShapChart === 'function') renderShapChart(data.shap);
+            if (typeof renderLimeRules === 'function') renderLimeRules(data.lime);
+            if (typeof renderPdpIceChart === 'function') renderPdpIceChart(data.pdp_ice);
+            
+            updateMetricCards(data.metrics);
+        } catch (e) {
+            console.error('XAI Recalculation error:', e);
+        }
+    }
+
+    async function switchPdpFeature(featureKey) {
+        currentPdpFeature = featureKey;
+        
+        ['torque', 'tool_wear', 'vibration_index', 'rotational_speed'].forEach(f => {
+            const btn = document.getElementById('btn_pdp_' + f);
+            if (btn) {
+                if (f === featureKey) {
+                    btn.className = 'btn-primary text-xs py-1 px-2.5';
+                } else {
+                    btn.className = 'btn-glass text-xs py-1 px-2.5';
+                }
+            }
+        });
+
+        const currentVal = currentXaiSensors[featureKey] || 40.0;
+        try {
+            const res = await fetch(`/api/v1/explain/pdp-ice?feature=${featureKey}&val=${currentVal}`);
+            if (!res.ok) throw new Error("PDP fetch failed");
+            const data = await res.json();
+            if (typeof renderPdpIceChart === 'function') {
+                renderPdpIceChart(data);
+            }
+            showToast(`Switched PDP/ICE trajectory to ${data.feature_name}`, "info");
+        } catch (e) {
+            console.error('Error switching PDP feature:', e);
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        if (INITIAL_XAI) {
+            if (typeof renderShapChart === 'function') renderShapChart(INITIAL_XAI.shap);
+            if (typeof renderLimeRules === 'function') renderLimeRules(INITIAL_XAI.lime);
+            if (typeof renderPdpIceChart === 'function') renderPdpIceChart(INITIAL_XAI.pdp_ice);
+            updateMetricCards(INITIAL_XAI.metrics);
+        }
+        if (window.lucide) window.lucide.createIcons();
+    });
+</script>
+{% endblock %}

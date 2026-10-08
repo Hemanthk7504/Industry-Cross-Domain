@@ -1,0 +1,419 @@
+{% extends "base.html" %}
+
+{% block title %}Digital Twin Stream | CrossDomain AI Mission Control{% endblock %}
+{% block header_title %}Digital Twin Telemetry Simulator{% endblock %}
+{% block header_subtitle %}Continuous degradation streaming, live multi-sensor telemetry feeds, and real-time inference alerting{% endblock %}
+
+{% block content %}
+<div class="space-y-6 max-w-[1400px] mx-auto w-full pb-12">
+
+    <!-- Header Controls Bar -->
+    <div class="glass-card p-4 sm:p-5 flex flex-wrap items-center justify-between gap-4">
+        <div class="flex flex-wrap items-center gap-4">
+            <div class="flex items-center gap-2">
+                <span class="pulse-dot bg-emerald-400"></span>
+                <span class="text-xs font-bold text-[var(--text-muted)] uppercase tracking-wider font-display">Asset:</span>
+                <select id="sim_asset_select" class="input-glass text-xs font-semibold py-1.5 px-3 w-auto">
+                    <option value="CNC-SPINDLE-402" class="bg-[var(--bg-surface)]">CNC-SPINDLE-402 (Bay 1 &bull; 5-Axis Milling)</option>
+                    <option value="CNC-MILL-108" class="bg-[var(--bg-surface)]">CNC-MILL-108 (Bay 1 &bull; High-Speed Spindle)</option>
+                    <option value="LATHE-09" class="bg-[var(--bg-surface)]">LATHE-09 (Bay 2 &bull; Horizontal Turning)</option>
+                    <option value="MILL-33" class="bg-[var(--bg-surface)]">MILL-33 (Bay 3 &bull; Heavy Gantry)</option>
+                </select>
+            </div>
+
+            <span class="text-[var(--border-color)] hidden sm:inline">|</span>
+
+            <div class="flex items-center gap-2">
+                <span class="text-xs font-bold text-[var(--text-muted)] uppercase tracking-wider font-display">Degradation:</span>
+                <select id="sim_mode_select" onchange="onModeChanged()" class="input-glass text-xs font-semibold py-1.5 px-3 w-auto">
+                    <option value="normal" class="bg-[var(--bg-surface)]">Nominal Steady Operation (Healthy)</option>
+                    <option value="wear_drift" class="bg-[var(--bg-surface)]">Accelerated Tool Wear Drift (TWF)</option>
+                    <option value="thermal_collapse" class="bg-[var(--bg-surface)]">Thermal Heat Dissipation Collapse (HDF)</option>
+                    <option value="vibration_surge" class="bg-[var(--bg-surface)]">Sub-Harmonic Vibration Surge (OSF/RNF)</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="flex items-center gap-2">
+            <button id="btn_stream_toggle" onclick="toggleStream()" class="btn-primary text-xs py-2 px-4 bg-amber-500 hover:bg-amber-600">
+                <i id="stream_icon" data-lucide="pause" class="w-3.5 h-3.5"></i>
+                <span id="stream_text">Pause Stream</span>
+            </button>
+
+            <button onclick="stepSingleCycle()" class="btn-glass text-xs py-2 px-3">
+                <i data-lucide="step-forward" class="w-3.5 h-3.5"></i>
+                <span>Step +1</span>
+            </button>
+
+            <button onclick="resetSimulation()" class="btn-ghost text-xs py-2 px-3">
+                <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
+                <span>Reset</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Live Telemetry KPI Gauges Row -->
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        <!-- 1. Live Health Index -->
+        <div class="stat-card stagger-card">
+            <span class="stat-label">Asset Health Index</span>
+            <div class="flex items-baseline gap-2 mt-2">
+                <span id="dt_health" class="stat-value text-emerald-400">98.4%</span>
+                <span id="dt_status_badge" class="badge-subtle badge-healthy text-[10px]">Optimal</span>
+            </div>
+            <div class="w-full bg-[var(--bg-elevated)] h-1.5 rounded-full mt-3 overflow-hidden">
+                <div id="dt_health_bar" class="h-1.5 rounded-full bg-emerald-400 transition-all duration-300" style="width: 98.4%;"></div>
+            </div>
+        </div>
+
+        <!-- 2. Stage 1 VAE Anomaly Score -->
+        <div class="stat-card stagger-card">
+            <span class="stat-label">Stage 1 VAE Score</span>
+            <div class="flex items-baseline gap-2 mt-2">
+                <span id="dt_vae_score" class="stat-value text-cyan-400">0.038</span>
+                <span id="dt_vae_badge" class="badge-subtle badge-cyan text-[10px]">z &in; &#8477;&#8312;</span>
+            </div>
+            <p class="text-[10px] text-[var(--text-dim)] mt-2">Thermodynamic projection loss</p>
+        </div>
+
+        <!-- 3. Stage 2 Failure Probability -->
+        <div class="stat-card stagger-card">
+            <span class="stat-label">Stage 2 Failure Probability</span>
+            <div class="flex items-baseline gap-2 mt-2">
+                <span id="dt_fail_prob" class="stat-value text-emerald-400">0.8%</span>
+                <span id="dt_alarm_badge" class="badge-subtle badge-healthy text-[10px]">Normal</span>
+            </div>
+            <p class="text-[10px] text-[var(--text-dim)] mt-2 font-mono">Limit &tau;* = 0.380</p>
+        </div>
+
+        <!-- 4. Current Operating Cycle Step -->
+        <div class="stat-card stagger-card">
+            <span class="stat-label">Cycle Clock & Status</span>
+            <div class="flex items-baseline gap-2 mt-2">
+                <span id="dt_cycle_step" class="stat-value text-indigo-400">#0</span>
+                <span class="text-xs text-[var(--text-dim)] font-mono" id="dt_timestamp">--:--:--</span>
+            </div>
+            <div class="flex items-center gap-1.5 mt-2 text-[10px] text-emerald-400 font-semibold">
+                <span class="pulse-dot bg-emerald-400"></span>
+                <span>Active 1.0 Hz Ingest</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Real-Time 8-Channel Physical Telemetry Pill Strip -->
+    <div class="glass-card p-5 space-y-3">
+        <div class="flex items-center justify-between pb-2 border-b border-[var(--border-color)]">
+            <div class="flex items-center gap-2">
+                <i data-lucide="cpu" class="w-4 h-4 text-indigo-400"></i>
+                <span class="text-xs font-bold text-[var(--text-main)] uppercase tracking-wider font-display">Active 8-Channel Telemetry Sensor Grid</span>
+            </div>
+            <span class="text-[10px] font-mono text-[var(--text-dim)]">Continuous Real-Time Ingestion</span>
+        </div>
+
+        <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2.5 text-xs">
+            <!-- 1. Torque -->
+            <div class="glass-card p-3 text-center border-[var(--border-color)]">
+                <span class="text-[10px] text-[var(--text-dim)] block truncate">Spindle Torque</span>
+                <span id="s_torque" class="font-mono font-bold text-sm text-[var(--text-main)] block my-1">40.2 Nm</span>
+                <span id="badge_torque" class="badge-subtle badge-healthy text-[9px] py-0 px-1">Normal</span>
+            </div>
+            <!-- 2. Vibration -->
+            <div class="glass-card p-3 text-center border-[var(--border-color)]">
+                <span class="text-[10px] text-[var(--text-dim)] block truncate">Vibration RMS</span>
+                <span id="s_vib" class="font-mono font-bold text-sm text-[var(--text-main)] block my-1">2.10 mm/s</span>
+                <span id="badge_vib" class="badge-subtle badge-healthy text-[9px] py-0 px-1">Normal</span>
+            </div>
+            <!-- 3. Tool Wear -->
+            <div class="glass-card p-3 text-center border-[var(--border-color)]">
+                <span class="text-[10px] text-[var(--text-dim)] block truncate">Tool Wear</span>
+                <span id="s_wear" class="font-mono font-bold text-sm text-[var(--text-main)] block my-1">45 min</span>
+                <span id="badge_wear" class="badge-subtle badge-healthy text-[9px] py-0 px-1">Normal</span>
+            </div>
+            <!-- 4. Process Temp -->
+            <div class="glass-card p-3 text-center border-[var(--border-color)]">
+                <span class="text-[10px] text-[var(--text-dim)] block truncate">Spindle Temp</span>
+                <span id="s_proc_t" class="font-mono font-bold text-sm text-[var(--text-main)] block my-1">308.6 K</span>
+                <span id="badge_proc_t" class="badge-subtle badge-healthy text-[9px] py-0 px-1">Normal</span>
+            </div>
+            <!-- 5. Ambient Temp -->
+            <div class="glass-card p-3 text-center border-[var(--border-color)]">
+                <span class="text-[10px] text-[var(--text-dim)] block truncate">Ambient Temp</span>
+                <span id="s_air_t" class="font-mono font-bold text-sm text-[var(--text-main)] block my-1">298.1 K</span>
+                <span id="badge_air_t" class="badge-subtle badge-healthy text-[9px] py-0 px-1">Normal</span>
+            </div>
+            <!-- 6. Rotational Speed -->
+            <div class="glass-card p-3 text-center border-[var(--border-color)]">
+                <span class="text-[10px] text-[var(--text-dim)] block truncate">Shaft Speed</span>
+                <span id="s_speed" class="font-mono font-bold text-sm text-[var(--text-main)] block my-1">1540 rpm</span>
+                <span id="badge_speed" class="badge-subtle badge-healthy text-[9px] py-0 px-1">Normal</span>
+            </div>
+            <!-- 7. Acoustic Noise -->
+            <div class="glass-card p-3 text-center border-[var(--border-color)]">
+                <span class="text-[10px] text-[var(--text-dim)] block truncate">Acoustic dB</span>
+                <span id="s_acous" class="font-mono font-bold text-sm text-[var(--text-main)] block my-1">62.0 dB</span>
+                <span id="badge_acous" class="badge-subtle badge-healthy text-[9px] py-0 px-1">Normal</span>
+            </div>
+            <!-- 8. Oil Pressure -->
+            <div class="glass-card p-3 text-center border-[var(--border-color)]">
+                <span class="text-[10px] text-[var(--text-dim)] block truncate">Oil Pressure</span>
+                <span id="s_oil" class="font-mono font-bold text-sm text-[var(--text-main)] block my-1">4.50 bar</span>
+                <span id="badge_oil" class="badge-subtle badge-healthy text-[9px] py-0 px-1">Normal</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Live Multi-Channel Streaming Line Chart -->
+    <div class="glass-card p-6 space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-[var(--border-color)]">
+            <div>
+                <div class="flex items-center gap-2">
+                    <i data-lucide="line-chart" class="w-4 h-4 text-cyan-400"></i>
+                    <h2 class="font-display text-sm sm:text-base font-bold text-[var(--text-main)]">
+                        Real-Time Multi-Sensor Telemetry Feed &bull; 25-Point Rolling Window
+                    </h2>
+                </div>
+                <p class="text-xs text-[var(--text-muted)] mt-0.5">Live multi-axis stream tracking Spindle Torque (Nm), Vibration (mm/s), and Flank Wear (min)</p>
+            </div>
+            <div class="flex items-center gap-3 text-xs font-mono">
+                <span class="flex items-center gap-1.5"><span class="w-3 h-1 rounded bg-indigo-500 inline-block"></span> Torque</span>
+                <span class="flex items-center gap-1.5"><span class="w-3 h-1 rounded bg-rose-400 inline-block"></span> Vibration</span>
+                <span class="flex items-center gap-1.5"><span class="w-3 h-1 rounded bg-amber-400 inline-block"></span> Wear</span>
+            </div>
+        </div>
+
+        <div class="h-64 sm:h-80 relative">
+            <canvas id="liveStreamChart"></canvas>
+        </div>
+    </div>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    let isStreaming = true;
+    let streamInterval = null;
+    let currentStep = 0;
+    const maxPoints = 25;
+
+    const chartLabels = [];
+    const torqueData = [];
+    const vibData = [];
+    const wearData = [];
+
+    let streamChart = null;
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const isDark = document.documentElement.getAttribute('data-theme') !== 'light';
+        const ctx = document.getElementById('liveStreamChart').getContext('2d');
+        streamChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: chartLabels,
+                datasets: [
+                    {
+                        label: 'Spindle Torque (Nm)',
+                        data: torqueData,
+                        borderColor: '#6366F1',
+                        borderWidth: 2.5,
+                        tension: 0.25,
+                        pointRadius: 2,
+                        pointBackgroundColor: '#6366F1',
+                        yAxisID: 'y'
+                    },
+                    {
+                        label: 'Vibration Index (mm/s)',
+                        data: vibData,
+                        borderColor: '#FB7185',
+                        borderWidth: 2,
+                        tension: 0.25,
+                        pointRadius: 2,
+                        pointBackgroundColor: '#FB7185',
+                        yAxisID: 'y1'
+                    },
+                    {
+                        label: 'Tool Wear (min)',
+                        data: wearData,
+                        borderColor: '#FBBF24',
+                        borderWidth: 2,
+                        tension: 0.25,
+                        pointRadius: 2,
+                        pointBackgroundColor: '#FBBF24',
+                        yAxisID: 'y2'
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                animation: false,
+                scales: {
+                    x: {
+                        grid: { color: isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(15, 23, 42, 0.06)' },
+                        ticks: { maxTicksLimit: 12, color: isDark ? '#8A94B2' : '#64748B', font: { family: 'JetBrains Mono', size: 10 } }
+                    },
+                    y: {
+                        type: 'linear',
+                        position: 'left',
+                        min: 20, max: 85,
+                        grid: { color: isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(15, 23, 42, 0.06)' },
+                        ticks: { color: '#6366F1', font: { family: 'JetBrains Mono', size: 10 } },
+                        title: { display: true, text: 'Torque (Nm)', color: '#6366F1', font: { size: 10, weight: 'bold' } }
+                    },
+                    y1: {
+                        type: 'linear',
+                        position: 'right',
+                        min: 0, max: 10,
+                        grid: { display: false },
+                        ticks: { color: '#FB7185', font: { family: 'JetBrains Mono', size: 10 } },
+                        title: { display: true, text: 'Vib (mm/s)', color: '#FB7185', font: { size: 10, weight: 'bold' } }
+                    },
+                    y2: {
+                        type: 'linear',
+                        position: 'right',
+                        min: 0, max: 260,
+                        grid: { display: false },
+                        ticks: { color: '#FBBF24', font: { family: 'JetBrains Mono', size: 10 } },
+                        title: { display: true, text: 'Wear (min)', color: '#FBBF24', font: { size: 10, weight: 'bold' } }
+                    }
+                }
+            }
+        });
+
+        // Auto-start streaming immediately
+        stepSingleCycle();
+        streamInterval = setInterval(stepSingleCycle, 1000);
+
+        if (window.lucide) window.lucide.createIcons();
+    });
+
+    function onModeChanged() {
+        const mode = document.getElementById('sim_mode_select').value;
+        showToast(`Degradation profile changed to: ${mode}`, 'info');
+    }
+
+    async function stepSingleCycle() {
+        currentStep++;
+        const assetId = document.getElementById('sim_asset_select').value;
+        const mode = document.getElementById('sim_mode_select').value;
+
+        try {
+            const res = await fetch(`/api/v1/simulate/cycle?asset=${assetId}&step=${currentStep}&mode=${mode}`);
+            if (!res.ok) throw new Error("Cycle fetch failed");
+            const data = await res.json();
+
+            // 1. Update KPI Gauges
+            document.getElementById('dt_cycle_step').innerText = `#${data.cycle_step}`;
+            document.getElementById('dt_timestamp').innerText = data.timestamp;
+            document.getElementById('dt_health').innerText = `${data.health_index}%`;
+            document.getElementById('dt_health_bar').style.width = `${data.health_index}%`;
+
+            if (data.health_index > 80) {
+                document.getElementById('dt_health_bar').className = 'h-1.5 rounded-full bg-emerald-400';
+                document.getElementById('dt_status_badge').className = 'badge-subtle badge-healthy text-[10px]';
+                document.getElementById('dt_status_badge').innerText = 'Optimal';
+            } else if (data.health_index > 50) {
+                document.getElementById('dt_health_bar').className = 'h-1.5 rounded-full bg-amber-400';
+                document.getElementById('dt_status_badge').className = 'badge-subtle badge-warning text-[10px]';
+                document.getElementById('dt_status_badge').innerText = 'Degrading';
+            } else {
+                document.getElementById('dt_health_bar').className = 'h-1.5 rounded-full bg-rose-400';
+                document.getElementById('dt_status_badge').className = 'badge-subtle badge-critical text-[10px]';
+                document.getElementById('dt_status_badge').innerText = 'Critical Risk';
+            }
+
+            document.getElementById('dt_vae_score').innerText = data.stage1_vae_anomaly_score.toFixed(3);
+            const failPct = (data.stage2_failure_probability * 100).toFixed(1);
+            document.getElementById('dt_fail_prob').innerText = `${failPct}%`;
+
+            if (data.is_alert) {
+                document.getElementById('dt_fail_prob').className = 'stat-value text-rose-400';
+                document.getElementById('dt_alarm_badge').className = 'badge-subtle badge-critical text-[10px] animate-pulse';
+                document.getElementById('dt_alarm_badge').innerText = 'ALARM \u03C4 \u2265 0.38';
+            } else {
+                document.getElementById('dt_fail_prob').className = 'stat-value text-emerald-400';
+                document.getElementById('dt_alarm_badge').className = 'badge-subtle badge-healthy text-[10px]';
+                document.getElementById('dt_alarm_badge').innerText = 'Normal';
+            }
+
+            // 2. Update 8 Sensor Physical Telemetry Readings
+            const s = data.sensors;
+            if (s) {
+                updateSensorCard('torque', `${s.torque} Nm`, s.torque > 55 ? 'rose' : (s.torque > 48 ? 'amber' : 'emerald'));
+                updateSensorCard('vib', `${s.vibration_index} mm/s`, s.vibration_index > 4.5 ? 'rose' : (s.vibration_index > 3.0 ? 'amber' : 'emerald'));
+                updateSensorCard('wear', `${s.tool_wear} min`, s.tool_wear > 195 ? 'rose' : (s.tool_wear > 140 ? 'amber' : 'emerald'));
+                updateSensorCard('proc_t', `${s.process_temperature} K`, (s.process_temperature - s.air_temperature) < 8.6 ? 'amber' : 'emerald');
+                updateSensorCard('air_t', `${s.air_temperature} K`, 'emerald');
+                updateSensorCard('speed', `${s.rotational_speed} rpm`, (s.rotational_speed < 1300 || s.rotational_speed > 2400) ? 'amber' : 'emerald');
+                updateSensorCard('acous', `${s.acoustic_emission} dB`, s.acoustic_emission > 75 ? 'rose' : (s.acoustic_emission > 68 ? 'amber' : 'emerald'));
+                updateSensorCard('oil', `${s.oil_pressure} bar`, s.oil_pressure < 3.2 ? 'rose' : 'emerald');
+            }
+
+            // 3. Update Chart Window
+            chartLabels.push(data.timestamp);
+            torqueData.push(data.sensors.torque);
+            vibData.push(data.sensors.vibration_index);
+            wearData.push(data.sensors.tool_wear);
+
+            if (chartLabels.length > maxPoints) {
+                chartLabels.shift();
+                torqueData.shift();
+                vibData.shift();
+                wearData.shift();
+            }
+
+            streamChart.update('none');
+
+        } catch (e) {
+            console.error('Digital Twin tick error:', e);
+        }
+    }
+
+    function updateSensorCard(idKey, valText, color) {
+        const valEl = document.getElementById('s_' + idKey);
+        const badgeEl = document.getElementById('badge_' + idKey);
+        if (valEl) valEl.innerText = valText;
+        if (badgeEl) {
+            if (color === 'rose') {
+                badgeEl.className = 'badge-subtle badge-critical text-[9px] py-0 px-1 animate-pulse';
+                badgeEl.innerText = 'Critical';
+            } else if (color === 'amber') {
+                badgeEl.className = 'badge-subtle badge-warning text-[9px] py-0 px-1';
+                badgeEl.innerText = 'Warning';
+            } else {
+                badgeEl.className = 'badge-subtle badge-healthy text-[9px] py-0 px-1';
+                badgeEl.innerText = 'Normal';
+            }
+        }
+    }
+
+    function toggleStream() {
+        if (isStreaming) {
+            clearInterval(streamInterval);
+            isStreaming = false;
+            document.getElementById('stream_icon').setAttribute('data-lucide', 'play');
+            document.getElementById('stream_text').innerText = 'Resume Stream';
+            document.getElementById('btn_stream_toggle').className = 'btn-primary text-xs py-2 px-4';
+        } else {
+            isStreaming = true;
+            document.getElementById('stream_icon').setAttribute('data-lucide', 'pause');
+            document.getElementById('stream_text').innerText = 'Pause Stream';
+            document.getElementById('btn_stream_toggle').className = 'btn-primary text-xs py-2 px-4 bg-amber-500 hover:bg-amber-600';
+            streamInterval = setInterval(stepSingleCycle, 1000);
+        }
+        if (window.lucide) window.lucide.createIcons();
+    }
+
+    function resetSimulation() {
+        if (isStreaming) toggleStream();
+        currentStep = 0;
+        chartLabels.length = 0;
+        torqueData.length = 0;
+        vibData.length = 0;
+        wearData.length = 0;
+        streamChart.update();
+        stepSingleCycle();
+        showToast("Simulation baseline reset to step #0", "info");
+    }
+</script>
+{% endblock %}

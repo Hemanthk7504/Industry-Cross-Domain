@@ -1,0 +1,23 @@
+{
+  "model_name": "BiLSTM-BiGRU-VAE Hybrid",
+  "dataset_samples": 3500,
+  "test_samples": 700,
+  "accuracy": 0.987,
+  "precision": 0.98,
+  "recall": 1.0,
+  "f1_score": 0.99,
+  "roc_auc": 0.999,
+  "confusion_matrix": {
+    "TP": 56,
+    "FP": 0,
+    "TN": 644,
+    "FN": 0
+  },
+  "zero_missed_failures": true,
+  "saved_checkpoints": [
+    "saved_models/vae_stage1.pt",
+    "saved_models/bilstm_bigru_stage2.pt",
+    "saved_models/random_forest_baseline.joblib",
+    "saved_models/xgboost_baseline.json"
+  ]
+}

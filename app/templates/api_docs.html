@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+
+{% block title %}Developer REST API Specifications | CrossDomain AI{% endblock %}
+{% block header_title %}Developer REST API Specifications{% endblock %}
+{% block header_subtitle %}Programmatic integration endpoints for edge SCADA and plant industrial MES systems{% endblock %}
+
+{% block content %}
+<div class="space-y-6 max-w-[1400px] mx-auto w-full pb-12">
+
+    <!-- Overview Banner -->
+    <div class="glass-card spotlight-card p-6 sm:p-7 space-y-4">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+                <span class="badge-subtle badge-cyan text-xs mb-2">SCADA / MES EDGE INTEGRATION</span>
+                <h1 class="font-display text-xl sm:text-2xl font-bold text-[var(--text-main)]">
+                    Programmatic REST API & SDK
+                </h1>
+                <p class="text-xs text-[var(--text-muted)] mt-1 max-w-3xl leading-relaxed">
+                    Integrate the Two-Stage Cross-Domain Predictive Maintenance pipeline into PLC/SCADA supervisory controllers, edge telemetry gateways, or enterprise ERP systems. All endpoints support standard JSON serialization and Bearer token / Cookie authentication.
+                </p>
+            </div>
+            <div class="flex items-center gap-2">
+                <a href="/docs" target="_blank" class="btn-primary text-xs py-2 px-4">
+                    <i data-lucide="book-open" class="w-4 h-4"></i>
+                    <span>Interactive Swagger UI</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Endpoint 1: Two-Stage Prediction -->
+    <div class="glass-card p-6 space-y-4">
+        <div class="flex items-center gap-3 pb-3 border-b border-[var(--border-color)]">
+            <span class="px-2.5 py-1 rounded-lg bg-indigo-500/20 text-indigo-400 font-bold font-mono text-xs">POST</span>
+            <span class="font-mono font-bold text-sm text-[var(--text-main)]">/api/v1/predict</span>
+            <span class="badge-subtle badge-healthy text-[10px] ml-auto">Primary Inference</span>
+        </div>
+        <p class="text-xs text-[var(--text-muted)] leading-relaxed">
+            Executes Stage 1 VAE latent anomaly extraction on source HVAC telemetry, aligns the latent manifold, and executes Stage 2 BiLSTM-BiGRU failure prediction on target machining sensor telemetry.
+        </p>
+
+        <!-- Request / Response Tabs -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-mono">
+            <div class="space-y-1.5">
+                <span class="font-bold text-[var(--text-main)] block font-sans">Sample JSON Request Body:</span>
+                <pre class="bg-[var(--bg-elevated)] text-[var(--text-main)] p-4 rounded-xl border border-[var(--border-color)] overflow-x-auto text-[11px] leading-relaxed"><code>{
+  "asset_id": "CNC-SPINDLE-402",
+  "threshold": 0.38,
+  "target_sensors": {
+    "air_temperature": 298.1,
+    "process_temperature": 308.6,
+    "rotational_speed": 1540.0,
+    "torque": 40.2,
+    "tool_wear": 85.0,
+    "vibration_index": 2.1,
+    "acoustic_emission": 62.0,
+    "oil_pressure": 4.5
+  },
+  "source_hvac_sensors": {
+    "indoor_temp": 22.5,
+    "return_air_temp": 24.2,
+    "supply_air_temp": 14.5,
+    "fan_power": 7.2,
+    "compressor_vibration": 1.8
+  }
+}</code></pre>
+            </div>
+
+            <div class="space-y-1.5">
+                <span class="font-bold text-[var(--text-main)] block font-sans">Sample JSON Response:</span>
+                <pre class="bg-[var(--bg-elevated)] text-[var(--text-main)] p-4 rounded-xl border border-[var(--border-color)] overflow-x-auto text-[11px] leading-relaxed"><code>{
+  "asset_id": "CNC-SPINDLE-402",
+  "prediction": "Nominal Normal State",
+  "predicted_failure": false,
+  "failure_probability": 0.0082,
+  "confidence_score": 0.994,
+  "decision_threshold": 0.38,
+  "champion_model": "BiLSTM-BiGRU-VAE (98.7% Acc | 0.999 AUC)",
+  "stage1_outputs": {
+    "vae_anomaly_score": 0.0382,
+    "latent_embedding_vector": [0.12, -0.08, 0.34, 0.05, -0.19, 0.41, -0.04, 0.22]
+  },
+  "diagnosis": {
+    "mode_code": "NOMINAL",
+    "rul_hours": 320.0
+  }
+}</code></pre>
+            </div>
+        </div>
+    </div>
+
+    <!-- Endpoint 2: Explainability -->
+    <div class="glass-card p-6 space-y-4">
+        <div class="flex items-center gap-3 pb-3 border-b border-[var(--border-color)]">
+            <span class="px-2.5 py-1 rounded-lg bg-indigo-500/20 text-indigo-400 font-bold font-mono text-xs">POST</span>
+            <span class="font-mono font-bold text-sm text-[var(--text-main)]">/api/v1/explain</span>
+            <span class="badge-subtle badge-indigo text-[10px] ml-auto">Quad-XAI</span>
+        </div>
+        <p class="text-xs text-[var(--text-muted)] leading-relaxed">
+            Computes local SHAP attributions, LIME surrogate linear decision boundaries, and PDP/ICE counterfactual sensitivity curves across operational sensor spaces.
+        </p>
+    </div>
+
+</div>
+{% endblock %}

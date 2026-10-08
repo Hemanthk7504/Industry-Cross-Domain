@@ -1,0 +1,450 @@
+{% extends "base.html" %}
+
+{% block title %}CrossDomain AI — Two-Stage Hybrid Anomaly Transfer Architecture{% endblock %}
+{% block header_title %}System Architecture & Intelligence Core{% endblock %}
+{% block header_subtitle %}Two-Stage Hybrid VAE Latent Transfer & BiLSTM-BiGRU Failure Prediction{% endblock %}
+
+{% block content %}
+<div class="space-y-8 max-w-[1400px] mx-auto w-full pb-12">
+
+    <!-- Hero Section: Mission Control Executive Presentation -->
+    <div class="glass-card spotlight-card p-6 sm:p-8 lg:p-10 relative overflow-hidden">
+        <!-- Floating Particle Network Canvas (Hero Background) -->
+        <canvas id="hero-particles" class="absolute inset-0 w-full h-full pointer-events-none opacity-40 z-0"></canvas>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center relative z-10">
+            <!-- Left Hero Content -->
+            <div class="lg:col-span-8 space-y-4">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-indigo-500/10 text-indigo-400 border border-indigo-500/25">
+                    <span class="pulse-dot bg-cyan-400"></span>
+                    <span>Research Framework v2.4 &bull; Production Decision Support</span>
+                </div>
+
+                <h1 id="hero-headline" class="font-display text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight leading-tight text-[var(--text-main)]">
+                    Two-Stage Hybrid Deep Learning for
+                    <span class="text-gradient">Cross-Domain Anomaly Transfer</span>
+                    and Failure Prediction
+                </h1>
+
+                <p class="text-sm sm:text-base text-[var(--text-muted)] leading-relaxed max-w-3xl">
+                    Industrial anomaly detection framework transferring continuous latent representations (<span class="font-mono text-cyan-400">z &in; &#8477;&#8312;</span>) from an <strong>HVAC source domain</strong> via Variational Autoencoders (VAE) to an <strong>industrial machinery target domain</strong>. The champion <strong>BiLSTM-BiGRU hybrid</strong> achieves <strong>98.7% accuracy</strong> with <strong>zero missed failures</strong> (1.000 recall).
+                </p>
+
+                <!-- Hero Action Buttons -->
+                <div class="flex flex-wrap items-center gap-3 pt-2">
+                    <a href="/live-prediction" class="btn-primary">
+                        <i data-lucide="zap" class="w-4 h-4"></i>
+                        <span>Live Inference Lab</span>
+                    </a>
+
+                    <a href="/model-metrics" class="btn-glass">
+                        <i data-lucide="line-chart" class="w-4 h-4 text-indigo-400"></i>
+                        <span>Training & Metrics</span>
+                    </a>
+
+                    <a href="/company-profiles" class="btn-glass">
+                        <i data-lucide="building-2" class="w-4 h-4 text-cyan-400"></i>
+                        <span>Enterprise Companies</span>
+                    </a>
+
+                    <a href="/datasets" class="btn-ghost">
+                        <i data-lucide="download" class="w-4 h-4"></i>
+                        <span>Raw CSV Data</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Right Hero: Champion Model 3D Card -->
+            <div class="lg:col-span-4">
+                <div class="tilt-card glass-card p-5 space-y-4 border-indigo-500/20 shadow-glow-indigo">
+                    <div class="flex items-center justify-between pb-3 border-b border-[var(--border-color)]">
+                        <div class="flex items-center gap-2">
+                            <span class="pulse-dot bg-emerald-400"></span>
+                            <span class="text-xs font-bold font-display text-[var(--text-main)] uppercase tracking-wider">Champion Model</span>
+                        </div>
+                        <span class="badge-subtle badge-healthy text-[10px]">Active Production</span>
+                    </div>
+
+                    <div>
+                        <h3 class="font-display text-base font-bold text-[var(--text-main)]">BiLSTM-BiGRU-VAE Hybrid</h3>
+                        <p class="text-xs text-[var(--text-muted)]">Two-Stage Latent Manifold Transfer</p>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-2 text-xs">
+                        <div class="p-2.5 rounded-xl bg-[var(--bg-elevated)] border border-[var(--border-color)]">
+                            <span class="text-[10px] text-[var(--text-dim)] uppercase font-semibold block">Source Domain</span>
+                            <strong class="font-mono text-[var(--text-main)]">10 HVAC Chiller</strong>
+                        </div>
+                        <div class="p-2.5 rounded-xl bg-[var(--bg-elevated)] border border-[var(--border-color)]">
+                            <span class="text-[10px] text-[var(--text-dim)] uppercase font-semibold block">Target Domain</span>
+                            <strong class="font-mono text-[var(--text-main)]">8 Machining AI4I</strong>
+                        </div>
+                        <div class="p-2.5 rounded-xl bg-[var(--bg-elevated)] border border-[var(--border-color)]">
+                            <span class="text-[10px] text-[var(--text-dim)] uppercase font-semibold block">Latent Space</span>
+                            <strong class="font-mono text-cyan-400">8D Continuous (z)</strong>
+                        </div>
+                        <div class="p-2.5 rounded-xl bg-[var(--bg-elevated)] border border-[var(--border-color)]">
+                            <span class="text-[10px] text-[var(--text-dim)] uppercase font-semibold block">Cost Threshold</span>
+                            <strong class="font-mono text-emerald-400">&tau;* = 0.380 (0 FN)</strong>
+                        </div>
+                    </div>
+
+                    <div class="pt-1 flex items-center justify-between text-xs text-[var(--text-muted)] border-t border-[var(--border-color)]">
+                        <span>Inference Latency: <strong class="font-mono text-[var(--text-main)]">2.15 ms</strong></span>
+                        <a href="/stage2-benchmark" class="text-indigo-400 font-bold hover:underline flex items-center gap-1">
+                            <span>Leaderboard</span>
+                            <i data-lucide="arrow-right" class="w-3 h-3"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Champion Performance Metrics Strip (Count-Up Numbers with Micro Sparkline Indicators) -->
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3.5">
+        <!-- Metric 1: Accuracy -->
+        <div class="stat-card stagger-card">
+            <div class="flex items-center justify-between">
+                <span class="stat-label">Model Accuracy</span>
+                <i data-lucide="target" class="w-4 h-4 text-indigo-400"></i>
+            </div>
+            <div class="stat-value mt-2 text-indigo-400" data-countup="98.7" data-suffix="%" data-decimals="1">0%</div>
+            <div class="mt-2 flex items-center justify-between text-xs">
+                <span class="badge-subtle badge-indigo text-[10px]">Champion</span>
+                <span class="text-[var(--text-muted)] font-mono">+14.5% vs RF</span>
+            </div>
+        </div>
+
+        <!-- Metric 2: Recall (Zero FN) -->
+        <div class="stat-card stagger-card">
+            <div class="flex items-center justify-between">
+                <span class="stat-label">Failure Recall</span>
+                <i data-lucide="shield-check" class="w-4 h-4 text-emerald-400"></i>
+            </div>
+            <div class="stat-value mt-2 text-emerald-400" data-countup="1.000" data-decimals="3">0.000</div>
+            <div class="mt-2 flex items-center justify-between text-xs">
+                <span class="badge-subtle badge-healthy text-[10px]">0 Missed</span>
+                <span class="text-emerald-400 font-mono">100% Catch</span>
+            </div>
+        </div>
+
+        <!-- Metric 3: Precision -->
+        <div class="stat-card stagger-card">
+            <div class="flex items-center justify-between">
+                <span class="stat-label">Precision Score</span>
+                <i data-lucide="check-check" class="w-4 h-4 text-cyan-400"></i>
+            </div>
+            <div class="stat-value mt-2 text-cyan-400" data-countup="0.980" data-decimals="3">0.000</div>
+            <div class="mt-2 flex items-center justify-between text-xs">
+                <span class="badge-subtle badge-cyan text-[10px]">High Trust</span>
+                <span class="text-[var(--text-muted)] font-mono">&lt;2% False Pos</span>
+            </div>
+        </div>
+
+        <!-- Metric 4: F1 Score -->
+        <div class="stat-card stagger-card">
+            <div class="flex items-center justify-between">
+                <span class="stat-label">F1-Score (Peak)</span>
+                <i data-lucide="scale" class="w-4 h-4 text-violet-400"></i>
+            </div>
+            <div class="stat-value mt-2 text-violet-400" data-countup="0.990" data-decimals="3">0.000</div>
+            <div class="mt-2 flex items-center justify-between text-xs">
+                <span class="badge-subtle badge-indigo text-[10px]">Harmonic</span>
+                <span class="text-[var(--text-muted)] font-mono">Balanced</span>
+            </div>
+        </div>
+
+        <!-- Metric 5: ROC-AUC -->
+        <div class="stat-card stagger-card col-span-2 sm:col-span-1">
+            <div class="flex items-center justify-between">
+                <span class="stat-label">ROC-AUC Metric</span>
+                <i data-lucide="area-chart" class="w-4 h-4 text-amber-400"></i>
+            </div>
+            <div class="stat-value mt-2 text-amber-400" data-countup="0.999" data-decimals="3">0.000</div>
+            <div class="mt-2 flex items-center justify-between text-xs">
+                <span class="badge-subtle badge-warning text-[10px]">Near-Perfect</span>
+                <span class="text-[var(--text-muted)] font-mono">PR-AUC 0.998</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Animated Architecture Pipeline (4 Nodes with Flowing Particle Connectors) -->
+    <div class="glass-card p-6 sm:p-8 space-y-6">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-[var(--border-color)]">
+            <div>
+                <div class="flex items-center gap-2">
+                    <span class="badge-subtle badge-indigo text-[10px]">TWO-STAGE PIPELINE</span>
+                    <h2 class="font-display text-lg sm:text-xl font-bold text-[var(--text-main)]">End-to-End Cross-Domain Workflow</h2>
+                </div>
+                <p class="text-xs text-[var(--text-muted)] mt-1">Cross-domain thermodynamic anomaly transfer mechanism from HVAC chillers into rotating machinery</p>
+            </div>
+            <a href="/model-metrics" class="btn-ghost text-xs self-start sm:self-auto">
+                <span>Inspect Convergence Curves</span>
+                <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+            </a>
+        </div>
+
+        <!-- 4-Node Pipeline Grid with Visual Flow -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 relative">
+            
+            <!-- Node 1: Source Domain VAE -->
+            <div class="glass-card p-5 space-y-3 border-indigo-500/20 hover:border-indigo-500/50 transition-all hover:scale-[1.02] group">
+                <div class="flex items-center justify-between">
+                    <span class="w-6 h-6 rounded-lg bg-indigo-500/20 text-indigo-400 font-mono font-bold text-xs flex items-center justify-center">01</span>
+                    <span class="badge-subtle badge-indigo text-[10px]">SOURCE DOMAIN</span>
+                </div>
+                <h3 class="font-display text-sm font-bold text-[var(--text-main)] group-hover:text-indigo-400 transition-colors">
+                    HVAC Telemetry & Stage 1 VAE
+                </h3>
+                <p class="text-xs text-[var(--text-muted)] leading-relaxed">
+                    Extracts thermodynamic degradation representations. Evaluated against 7 baseline models (PCA, Isolation Forest, AutoEncoder, Deep SVDD, GRU, Transformer, TCN-AE).
+                </p>
+                <div class="p-3 rounded-xl bg-[var(--bg-elevated)] border border-[var(--border-color)] font-mono text-xs space-y-1">
+                    <div class="flex justify-between text-[var(--text-muted)]"><span>Latent Prior:</span> <strong class="text-[var(--text-main)]">z ~ N(&mu;, &sigma;&sup2;)</strong></div>
+                    <div class="flex justify-between text-[var(--text-muted)]"><span>Dimension:</span> <strong class="text-cyan-400">z &in; &#8477;&#8312;</strong></div>
+                    <div class="flex justify-between text-[var(--text-muted)]"><span>Recon MSE:</span> <strong class="text-emerald-400">0.0108</strong></div>
+                </div>
+            </div>
+
+            <!-- Node 2: Manifold Alignment -->
+            <div class="glass-card p-5 space-y-3 border-cyan-500/20 hover:border-cyan-500/50 transition-all hover:scale-[1.02] group">
+                <div class="flex items-center justify-between">
+                    <span class="w-6 h-6 rounded-lg bg-cyan-500/20 text-cyan-400 font-mono font-bold text-xs flex items-center justify-center">02</span>
+                    <span class="badge-subtle badge-cyan text-[10px]">TRANSFER LAYER</span>
+                </div>
+                <h3 class="font-display text-sm font-bold text-[var(--text-main)] group-hover:text-cyan-400 transition-colors">
+                    Latent Manifold Alignment
+                </h3>
+                <p class="text-xs text-[var(--text-muted)] leading-relaxed">
+                    Projects source latent anomaly embeddings into target machinery coordinates using learned parametric projection layer with LayerNorm, GELU, and Maximum Mean Discrepancy (MMD).
+                </p>
+                <div class="p-3 rounded-xl bg-[var(--bg-elevated)] border border-[var(--border-color)] font-mono text-xs space-y-1">
+                    <div class="flex justify-between text-[var(--text-muted)]"><span>MMD Metric:</span> <strong class="text-cyan-400">0.018</strong></div>
+                    <div class="flex justify-between text-[var(--text-muted)]"><span>Wasserstein:</span> <strong class="text-cyan-400">0.042</strong></div>
+                    <div class="flex justify-between text-[var(--text-muted)]"><span>Fused Vector:</span> <strong class="text-indigo-400">v &in; &#8477;&#185;&#8311;</strong></div>
+                </div>
+            </div>
+
+            <!-- Node 3: Target BiLSTM-BiGRU -->
+            <div class="glass-card p-5 space-y-3 border-indigo-500/20 hover:border-indigo-500/50 transition-all hover:scale-[1.02] group">
+                <div class="flex items-center justify-between">
+                    <span class="w-6 h-6 rounded-lg bg-indigo-500/20 text-indigo-400 font-mono font-bold text-xs flex items-center justify-center">03</span>
+                    <span class="badge-subtle badge-indigo text-[10px]">TARGET DOMAIN</span>
+                </div>
+                <h3 class="font-display text-sm font-bold text-[var(--text-main)] group-hover:text-indigo-400 transition-colors">
+                    BiLSTM-BiGRU Hybrid Champion
+                </h3>
+                <p class="text-xs text-[var(--text-muted)] leading-relaxed">
+                    Bidirectional LSTM models gradual structural wear trends; Bidirectional GRU captures rapid transient shocks and micro-spalls with multi-head attention pooling.
+                </p>
+                <div class="p-3 rounded-xl bg-[var(--bg-elevated)] border border-[var(--border-color)] font-mono text-xs space-y-1">
+                    <div class="flex justify-between text-[var(--text-muted)]"><span>Accuracy:</span> <strong class="text-indigo-400">98.7%</strong></div>
+                    <div class="flex justify-between text-[var(--text-muted)]"><span>Failure Recall:</span> <strong class="text-emerald-400">1.000 (100%)</strong></div>
+                    <div class="flex justify-between text-[var(--text-muted)]"><span>ROC-AUC:</span> <strong class="text-amber-400">0.999</strong></div>
+                </div>
+            </div>
+
+            <!-- Node 4: Decision Support -->
+            <div class="glass-card p-5 space-y-3 border-emerald-500/20 hover:border-emerald-500/50 transition-all hover:scale-[1.02] group">
+                <div class="flex items-center justify-between">
+                    <span class="w-6 h-6 rounded-lg bg-emerald-500/20 text-emerald-400 font-mono font-bold text-xs flex items-center justify-center">04</span>
+                    <span class="badge-subtle badge-healthy text-[10px]">DECISION SUPPORT</span>
+                </div>
+                <h3 class="font-display text-sm font-bold text-[var(--text-main)] group-hover:text-emerald-400 transition-colors">
+                    Quad-XAI & Prescriptive Orders
+                </h3>
+                <p class="text-xs text-[var(--text-muted)] leading-relaxed">
+                    SHAP waterfall attributions, LIME local rules, PDP, and ICE explain sensor influences; prescriptive engine estimates RUL in hours and dispatches automated CMMS work orders.
+                </p>
+                <div class="p-3 rounded-xl bg-[var(--bg-elevated)] border border-[var(--border-color)] font-mono text-xs space-y-1">
+                    <div class="flex justify-between text-[var(--text-muted)]"><span>Explainability:</span> <strong class="text-indigo-400">Quad-XAI Suite</strong></div>
+                    <div class="flex justify-between text-[var(--text-muted)]"><span>Cost Optimum:</span> <strong class="text-emerald-400">&tau;* = 0.380</strong></div>
+                    <div class="flex justify-between text-[var(--text-muted)]"><span>Dispatch:</span> <strong class="text-[var(--text-main)]">Automated CMMS</strong></div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Enterprise Operations Navigation Cards Grid -->
+    <div class="space-y-4">
+        <div class="flex items-center justify-between pb-2 border-b border-[var(--border-color)]">
+            <div>
+                <h2 class="font-display text-base sm:text-lg font-bold text-[var(--text-main)]">Enterprise System Modules</h2>
+                <p class="text-xs text-[var(--text-muted)]">Dedicated operational workspaces for telemetry monitoring and model diagnostics</p>
+            </div>
+            <a href="/dashboard" class="btn-ghost text-xs">
+                <span>Plant Fleet Overview</span>
+                <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+            </a>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            
+            <!-- Module 1: Live Inference -->
+            <a href="/live-prediction" class="glass-card p-5 block group hover:-translate-y-1 transition-all">
+                <div class="flex items-start justify-between mb-3">
+                    <div class="w-10 h-10 rounded-xl bg-indigo-500/10 text-indigo-400 flex items-center justify-center border border-indigo-500/20 group-hover:scale-105 transition-transform">
+                        <i data-lucide="zap" class="w-5 h-5"></i>
+                    </div>
+                    <span class="badge-subtle badge-indigo text-[10px]">Real-Time</span>
+                </div>
+                <h3 class="font-display text-sm font-bold text-[var(--text-main)] group-hover:text-indigo-400 transition-colors">Live Inference Lab</h3>
+                <p class="text-xs text-[var(--text-muted)] leading-relaxed mt-1">
+                    Simulate target machinery and source HVAC sensor telemetry with interactive sliders and generate real-time VAE latent predictions.
+                </p>
+            </a>
+
+            <!-- Module 2: Datasets Studio -->
+            <a href="/datasets" class="glass-card p-5 block group hover:-translate-y-1 transition-all">
+                <div class="flex items-start justify-between mb-3">
+                    <div class="w-10 h-10 rounded-xl bg-cyan-500/10 text-cyan-400 flex items-center justify-center border border-cyan-500/20 group-hover:scale-105 transition-transform">
+                        <i data-lucide="database" class="w-5 h-5"></i>
+                    </div>
+                    <span class="badge-subtle badge-cyan text-[10px]">Raw CSVs</span>
+                </div>
+                <h3 class="font-display text-sm font-bold text-[var(--text-main)] group-hover:text-cyan-400 transition-colors">Datasets Studio & Telemetry</h3>
+                <p class="text-xs text-[var(--text-muted)] leading-relaxed mt-1">
+                    Explore HVAC (2,500 samples) and machinery (3,500 samples) distributions with statistical correlations and instant CSV downloads.
+                </p>
+            </a>
+
+            <!-- Module 3: Training & Metrics -->
+            <a href="/model-metrics" class="glass-card p-5 block group hover:-translate-y-1 transition-all">
+                <div class="flex items-start justify-between mb-3">
+                    <div class="w-10 h-10 rounded-xl bg-indigo-500/10 text-indigo-400 flex items-center justify-center border border-indigo-500/20 group-hover:scale-105 transition-transform">
+                        <i data-lucide="line-chart" class="w-5 h-5"></i>
+                    </div>
+                    <span class="badge-subtle badge-indigo text-[10px]">Metrics</span>
+                </div>
+                <h3 class="font-display text-sm font-bold text-[var(--text-main)] group-hover:text-indigo-400 transition-colors">Training Models & Metrics Hub</h3>
+                <p class="text-xs text-[var(--text-muted)] leading-relaxed mt-1">
+                    Deep dive into epoch loss curves, ROC comparative sweeps across all benchmark models, and quantitative ablation tables.
+                </p>
+            </a>
+
+            <!-- Module 4: Quad-XAI Suite -->
+            <a href="/explainability" class="glass-card p-5 block group hover:-translate-y-1 transition-all">
+                <div class="flex items-start justify-between mb-3">
+                    <div class="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center border border-emerald-500/20 group-hover:scale-105 transition-transform">
+                        <i data-lucide="sparkles" class="w-5 h-5"></i>
+                    </div>
+                    <span class="badge-subtle badge-healthy text-[10px]">Quad-XAI</span>
+                </div>
+                <h3 class="font-display text-sm font-bold text-[var(--text-main)] group-hover:text-emerald-400 transition-colors">Quad-XAI Interpretability Suite</h3>
+                <p class="text-xs text-[var(--text-muted)] leading-relaxed mt-1">
+                    Interactive SHAP waterfall attributions, LIME local engineering rules, PDP curves, and counterfactual perturbation lab.
+                </p>
+            </a>
+
+            <!-- Module 5: Threshold & Cost Ablation -->
+            <a href="/threshold-ablation" class="glass-card p-5 block group hover:-translate-y-1 transition-all">
+                <div class="flex items-start justify-between mb-3">
+                    <div class="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center border border-amber-500/20 group-hover:scale-105 transition-transform">
+                        <i data-lucide="sliders" class="w-5 h-5"></i>
+                    </div>
+                    <span class="badge-subtle badge-warning text-[10px]">Economics</span>
+                </div>
+                <h3 class="font-display text-sm font-bold text-[var(--text-main)] group-hover:text-amber-400 transition-colors">Cost Threshold Optimizer</h3>
+                <p class="text-xs text-[var(--text-muted)] leading-relaxed mt-1">
+                    Dynamic threshold slider calculating financial outage trade-offs ($21,250/FN) and step-by-step architectural lift metrics.
+                </p>
+            </a>
+
+            <!-- Module 6: Enterprise Companies -->
+            <a href="/company-profiles" class="glass-card p-5 block group hover:-translate-y-1 transition-all">
+                <div class="flex items-start justify-between mb-3">
+                    <div class="w-10 h-10 rounded-xl bg-indigo-500/10 text-indigo-400 flex items-center justify-center border border-indigo-500/20 group-hover:scale-105 transition-transform">
+                        <i data-lucide="building-2" class="w-5 h-5"></i>
+                    </div>
+                    <span class="badge-subtle badge-indigo text-[10px]">4 Orgs</span>
+                </div>
+                <h3 class="font-display text-sm font-bold text-[var(--text-main)] group-hover:text-indigo-400 transition-colors">Enterprise Multi-Company Hub</h3>
+                <p class="text-xs text-[var(--text-muted)] leading-relaxed mt-1">
+                    Cross-domain adaptation across 4 distinct industrial sectors (Apex Machining, Aeolus Wind, PetroFlow, BioFreeze) with custom schemas.
+                </p>
+            </a>
+
+        </div>
+    </div>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Lightweight Floating Particle Network Canvas for Hero
+    document.addEventListener('DOMContentLoaded', () => {
+        const canvas = document.getElementById('hero-particles');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        let width = canvas.width = canvas.parentElement.offsetWidth;
+        let height = canvas.height = canvas.parentElement.offsetHeight;
+
+        window.addEventListener('resize', () => {
+            if (canvas.parentElement) {
+                width = canvas.width = canvas.parentElement.offsetWidth;
+                height = canvas.height = canvas.parentElement.offsetHeight;
+            }
+        });
+
+        const particles = [];
+        const count = Math.min(35, Math.floor(width / 35));
+
+        for (let i = 0; i < count; i++) {
+            particles.push({
+                x: Math.random() * width,
+                y: Math.random() * height,
+                vx: (Math.random() - 0.5) * 0.45,
+                vy: (Math.random() - 0.5) * 0.45,
+                radius: Math.random() * 1.8 + 1
+            });
+        }
+
+        let animationFrameId;
+        let isTabVisible = true;
+
+        document.addEventListener('visibilitychange', () => {
+            isTabVisible = !document.hidden;
+            if (isTabVisible) animate();
+        });
+
+        function animate() {
+            if (!isTabVisible) return;
+            ctx.clearRect(0, 0, width, height);
+
+            for (let i = 0; i < count; i++) {
+                const p = particles[i];
+                p.x += p.vx;
+                p.y += p.vy;
+
+                if (p.x < 0 || p.x > width) p.vx *= -1;
+                if (p.y < 0 || p.y > height) p.vy *= -1;
+
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(99, 102, 241, 0.4)';
+                ctx.fill();
+
+                for (let j = i + 1; j < count; j++) {
+                    const p2 = particles[j];
+                    const dist = Math.hypot(p.x - p2.x, p.y - p2.y);
+                    if (dist < 110) {
+                        ctx.beginPath();
+                        ctx.moveTo(p.x, p.y);
+                        ctx.lineTo(p2.x, p2.y);
+                        ctx.strokeStyle = `rgba(34, 211, 238, ${0.18 * (1 - dist / 110)})`;
+                        ctx.lineWidth = 0.8;
+                        ctx.stroke();
+                    }
+                }
+            }
+
+            animationFrameId = requestAnimationFrame(animate);
+        }
+
+        animate();
+    });
+</script>
+{% endblock %}

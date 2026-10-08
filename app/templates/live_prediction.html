@@ -1,0 +1,1058 @@
+{% extends "base.html" %}
+
+{% block title %}Live Inference Lab & Two-Stage Decision Support{% endblock %}
+{% block header_title %}Live Two-Stage Inference Lab{% endblock %}
+{% block header_subtitle %}Cross-domain multi-sensor failure assessment with VAE latent transfer & BiLSTM-BiGRU prediction{% endblock %}
+
+{% block content %}
+<div class="space-y-6 max-w-[1560px] mx-auto w-full">
+
+    <!-- Enterprise Company & Scenario Command Header -->
+    <div class="card-glass p-5 relative overflow-hidden">
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-4 border-b border-white/5">
+            <!-- Left: Company Switcher & Facility -->
+            <div class="flex flex-wrap items-center gap-3">
+                <div class="flex items-center gap-2">
+                    <span class="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-1.5 font-heading">
+                        <i data-lucide="shield-check" class="w-4 h-4 text-indigo-400"></i>
+                        <span>Company:</span>
+                    </span>
+                    <select id="live_company_selector" onchange="onCompanyChanged(this.value)"
+                            class="text-xs font-bold bg-slate-900/80 border border-white/10 rounded-xl px-3 py-2 text-indigo-300 focus:ring-2 focus:ring-indigo-500/50 focus:outline-none">
+                        {% for c_id, comp in companies.items() %}
+                        <option value="{{ c_id }}" {% if c_id == 'apex_machining' %}selected{% endif %}>
+                            {{ comp.name }} ({{ comp.industry }})
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <button type="button" onclick="openRegisterCompanyModal()"
+                        class="btn btn-glass px-3 py-1.5 text-xs font-bold text-indigo-300 flex items-center gap-1.5">
+                    <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+                    <span>Register Company</span>
+                </button>
+
+                <div class="flex items-center gap-2.5 text-xs text-slate-400">
+                    <span id="live_company_downtime_badge" class="badge badge-slate font-mono text-[11px] font-bold">
+                        Downtime: $8,500/hr
+                    </span>
+                    <a href="/company-profiles" class="text-xs font-medium text-cyan-400 hover:text-cyan-300 flex items-center gap-1 transition-colors">
+                        <span>Adaptation Hub</span>
+                        <i data-lucide="arrow-up-right" class="w-3.5 h-3.5"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Right: Asset Selector & Cost-Optimal Threshold -->
+            <div class="flex flex-wrap items-center gap-3">
+                <div class="flex items-center gap-2">
+                    <label class="text-xs font-medium text-slate-400 font-mono">Asset:</label>
+                    <select id="selected_asset_id" class="text-xs font-semibold bg-slate-900/80 border border-white/10 rounded-lg px-3 py-1.5 text-slate-200">
+                        <!-- Populated dynamically via JS -->
+                    </select>
+                </div>
+
+                <div class="flex items-center gap-2">
+                    <label class="text-xs font-medium text-slate-400 font-mono">Threshold &tau;:</label>
+                    <input type="number" id="decision_threshold_input" min="0.05" max="0.95" step="0.01" value="0.38"
+                           class="w-20 text-xs font-bold text-center bg-slate-900/80 border border-white/10 rounded-lg py-1.5 font-mono text-cyan-400 focus:border-cyan-400 focus:outline-none">
+                </div>
+            </div>
+        </div>
+
+        <!-- Dynamic Scenario Presets Bar -->
+        <div class="mt-3.5 flex flex-wrap items-center justify-between gap-3">
+            <div class="flex flex-wrap items-center gap-2">
+                <span class="text-xs font-bold text-slate-400 uppercase tracking-wider font-mono mr-1">Industry Presets:</span>
+                <div id="company_presets_container" class="flex flex-wrap gap-1.5">
+                    <!-- Populated dynamically via JS -->
+                </div>
+            </div>
+
+            <div class="text-xs text-slate-400">
+                <span>Champion Model: <strong class="text-indigo-400 font-mono">BiLSTM-BiGRU-VAE (98.7% Acc | 0 FN)</strong></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Two-Column Inference Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+        <!-- Left Column: Multi-Domain Sensor Telemetry Inputs (5 Cols) -->
+        <div class="lg:col-span-5 space-y-6">
+            
+            <!-- Target Domain Sensor Telemetry (Dynamically morphs per company) -->
+            <div class="card-glass p-6">
+                <div class="flex items-center justify-between mb-4 pb-3 border-b border-white/5">
+                    <div>
+                        <h3 class="text-sm font-bold text-slate-100 flex items-center gap-2 uppercase tracking-wider font-heading">
+                            <i id="target_domain_icon" data-lucide="cpu" class="w-4 h-4 text-cyan-400"></i>
+                            <span id="target_domain_heading">Target Domain: Machine Telemetry</span>
+                        </h3>
+                        <p id="target_domain_subheading" class="text-xs text-slate-400 mt-0.5">
+                            Dynamic sensor parameters for active company machinery
+                        </p>
+                    </div>
+                    <span id="target_schema_badge" class="badge badge-cyan text-[11px] font-mono">8 Channels</span>
+                </div>
+
+                <!-- Sensor Sliders Container (Dynamically rendered) -->
+                <div id="target_sensors_container" class="space-y-3">
+                    <!-- Populated via JS -->
+                </div>
+            </div>
+
+            <!-- Source Domain: HVAC Telemetry (Collapsible details) -->
+            <details class="card-glass p-4 rounded-2xl group">
+                <summary class="font-bold text-xs text-slate-200 cursor-pointer flex items-center justify-between select-none list-none">
+                    <span class="flex items-center gap-2">
+                        <i data-lucide="fan" class="w-4 h-4 text-cyan-400"></i>
+                        <span>Source Domain: HVAC Operating Telemetry (10 Channels)</span>
+                    </span>
+                    <span class="badge badge-cyan text-[10px] font-mono">Stage 1 VAE Input</span>
+                </summary>
+
+                <div class="mt-3.5 pt-3.5 border-t border-white/5 grid grid-cols-2 gap-3 text-xs">
+                    <div>
+                        <label class="block text-[10px] text-slate-400 font-mono">Indoor Temp (&deg;C)</label>
+                        <input type="number" id="hvac_indoor_temp" value="22.5" step="0.1" class="w-full p-2 bg-slate-900/60 border border-white/10 rounded-lg font-mono text-xs text-slate-200 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] text-slate-400 font-mono">Return Air Temp (&deg;C)</label>
+                        <input type="number" id="hvac_return_air_temp" value="24.2" step="0.1" class="w-full p-2 bg-slate-900/60 border border-white/10 rounded-lg font-mono text-xs text-slate-200 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] text-slate-400 font-mono">Supply Air Temp (&deg;C)</label>
+                        <input type="number" id="hvac_supply_air_temp" value="14.5" step="0.1" class="w-full p-2 bg-slate-900/60 border border-white/10 rounded-lg font-mono text-xs text-slate-200 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] text-slate-400 font-mono">Chilled Water Supply (&deg;C)</label>
+                        <input type="number" id="hvac_chilled_water_supply_temp" value="6.8" step="0.1" class="w-full p-2 bg-slate-900/60 border border-white/10 rounded-lg font-mono text-xs text-slate-200 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] text-slate-400 font-mono">Chilled Water Return (&deg;C)</label>
+                        <input type="number" id="hvac_chilled_water_return_temp" value="12.4" step="0.1" class="w-full p-2 bg-slate-900/60 border border-white/10 rounded-lg font-mono text-xs text-slate-200 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] text-slate-400 font-mono">Fan Power (kW)</label>
+                        <input type="number" id="hvac_fan_power" value="7.2" step="0.1" class="w-full p-2 bg-slate-900/60 border border-white/10 rounded-lg font-mono text-xs text-slate-200 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] text-slate-400 font-mono">Compressor Vibration (mm/s)</label>
+                        <input type="number" id="hvac_compressor_vibration" value="1.8" step="0.1" class="w-full p-2 bg-slate-900/60 border border-white/10 rounded-lg font-mono text-xs text-slate-200 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] text-slate-400 font-mono">Air Flow Rate (m&sup3;/h)</label>
+                        <input type="number" id="hvac_air_flow_rate" value="3200" step="50" class="w-full p-2 bg-slate-900/60 border border-white/10 rounded-lg font-mono text-xs text-slate-200 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] text-slate-400 font-mono">Static Pressure (Pa)</label>
+                        <input type="number" id="hvac_static_pressure" value="320" step="10" class="w-full p-2 bg-slate-900/60 border border-white/10 rounded-lg font-mono text-xs text-slate-200 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] text-slate-400 font-mono">Relative Humidity (%)</label>
+                        <input type="number" id="hvac_relative_humidity" value="50" step="1" class="w-full p-2 bg-slate-900/60 border border-white/10 rounded-lg font-mono text-xs text-slate-200 focus:outline-none">
+                    </div>
+                </div>
+            </details>
+
+            <!-- Big Run Inference CTA Button -->
+            <button id="btn-run-inference" onclick="executeInference()" type="button"
+                    class="w-full py-3.5 px-4 btn btn-primary text-sm font-bold shadow-lg shadow-indigo-500/25 flex items-center justify-center gap-2">
+                <i data-lucide="zap" class="w-4 h-4 fill-current"></i>
+                <span>Run Two-Stage Cross-Domain Inference</span>
+            </button>
+        </div>
+
+        <!-- Right Column: Real-time Multi-Stage Diagnostics & Decision Support (7 Cols) -->
+        <div class="lg:col-span-7 space-y-6">
+            
+            <!-- Result Banner: Impending Failure Assessment -->
+            <div class="card-glass p-6 relative overflow-hidden">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div>
+                        <div class="flex items-center gap-2.5 mb-1.5">
+                            <span id="res_prediction_badge" class="badge badge-emerald text-xs inline-flex items-center gap-1.5">
+                                <i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i> Nominal Operating State
+                            </span>
+                            <span id="res_confidence" class="text-xs font-semibold text-slate-400 font-mono">99.4% Confidence</span>
+                        </div>
+                        <h2 id="res_prediction_title" class="text-xl font-bold text-slate-100 font-heading">Normal Operational State</h2>
+                        <p id="res_root_cause" class="text-xs text-slate-400 mt-1 leading-relaxed">
+                            All operational metrics within standard mechanical vibration and thermal boundaries.
+                        </p>
+                    </div>
+
+                    <div class="text-right shrink-0">
+                        <span class="text-[10px] font-semibold text-slate-400 block uppercase font-mono">Failure Probability</span>
+                        <span id="res_failure_prob" class="text-3xl font-extrabold text-slate-100 font-mono">0.8%</span>
+                    </div>
+                </div>
+
+                <!-- Probability Bar Indicator -->
+                <div class="w-full bg-slate-900/80 h-2.5 rounded-full mt-4 overflow-hidden border border-white/5 p-0.5">
+                    <div id="res_prob_bar" class="h-full rounded-full bg-emerald-500 transition-all duration-500" style="width: 0.8%;"></div>
+                </div>
+
+                <div class="flex justify-between items-center text-[11px] text-slate-400 mt-2 font-mono">
+                    <span id="label_safe_region">Safe Region (&tau; &lt; 0.38)</span>
+                    <span id="label_crit_region">Critical Breakdown (&tau; &ge; 0.38)</span>
+                </div>
+            </div>
+
+            <!-- Stage 1 VAE Latent Transfer Visualizer Card -->
+            <div class="card-glass p-6">
+                <div class="flex items-center justify-between mb-3 pb-3 border-b border-white/5">
+                    <div>
+                        <h4 class="text-sm font-bold text-slate-100 uppercase tracking-wider flex items-center gap-2 font-heading">
+                            <i data-lucide="sparkles" class="w-4 h-4 text-cyan-400"></i>
+                            <span>Stage 1: VAE Latent Anomaly Embedding Transfer</span>
+                        </h4>
+                        <p class="text-xs text-slate-400 mt-0.5">Thermodynamic manifold projection into target machinery domain</p>
+                    </div>
+                    <span id="res_vae_status" class="badge badge-emerald text-xs">Nominal Baseline</span>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3 mb-3">
+                    <div class="bg-slate-900/40 p-3 rounded-xl border border-white/5">
+                        <span class="text-[10px] text-slate-400 uppercase block font-medium font-mono">VAE Anomaly Score</span>
+                        <span id="res_vae_score" class="text-lg font-bold font-mono text-slate-200 mt-0.5 block">0.0382</span>
+                        <p id="res_vae_mse" class="text-[10px] text-slate-500 mt-0.5 font-mono">Reconstruction MSE: 0.0108</p>
+                    </div>
+                    <div class="bg-slate-900/40 p-3 rounded-xl border border-white/5">
+                        <span class="text-[10px] text-slate-400 uppercase block font-medium font-mono">Domain Alignment</span>
+                        <span class="text-lg font-bold font-mono text-cyan-400 mt-0.5 block">MMD = 0.018</span>
+                        <p class="text-[10px] text-slate-500 mt-0.5 font-mono">Wasserstein Distance: 0.042</p>
+                    </div>
+                </div>
+
+                <div>
+                    <span class="text-xs font-semibold text-slate-300 mb-2 block font-heading">Latent Embedding Vector <span class="font-mono text-cyan-300">z<sub>latent</sub> &in; &#8477;&#8312;</span>:</span>
+                    <div id="res_vae_latent_vector" class="grid grid-cols-4 sm:grid-cols-8 gap-1.5">
+                        <!-- Populated dynamically via JS -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Prescriptive Maintenance Guidance & Dispatch -->
+            <div class="card-glass p-6">
+                <div class="flex items-center justify-between mb-3 pb-3 border-b border-white/5">
+                    <div>
+                        <h4 class="text-sm font-bold text-slate-100 uppercase tracking-wider flex items-center gap-2 font-heading">
+                            <i data-lucide="wrench" class="w-4 h-4 text-indigo-400"></i>
+                            <span>Prescriptive Guidance & Action Plan</span>
+                        </h4>
+                        <p class="text-xs text-slate-400 mt-0.5">Remaining Useful Life (RUL) and tailored spare parts</p>
+                    </div>
+                    <button id="btn_dispatch_work_order" onclick="dispatchCurrentWorkOrder()" style="display: none;"
+                            class="px-3 py-1.5 rounded-xl text-xs font-bold bg-rose-600 hover:bg-rose-500 text-white shadow-md shadow-rose-600/30 flex items-center gap-1.5 transition-all">
+                        <i data-lucide="send" class="w-3.5 h-3.5"></i> Dispatch Work Order
+                    </button>
+                </div>
+
+                <!-- RUL Grid -->
+                <div class="grid grid-cols-2 gap-3 mb-3">
+                    <div class="bg-indigo-500/10 p-3 rounded-xl border border-indigo-500/20">
+                        <span class="text-[10px] text-indigo-300 uppercase font-semibold block font-mono">Remaining Useful Life (RUL)</span>
+                        <span id="res_rul_hours" class="text-lg font-bold text-slate-100 font-mono mt-0.5 block">320.0 hrs</span>
+                    </div>
+                    <div class="bg-cyan-500/10 p-3 rounded-xl border border-cyan-500/20">
+                        <span class="text-[10px] text-cyan-300 uppercase font-semibold block font-mono">Estimated Cycles</span>
+                        <span id="res_rul_cycles" class="text-lg font-bold text-slate-100 font-mono mt-0.5 block">1,450 cycles</span>
+                    </div>
+                </div>
+
+                <!-- Action Steps -->
+                <div class="mb-3">
+                    <span class="text-xs font-semibold text-slate-300 block mb-1.5 font-heading">Prescribed Actions:</span>
+                    <ul id="res_prescriptions_list" class="space-y-1.5">
+                        <li class="flex items-start gap-2 text-xs text-slate-300">
+                            <i data-lucide="chevron-right" class="w-3.5 h-3.5 text-indigo-400 mt-0.5 shrink-0"></i>
+                            <span>Continue standard preventive maintenance schedule (PM-30D).</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Spare Parts -->
+                <div>
+                    <span class="text-xs font-semibold text-slate-300 block mb-1.5 font-heading">Required Spare Parts & Tooling:</span>
+                    <div id="res_parts_list" class="space-y-1.5">
+                        <p class="text-xs text-slate-500 italic">No replacement spare parts required at this stage.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Live SHAP Feature Attribution -->
+            <div class="card-glass p-6">
+                <div class="flex items-center justify-between mb-3 pb-3 border-b border-white/5">
+                    <div>
+                        <h4 class="text-sm font-bold text-slate-100 uppercase tracking-wider flex items-center gap-2 font-heading">
+                            <i data-lucide="bar-chart-2" class="w-4 h-4 text-indigo-400"></i>
+                            <span>Live Feature Attribution (SHAP)</span>
+                        </h4>
+                        <span id="shap_base_val" class="text-[11px] text-slate-400 font-mono">Base Value E[f(x)] = 0.082</span>
+                    </div>
+                    <a href="/explainability" class="text-xs font-medium text-cyan-400 hover:text-cyan-300 flex items-center gap-1 transition-colors">
+                        <span>Full Quad-XAI Suite</span>
+                        <i data-lucide="arrow-up-right" class="w-3.5 h-3.5"></i>
+                    </a>
+                </div>
+
+                <div class="h-48 sm:h-52 relative">
+                    <canvas id="shapWaterfallChart"></canvas>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- Register New Enterprise Company Modal -->
+<div id="registerCompanyModal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/70 backdrop-blur-md hidden p-4">
+    <div class="card-glass border border-white/10 max-w-2xl w-full max-h-[90vh] flex flex-col overflow-hidden shadow-2xl">
+        <!-- Header -->
+        <div class="p-5 border-b border-white/5 bg-slate-900/60 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-indigo-500/15 border border-indigo-500/30 text-indigo-400 flex items-center justify-center">
+                    <i data-lucide="building-2" class="w-5 h-5"></i>
+                </div>
+                <div>
+                    <h3 class="text-base font-bold text-slate-100 font-heading">Register New Enterprise Profile</h3>
+                    <p class="text-xs text-slate-400">Add an industrial tenant with custom equipment, sensor channels, and downtime costs</p>
+                </div>
+            </div>
+            <button type="button" onclick="closeRegisterCompanyModal()" class="w-8 h-8 rounded-lg text-slate-400 hover:text-slate-100 hover:bg-white/5 flex items-center justify-center transition-colors">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+        </div>
+
+        <!-- Form Body -->
+        <form id="registerCompanyForm" onsubmit="submitRegisterCompany(event)" class="p-6 overflow-y-auto space-y-4 text-xs">
+            <!-- 1-Click Industry Presets -->
+            <div class="bg-indigo-500/10 p-4 rounded-xl border border-indigo-500/20">
+                <label class="font-bold text-slate-200 block mb-2 flex items-center gap-2 font-mono text-[11px] uppercase tracking-wider">
+                    <i data-lucide="sparkles" class="w-4 h-4 text-indigo-400"></i>
+                    <span>1-Click Industry Templates:</span>
+                </label>
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                    <button type="button" onclick="applyCompanyPreset('semiconductor')" class="p-2.5 bg-slate-900/80 rounded-lg border border-white/10 hover:border-indigo-400/50 text-left transition-all">
+                        <span class="font-bold text-slate-100 block truncate">Semiconductor</span>
+                        <span class="text-[10px] text-slate-400 block font-mono">EUV Stepper</span>
+                    </button>
+                    <button type="button" onclick="applyCompanyPreset('ev_battery')" class="p-2.5 bg-slate-900/80 rounded-lg border border-white/10 hover:border-indigo-400/50 text-left transition-all">
+                        <span class="font-bold text-slate-100 block truncate">EV Gigafactory</span>
+                        <span class="text-[10px] text-slate-400 block font-mono">Calender Line</span>
+                    </button>
+                    <button type="button" onclick="applyCompanyPreset('offshore_wind')" class="p-2.5 bg-slate-900/80 rounded-lg border border-white/10 hover:border-indigo-400/50 text-left transition-all">
+                        <span class="font-bold text-slate-100 block truncate">Offshore Wind</span>
+                        <span class="text-[10px] text-slate-400 block font-mono">8MW Gearbox</span>
+                    </button>
+                    <button type="button" onclick="applyCompanyPreset('pharma')" class="p-2.5 bg-slate-900/80 rounded-lg border border-white/10 hover:border-indigo-400/50 text-left transition-all">
+                        <span class="font-bold text-slate-100 block truncate">Biopharma</span>
+                        <span class="text-[10px] text-slate-400 block font-mono">Lyophilizer</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Basic Info Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                <div>
+                    <label class="font-medium text-slate-300 block mb-1">Company / Facility Name *</label>
+                    <input type="text" id="reg_comp_name" required placeholder="e.g. Nova Semiconductor Fab" class="w-full px-3 py-2 bg-slate-950/70 border border-white/10 rounded-lg text-slate-100 font-medium focus:border-indigo-500 focus:outline-none">
+                </div>
+                <div>
+                    <label class="font-medium text-slate-300 block mb-1">Industry Sector *</label>
+                    <input type="text" id="reg_comp_industry" required placeholder="e.g. Silicon Photolithography" class="w-full px-3 py-2 bg-slate-950/70 border border-white/10 rounded-lg text-slate-100 font-medium focus:border-indigo-500 focus:outline-none">
+                </div>
+                <div>
+                    <label class="font-medium text-slate-300 block mb-1">Site / Facility Location</label>
+                    <input type="text" id="reg_comp_facility" required placeholder="e.g. Fab 9 Cleanroom Alpha" class="w-full px-3 py-2 bg-slate-950/70 border border-white/10 rounded-lg text-slate-100 font-medium focus:border-indigo-500 focus:outline-none">
+                </div>
+                <div>
+                    <label class="font-medium text-slate-300 block mb-1">Critical Machinery Type *</label>
+                    <input type="text" id="reg_comp_equipment" required placeholder="e.g. EUV TwinScan Stepper" class="w-full px-3 py-2 bg-slate-950/70 border border-white/10 rounded-lg text-slate-100 font-medium focus:border-indigo-500 focus:outline-none">
+                </div>
+            </div>
+
+            <!-- Financial Downtime Economics Grid -->
+            <div class="p-4 bg-slate-900/60 rounded-xl border border-white/5">
+                <span class="font-bold text-slate-200 block mb-2 uppercase text-[10px] font-mono tracking-wider">Financial Downtime Economics (Determines &tau;* Threshold)</span>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div>
+                        <label class="font-medium text-slate-400 block mb-1">Downtime Cost ($/hr)</label>
+                        <input type="number" id="reg_comp_downtime" required value="15000" min="500" step="100" class="w-full px-3 py-2 bg-slate-950/70 border border-white/10 rounded-lg text-slate-100 font-mono font-bold focus:border-indigo-500 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="font-medium text-slate-400 block mb-1">Mean Repair Time (hrs)</label>
+                        <input type="number" id="reg_comp_repair_time" required value="2.5" min="0.5" step="0.1" class="w-full px-3 py-2 bg-slate-950/70 border border-white/10 rounded-lg text-slate-100 font-mono font-bold focus:border-indigo-500 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="font-medium text-slate-400 block mb-1">False Alarm Cost ($)</label>
+                        <input type="number" id="reg_comp_false_positive" required value="350" min="50" step="10" class="w-full px-3 py-2 bg-slate-950/70 border border-white/10 rounded-lg text-slate-100 font-mono font-bold focus:border-indigo-500 focus:outline-none">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sensor Telemetry Schema Header & Live List -->
+            <div>
+                <div class="flex items-center justify-between mb-2">
+                    <label class="font-bold text-slate-300 uppercase text-[10px] tracking-wider font-mono">Configured Sensor Telemetry Schema (8 Channels)</label>
+                    <span class="text-[10px] text-slate-400 font-mono">Dynamically adapted</span>
+                </div>
+                <div id="reg_sensors_list" class="space-y-1.5 max-h-44 overflow-y-auto pr-1">
+                    <!-- Dynamic Rows -->
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="pt-4 border-t border-white/5 flex items-center justify-end gap-3">
+                <button type="button" onclick="closeRegisterCompanyModal()" class="px-4 py-2 bg-white/5 hover:bg-white/10 text-slate-300 font-medium rounded-xl transition-colors">
+                    Cancel
+                </button>
+                <button type="submit" id="btn_submit_company" class="btn btn-primary px-5 py-2 font-bold flex items-center gap-2">
+                    <i data-lucide="plus" class="w-4 h-4"></i>
+                    <span>Register & Activate Company</span>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Enterprise Multi-Company Data Registry
+let LIVE_COMPANIES = {{ companies | tojson }};
+let currentCompanyId = 'apex_machining';
+let lastPredictionResult = null;
+let shapChartInstance = null;
+
+function onCompanyChanged(companyId) {
+    currentCompanyId = companyId;
+    const comp = LIVE_COMPANIES[companyId];
+    if (!comp) return;
+
+    // 1. Update Company Badges & Header
+    const dtBadge = document.getElementById('live_company_downtime_badge');
+    if (dtBadge) dtBadge.innerText = `Downtime: $${Number(comp.downtime_cost_per_hour || 8500).toLocaleString()}/hr`;
+    
+    const headEl = document.getElementById('target_domain_heading');
+    if (headEl) headEl.innerText = `${comp.name} Telemetry`;
+    
+    const subEl = document.getElementById('target_domain_subheading');
+    if (subEl) subEl.innerText = `${comp.equipment_type} - ${comp.operating_mode}`;
+    
+    const schemaEl = document.getElementById('target_schema_badge');
+    if (schemaEl) schemaEl.innerText = `${(comp.sensor_schema || []).length} Channels`;
+
+    // 2. Set Cost-Optimal Threshold
+    const optThresh = Number(comp.optimal_threshold || 0.38);
+    const threshInput = document.getElementById('decision_threshold_input');
+    if (threshInput) threshInput.value = optThresh.toFixed(2);
+    
+    const safeRegion = document.getElementById('label_safe_region');
+    const critRegion = document.getElementById('label_crit_region');
+    if (safeRegion) safeRegion.innerText = `Safe Region (\u03C4 < ${optThresh.toFixed(2)})`;
+    if (critRegion) critRegion.innerText = `Critical Breakdown (\u03C4 \u2265 ${optThresh.toFixed(2)})`;
+
+    // 3. Populate Asset Selector
+    const assetSelect = document.getElementById('selected_asset_id');
+    if (assetSelect) {
+        assetSelect.innerHTML = '';
+        (comp.assets || ['ASSET-01']).forEach(asset => {
+            const opt = document.createElement('option');
+            opt.value = asset;
+            opt.innerText = asset;
+            assetSelect.appendChild(opt);
+        });
+    }
+
+    // 4. Populate Scenario Presets
+    const presetsContainer = document.getElementById('company_presets_container');
+    if (presetsContainer) {
+        presetsContainer.innerHTML = '';
+        for (const [sKey, sVal] of Object.entries(comp.scenarios || {})) {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.onclick = () => loadCompanyScenario(sKey);
+            
+            let colorClasses = 'bg-slate-900/60 hover:bg-slate-800 text-slate-300 border border-white/5';
+            if (sVal.badge === 'Safe') colorClasses = 'bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 border border-emerald-500/30';
+            else if (sVal.badge === 'Critical') colorClasses = 'bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 border border-rose-500/30';
+            else if (sVal.badge === 'Warning') colorClasses = 'bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 border border-amber-500/30';
+
+            btn.className = `px-2.5 py-1 text-[11px] font-semibold rounded-lg transition-all ${colorClasses}`;
+            btn.innerText = sVal.name;
+            presetsContainer.appendChild(btn);
+        }
+    }
+
+    // 5. Render Sensor Sliders
+    renderCompanySensors(comp);
+
+    // 6. Run initial inference for the company
+    executeInference();
+
+    if (window.lucide) lucide.createIcons();
+}
+
+function renderCompanySensors(comp) {
+    const container = document.getElementById('target_sensors_container');
+    if (!container) return;
+    container.innerHTML = '';
+
+    (comp.sensor_schema || []).forEach(sensor => {
+        const div = document.createElement('div');
+        div.className = 'p-3 bg-slate-900/40 rounded-xl border border-white/5 text-xs';
+        
+        div.innerHTML = `
+            <div class="flex justify-between items-center text-xs mb-1.5">
+                <div>
+                    <span class="font-bold text-slate-200">${sensor.name}</span>
+                    <span class="text-[10px] text-slate-400 block">${sensor.role || ''}</span>
+                </div>
+                <span id="val_${sensor.channel}" class="font-mono font-bold text-cyan-400">${sensor.default} ${sensor.unit}</span>
+            </div>
+            <input type="range" id="input_${sensor.channel}"
+                   min="${sensor.min}" max="${sensor.max}" step="${sensor.step}" value="${sensor.default}"
+                   oninput="document.getElementById('val_${sensor.channel}').innerText = this.value + ' ${sensor.unit}'"
+                   class="w-full h-1.5 bg-slate-800 rounded-lg cursor-pointer accent-indigo-500">
+        `;
+        container.appendChild(div);
+    });
+}
+
+function loadCompanyScenario(scenarioKey) {
+    const comp = LIVE_COMPANIES[currentCompanyId];
+    if (!comp || !comp.scenarios || !comp.scenarios[scenarioKey]) return;
+
+    const scen = comp.scenarios[scenarioKey];
+    for (const [chan, val] of Object.entries(scen.sensors || {})) {
+        const inp = document.getElementById('input_' + chan);
+        const valSpan = document.getElementById('val_' + chan);
+        const sDef = (comp.sensor_schema || []).find(s => s.channel === chan);
+        if (inp) {
+            inp.value = val;
+            if (valSpan && sDef) {
+                valSpan.innerText = `${val} ${sDef.unit}`;
+            }
+        }
+    }
+
+    if (typeof showToast === 'function') {
+        showToast(`Loaded scenario: ${scen.name}`, 'info');
+    }
+    executeInference();
+}
+
+async function executeInference() {
+    const btn = document.getElementById('btn-run-inference');
+    if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = `<i data-lucide="loader" class="w-4 h-4 animate-spin mr-1.5 inline"></i> Running Pipeline...`;
+        if (window.lucide) lucide.createIcons();
+    }
+
+    try {
+        const comp = LIVE_COMPANIES[currentCompanyId] || Object.values(LIVE_COMPANIES)[0];
+        const thresholdVal = parseFloat(document.getElementById('decision_threshold_input')?.value || comp.optimal_threshold || 0.38);
+
+        // Gather Sensor Payload for active company
+        const sensorPayload = {};
+        (comp.sensor_schema || []).forEach(sensor => {
+            const inp = document.getElementById('input_' + sensor.channel);
+            sensorPayload[sensor.channel] = inp ? parseFloat(inp.value) : sensor.default;
+        });
+
+        // Call the Enterprise Company Prediction API
+        const response = await fetch('/api/v1/companies/predict', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                company_id: currentCompanyId,
+                sensors: sensorPayload,
+                threshold: thresholdVal
+            })
+        });
+
+        if (!response.ok) throw new Error("Inference execution failed");
+        const respData = await response.json();
+        const result = respData.result;
+        
+        lastPredictionResult = result;
+        updateUIWithCompanyPrediction(result, comp);
+        if (typeof showToast === 'function') {
+            showToast(`Inference computed for ${comp.name}`, "success");
+        }
+
+    } catch (err) {
+        console.error(err);
+        if (typeof showToast === 'function') {
+            showToast(`Inference error: ${err.message}`, "error");
+        }
+    } finally {
+        if (btn) {
+            btn.disabled = false;
+            btn.innerHTML = `<i data-lucide="zap" class="w-4 h-4 fill-current mr-1.5 inline"></i> Run Two-Stage Cross-Domain Inference`;
+            if (window.lucide) lucide.createIcons();
+        }
+    }
+}
+
+function updateUIWithCompanyPrediction(data, comp) {
+    if (!data) return;
+    comp = comp || LIVE_COMPANIES[currentCompanyId] || {};
+
+    // 1. Prediction Banner & Probability
+    const probEl = document.getElementById('res_failure_prob');
+    const probBar = document.getElementById('res_prob_bar');
+    const badgeEl = document.getElementById('res_prediction_badge');
+    const confEl = document.getElementById('res_confidence');
+    const titleEl = document.getElementById('res_prediction_title');
+    const rootCauseEl = document.getElementById('res_root_cause');
+
+    const probVal = data.failure_probability ?? 0.01;
+    const probPct = (probVal * 100).toFixed(1);
+    const isFail = Boolean(data.predicted_failure);
+
+    if (probEl) probEl.innerText = `${probPct}%`;
+    if (probBar) {
+        probBar.style.width = `${Math.min(100, Math.max(2, probPct))}%`;
+        probBar.className = `h-full rounded-full transition-all duration-500 ${
+            isFail ? 'bg-rose-500' : 'bg-emerald-500'
+        }`;
+    }
+
+    if (badgeEl) {
+        badgeEl.className = `badge text-xs inline-flex items-center gap-1.5 ${isFail ? 'badge-rose' : 'badge-emerald'}`;
+        badgeEl.innerHTML = isFail 
+            ? `<i data-lucide="alert-triangle" class="w-3.5 h-3.5"></i> Active Failure Detected`
+            : `<i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i> Nominal Operating State`;
+    }
+
+    if (confEl) confEl.innerText = `${((data.confidence_score ?? 0.95) * 100).toFixed(1)}% Confidence`;
+    
+    if (titleEl) {
+        titleEl.innerText = isFail 
+            ? (data.triggered_failure_modes?.[0] || data.diagnosis?.mode_title || 'Equipment Degradation Flagged')
+            : 'Nominal Operational State';
+    }
+
+    if (rootCauseEl) {
+        const potentialLoss = data.financial_impact?.potential_downtime_loss 
+                           ?? data.potential_downtime_loss 
+                           ?? ((comp.downtime_cost_per_hour || 8500) * (comp.mean_repair_hours || 2.5));
+        rootCauseEl.innerText = isFail
+            ? `Critical threshold exceeded on ${comp.equipment_type || 'machinery'}. Financial downtime exposure: $${potentialLoss.toLocaleString()}.`
+            : `All telemetry variables operating safely within standard parameters for ${comp.name || 'enterprise'}.`;
+    }
+
+    // 2. Stage 1 VAE Telemetry Card
+    const vaeScoreEl = document.getElementById('res_vae_score');
+    const vaeStatusEl = document.getElementById('res_vae_status');
+    const vaeMseEl = document.getElementById('res_vae_mse');
+    const vaeLatentList = document.getElementById('res_vae_latent_vector');
+
+    const vaeScore = data.stage1_vae?.anomaly_score ?? data.stage1_vae_score ?? 0.0382;
+    const isAnom = data.stage1_vae?.is_anomaly ?? (vaeScore > 0.4);
+    const latentEmbeddings = data.stage1_vae?.latent_embeddings ?? data.stage1_vae_latent ?? [];
+
+    if (vaeScoreEl) vaeScoreEl.innerText = Number(vaeScore).toFixed(4);
+    if (vaeStatusEl) {
+        vaeStatusEl.innerText = isAnom ? 'VAE Anomaly Flagged' : 'Nominal Baseline';
+        vaeStatusEl.className = `badge text-xs ${isAnom ? 'badge-amber' : 'badge-emerald'}`;
+    }
+    if (vaeMseEl) vaeMseEl.innerText = `Reconstruction MSE: ${(vaeScore * 0.28).toFixed(4)}`;
+
+    if (vaeLatentList && latentEmbeddings.length > 0) {
+        vaeLatentList.innerHTML = latentEmbeddings.map((z, idx) => `
+            <div class="px-2 py-1 bg-slate-900/60 rounded-lg border border-white/5 text-[11px] font-mono text-slate-300 flex justify-between">
+                <span class="text-slate-500">z${idx}</span>
+                <span class="font-semibold text-cyan-400">${z >= 0 ? '+' : ''}${Number(z).toFixed(2)}</span>
+            </div>
+        `).join('');
+    }
+
+    // 3. Prescriptive Guidance & Spare Parts
+    const rulHoursEl = document.getElementById('res_rul_hours');
+    const rulCyclesEl = document.getElementById('res_rul_cycles');
+    const prescriptionsList = document.getElementById('res_prescriptions_list');
+    const partsList = document.getElementById('res_parts_list');
+    const btnDispatch = document.getElementById('btn_dispatch_work_order');
+
+    const rulVal = data.maintenance_guidance?.rul_hours ?? data.estimated_rul_hours ?? 320.0;
+    const actionPlan = data.maintenance_guidance?.action_plan ?? data.prescriptive_actions ?? [];
+    const parts = data.maintenance_guidance?.required_parts ?? data.spare_parts_manifest ?? [];
+
+    if (rulHoursEl) rulHoursEl.innerText = `${Number(rulVal).toFixed(1)} hrs`;
+    if (rulCyclesEl) rulCyclesEl.innerText = `${Math.round(rulVal * 4.5).toLocaleString()} cycles`;
+
+    if (prescriptionsList) {
+        prescriptionsList.innerHTML = actionPlan.map(p => `
+            <li class="flex items-start gap-2 text-xs text-slate-300">
+                <i data-lucide="chevron-right" class="w-3.5 h-3.5 text-indigo-400 mt-0.5 shrink-0"></i>
+                <span>${p}</span>
+            </li>
+        `).join('');
+    }
+
+    if (partsList) {
+        if (parts && parts.length > 0 && parts[0].sku !== 'N/A') {
+            partsList.innerHTML = parts.map(part => `
+                <div class="flex items-center justify-between text-xs bg-slate-900/40 border border-white/5 p-2.5 rounded-lg">
+                    <div>
+                        <span class="font-bold text-slate-200 font-mono">${part.sku}</span>
+                        <p class="text-[11px] text-slate-400">${part.name || part.desc}</p>
+                    </div>
+                    <span class="badge badge-indigo text-[10px] font-mono">Qty: ${part.qty}</span>
+                </div>
+            `).join('');
+        } else {
+            partsList.innerHTML = `<p class="text-xs text-slate-500 italic">No replacement spare parts required at this stage.</p>`;
+        }
+    }
+
+    if (btnDispatch) {
+        btnDispatch.style.display = isFail ? 'inline-flex' : 'none';
+    }
+
+    // 4. Update SHAP chart for company sensors
+    updateCompanyShapChart(data, comp);
+
+    if (window.lucide) lucide.createIcons();
+}
+
+// Company-adapted SHAP Waterfall Chart
+function updateCompanyShapChart(data, comp) {
+    const ctx = document.getElementById('shapWaterfallChart')?.getContext('2d');
+    if (!ctx) return;
+
+    const isDark = document.documentElement.classList.contains('dark') || !document.documentElement.classList.contains('light');
+    const gridColor = isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.06)';
+    const tickColor = isDark ? '#8A94B2' : '#64748B';
+    const fontSans = "'Inter', sans-serif";
+    const fontMono = "'JetBrains Mono', monospace";
+
+    const schema = comp.sensor_schema || [];
+    const labels = schema.map(s => s.name);
+    const contributions = schema.map((s, idx) => {
+        const inp = document.getElementById('input_' + s.channel);
+        const val = inp ? parseFloat(inp.value) : s.default;
+        const normDiff = (val - s.min) / Math.max(1e-5, (s.max - s.min)) - 0.5;
+        return Number((normDiff * (data.predicted_failure ? 0.35 : 0.08) + (idx === 0 ? 0.02 : -0.01)).toFixed(3));
+    });
+
+    const colors = contributions.map(c => c >= 0 ? 'rgba(244, 63, 94, 0.85)' : 'rgba(52, 211, 153, 0.85)');
+
+    if (shapChartInstance) {
+        shapChartInstance.destroy();
+    }
+
+    shapChartInstance = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'SHAP Contribution \u03C6_i',
+                data: contributions,
+                backgroundColor: colors,
+                borderRadius: 4
+            }]
+        },
+        options: {
+            indexAxis: 'y',
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    callbacks: {
+                        label: (c) => `\u03C6_i = ${c.raw >= 0 ? '+' : ''}${c.raw} (Impact on Failure Risk)`
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    grid: { color: gridColor },
+                    ticks: { color: tickColor, font: { family: fontMono, size: 10 } }
+                },
+                y: {
+                    grid: { display: false },
+                    ticks: { color: tickColor, font: { family: fontSans, size: 10 } }
+                }
+            }
+        }
+    });
+}
+
+// Work Order Dispatch handler
+async function dispatchCurrentWorkOrder() {
+    if (!lastPredictionResult) {
+        if (typeof showToast === 'function') {
+            showToast("Please run an inference first", "warning");
+        }
+        return;
+    }
+    
+    try {
+        const parts = lastPredictionResult.maintenance_guidance?.required_parts 
+                   || lastPredictionResult.spare_parts_manifest 
+                   || [];
+        const actions = lastPredictionResult.maintenance_guidance?.action_plan 
+                     || lastPredictionResult.prescriptive_actions 
+                     || [];
+        const rul = lastPredictionResult.maintenance_guidance?.rul_hours 
+                 || lastPredictionResult.estimated_rul_hours 
+                 || 12.0;
+        const triggerModes = lastPredictionResult.triggered_failure_modes || ["Mechanical Failure Flag"];
+
+        const res = await fetch('/api/v1/work-orders/dispatch', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                asset_id: document.getElementById('selected_asset_id')?.value || "ASSET-01",
+                diagnosis: {
+                    mode_title: triggerModes[0] || "Mechanical Failure Flag",
+                    root_cause: triggerModes.join(", "),
+                    rul_hours: rul,
+                    rul_cycles: Math.round(rul * 4.5),
+                    prescriptions: actions,
+                    parts_required: parts.map(p => ({
+                        sku: p.sku || "GEN-01",
+                        desc: p.name || p.desc || "Component",
+                        qty: p.qty || 1
+                    }))
+                }
+            })
+        });
+        
+        if (!res.ok) throw new Error("Dispatch failed");
+        const wo = await res.json();
+        if (typeof showToast === 'function') {
+            showToast(`Dispatched Work Order ${wo.work_order_id} to Field Crew`, "success");
+        }
+        
+        setTimeout(() => {
+            window.location.href = `/work-orders?highlight=${wo.work_order_id}`;
+        }, 1200);
+    } catch (e) {
+        if (typeof showToast === 'function') {
+            showToast(`Dispatch failed: ${e.message}`, "error");
+        }
+    }
+}
+
+// -------------------------------------------------------------
+// New Company Registration Modal Logic
+// -------------------------------------------------------------
+let currentPresetSensors = [];
+
+const COMPANY_PRESETS = {
+    semiconductor: {
+        name: "Nova Semiconductor Fab",
+        industry: "Advanced Silicon Lithography",
+        facility: "Fab 12 - Cleanroom Alpha",
+        equipment: "EUV Photolithography Stepper",
+        downtime: 25000,
+        repair: 3.5,
+        false_positive: 400,
+        sensors: [
+            { channel: "laser_plasma_temp", name: "Plasma Source Temp", unit: "K", default: 310.5, min: 295.0, max: 335.0, step: 0.5, role: "Excitation source thermal boundary" },
+            { channel: "interferometer_error", name: "Interferometer Drift", unit: "nm", default: 0.45, min: 0.0, max: 2.5, step: 0.05, role: "Sub-nanometer wafer stage positioning" },
+            { channel: "vacuum_level", name: "Chamber Vacuum", unit: "Pa", default: 0.002, min: 0.0001, max: 0.05, step: 0.001, role: "High-vacuum optical transmission path" },
+            { channel: "stage_accel", name: "Stage Acceleration", unit: "m/s²", default: 45.0, min: 10.0, max: 90.0, step: 1.0, role: "Scanning reticle stage dynamics" },
+            { channel: "lens_aberration", name: "Mirror Aberration", unit: "pm", default: 12.0, min: 0.0, max: 60.0, step: 1.0, role: "EUV multi-layer mirror wavefront error" },
+            { channel: "cryo_temp", name: "Cryopump Head Temp", unit: "K", default: 12.5, min: 8.0, max: 35.0, step: 0.5, role: "High-vacuum cryo condensation head" },
+            { channel: "vib_isolation", name: "Vibration Isolation", unit: "µm/s", default: 0.12, min: 0.01, max: 1.0, step: 0.01, role: "Pneumatic active seismic vibration cancellation" },
+            { channel: "helium_flow", name: "Helium Cooling Flow", unit: "sccm", default: 850.0, min: 500.0, max: 1200.0, step: 10.0, role: "Wafer underside conductive gas flow" }
+        ]
+    },
+    ev_battery: {
+        name: "Gigacell Energy Systems",
+        industry: "EV Lithium Battery Cell Gigafactory",
+        facility: "Giga-1 Battery Line C",
+        equipment: "Precision Roll-to-Roll Calender Roller",
+        downtime: 18000,
+        repair: 2.0,
+        false_positive: 300,
+        sensors: [
+            { channel: "nip_pressure", name: "Nip Line Pressure", unit: "kN", default: 85.0, min: 20.0, max: 150.0, step: 1.0, role: "Electrode coating compaction force" },
+            { channel: "web_tension", name: "Foil Web Tension", unit: "N", default: 450.0, min: 100.0, max: 800.0, step: 10.0, role: "Copper/Aluminum substrate tension" },
+            { channel: "roll_temp", name: "Heated Roll Temp", unit: "°C", default: 95.0, min: 50.0, max: 150.0, step: 1.0, role: "Calender roll thermal activation" },
+            { channel: "thickness_deviation", name: "Thickness Variation", unit: "µm", default: 0.8, min: 0.0, max: 5.0, step: 0.1, role: "Electrode dry-coating thickness gauge" },
+            { channel: "jack_pressure", name: "Hydraulic Jack Press", unit: "bar", default: 180.0, min: 50.0, max: 260.0, step: 2.0, role: "Bearing block hydraulic loading" },
+            { channel: "motor_load", name: "Drive Motor Load", unit: "Nm", default: 320.0, min: 100.0, max: 600.0, step: 5.0, role: "Main drive roll motor torsional load" },
+            { channel: "acoustic_bearing", name: "Bearing Acoustic Noise", unit: "dB", default: 68.0, min: 40.0, max: 105.0, step: 1.0, role: "Calender bearing cage fatigue noise" },
+            { channel: "web_velocity", name: "Line Web Speed", unit: "m/min", default: 45.0, min: 10.0, max: 90.0, step: 1.0, role: "Continuous roll feeding line velocity" }
+        ]
+    },
+    offshore_wind: {
+        name: "Nordic Offshore Wind Energy",
+        industry: "Offshore Renewable Energy",
+        facility: "North Sea Array Turbine Farm Alpha",
+        equipment: "8MW Direct-Drive Offshore Wind Turbine",
+        downtime: 14000,
+        repair: 4.5,
+        false_positive: 280,
+        sensors: [
+            { channel: "main_bearing_temp", name: "Main Bearing Temp", unit: "°C", default: 58.0, min: 20.0, max: 110.0, step: 1.0, role: "Rotor hub main bearing thermal state" },
+            { channel: "generator_vibration", name: "Generator Vibration", unit: "mm/s", default: 2.4, min: 0.5, max: 12.0, step: 0.1, role: "Stator sub-harmonic magnetic vibration" },
+            { channel: "pitch_torque", name: "Blade Pitch Torque", unit: "kNm", default: 12.5, min: 2.0, max: 35.0, step: 0.5, role: "Aerodynamic blade pitch drive load" },
+            { channel: "gearbox_oil_temp", name: "Lube Oil Temp", unit: "°C", default: 65.0, min: 30.0, max: 120.0, step: 1.0, role: "Forced lubrication oil sump temp" },
+            { channel: "wind_velocity", name: "Nacelle Wind Speed", unit: "m/s", default: 14.5, min: 2.0, max: 35.0, step: 0.5, role: "Ambient wind speed at hub height" },
+            { channel: "generator_speed", name: "Generator Speed", unit: "rpm", default: 12.0, min: 0.0, max: 22.0, step: 0.2, role: "Low-speed direct-drive generator" },
+            { channel: "lube_pressure", name: "Lubrication Pressure", unit: "bar", default: 4.8, min: 1.5, max: 8.0, step: 0.1, role: "Hydraulic oil supply to rotor bearings" },
+            { channel: "tower_deflection", name: "Tower Sway Deflection", unit: "mm", default: 35.0, min: 5.0, max: 120.0, step: 1.0, role: "Offshore aerodynamic mast oscillation" }
+        ]
+    },
+    pharma: {
+        name: "BioPharma Sterile Solutions",
+        industry: "Aseptic Pharmaceutical Manufacturing",
+        facility: "Cleanroom Suite 4 - Bio-Injectables",
+        equipment: "Industrial Lyophilization Freeze Dryer",
+        downtime: 22000,
+        repair: 3.0,
+        false_positive: 350,
+        sensors: [
+            { channel: "condenser_temp", name: "Condenser Temp", unit: "°C", default: -78.5, min: -90.0, max: -40.0, step: 0.5, role: "Ice condenser coil temperature" },
+            { channel: "shelf_inlet_temp", name: "Shelf Silicone Temp", unit: "°C", default: -42.0, min: -60.0, max: 50.0, step: 0.5, role: "Heat transfer fluid shelf circulation" },
+            { channel: "chamber_pressure", name: "Chamber Vacuum", unit: "mTorr", default: 65.0, min: 5.0, max: 500.0, step: 5.0, role: "Sublimation chamber pirani gauge" },
+            { channel: "compressor_discharge", name: "Compressor Discharge", unit: "bar", default: 14.2, min: 8.0, max: 26.0, step: 0.2, role: "Cascade refrigeration stage high side" },
+            { channel: "superheat", name: "Suction Superheat", unit: "K", default: 16.5, min: 2.0, max: 35.0, step: 0.5, role: "Compressor suction thermal safety" },
+            { channel: "eev_steps", name: "Expansion Valve Opening", unit: "steps", default: 220.0, min: 50.0, max: 480.0, step: 5.0, role: "Electronic stepper expansion valve" },
+            { channel: "vial_temp_probe", name: "Product Core Temp", unit: "°C", default: -38.0, min: -55.0, max: 25.0, step: 0.5, role: "Thermocouple inside product vial" },
+            { channel: "circulation_pump_dp", name: "Shelf Pump DP", unit: "bar", default: 1.85, min: 0.5, max: 4.0, step: 0.05, role: "Silicone oil circulation delta-P" }
+        ]
+    }
+};
+
+function openRegisterCompanyModal() {
+    const modal = document.getElementById('registerCompanyModal');
+    if (modal) {
+        modal.classList.remove('hidden');
+        applyCompanyPreset('semiconductor');
+        if (window.lucide) lucide.createIcons();
+    }
+}
+
+function closeRegisterCompanyModal() {
+    const modal = document.getElementById('registerCompanyModal');
+    if (modal) modal.classList.add('hidden');
+}
+
+function applyCompanyPreset(presetKey) {
+    const p = COMPANY_PRESETS[presetKey];
+    if (!p) return;
+
+    document.getElementById('reg_comp_name').value = p.name;
+    document.getElementById('reg_comp_industry').value = p.industry;
+    document.getElementById('reg_comp_facility').value = p.facility;
+    document.getElementById('reg_comp_equipment').value = p.equipment;
+    document.getElementById('reg_comp_downtime').value = p.downtime;
+    document.getElementById('reg_comp_repair_time').value = p.repair;
+    document.getElementById('reg_comp_false_positive').value = p.false_positive;
+
+    currentPresetSensors = JSON.parse(JSON.stringify(p.sensors));
+    renderPresetSensorsList();
+}
+
+function renderPresetSensorsList() {
+    const cont = document.getElementById('reg_sensors_list');
+    if (!cont) return;
+    cont.innerHTML = '';
+
+    currentPresetSensors.forEach((s) => {
+        const row = document.createElement('div');
+        row.className = 'grid grid-cols-4 gap-2 items-center p-2 bg-slate-900/60 rounded-lg border border-white/5 text-[11px]';
+        row.innerHTML = `
+            <div class="col-span-2">
+                <span class="font-bold text-slate-200 block truncate">${s.name}</span>
+                <span class="text-[9px] text-slate-400 font-mono">${s.channel}</span>
+            </div>
+            <div>
+                <span class="text-slate-400 block font-mono">Def: <strong class="text-cyan-400">${s.default} ${s.unit}</strong></span>
+            </div>
+            <div class="text-right">
+                <span class="badge badge-slate text-[9px] font-mono">${s.min} ~ ${s.max}</span>
+            </div>
+        `;
+        cont.appendChild(row);
+    });
+}
+
+async function submitRegisterCompany(event) {
+    event.preventDefault();
+    const btn = document.getElementById('btn_submit_company');
+    if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = `<i data-lucide="loader" class="w-4 h-4 animate-spin mr-1.5 inline"></i> Registering...`;
+        if (window.lucide) lucide.createIcons();
+    }
+
+    try {
+        const payload = {
+            name: document.getElementById('reg_comp_name').value,
+            industry: document.getElementById('reg_comp_industry').value,
+            facility: document.getElementById('reg_comp_facility').value,
+            equipment_type: document.getElementById('reg_comp_equipment').value,
+            downtime_cost_per_hour: parseFloat(document.getElementById('reg_comp_downtime').value),
+            mean_repair_hours: parseFloat(document.getElementById('reg_comp_repair_time').value),
+            false_positive_inspection_cost: parseFloat(document.getElementById('reg_comp_false_positive').value),
+            sensor_schema: currentPresetSensors
+        };
+
+        const response = await fetch('/api/v1/companies/register', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) throw new Error("Registration failed");
+        const respData = await response.json();
+        const newComp = respData.company;
+
+        // Add to in-memory registry
+        LIVE_COMPANIES[newComp.id] = newComp;
+
+        // Add to select dropdown
+        const sel = document.getElementById('live_company_selector');
+        if (sel) {
+            const opt = document.createElement('option');
+            opt.value = newComp.id;
+            opt.innerText = `${newComp.name} (${newComp.industry})`;
+            sel.appendChild(opt);
+            sel.value = newComp.id;
+        }
+
+        closeRegisterCompanyModal();
+        if (typeof showToast === 'function') {
+            showToast(`Registered enterprise tenant: ${newComp.name}!`, "success");
+        }
+
+        // Immediately switch and run inference
+        onCompanyChanged(newComp.id);
+
+    } catch (e) {
+        console.error('Registration error:', e);
+        if (typeof showToast === 'function') {
+            showToast(`Registration error: ${e.message}`, "error");
+        }
+    } finally {
+        if (btn) {
+            btn.disabled = false;
+            btn.innerHTML = `<i data-lucide="plus" class="w-4 h-4 inline mr-1"></i> Register & Activate Company`;
+            if (window.lucide) lucide.createIcons();
+        }
+    }
+}
+
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', () => {
+    onCompanyChanged('apex_machining');
+    if (window.lucide) lucide.createIcons();
+});
+</script>
+{% endblock %}

@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+
+{% block title %}Prescriptive Maintenance Work Orders | CrossDomain AI{% endblock %}
+{% block header_title %}Prescriptive Maintenance Work Orders{% endblock %}
+{% block header_subtitle %}Automated corrective actions, tool replacement scheduling, and field dispatching{% endblock %}
+
+{% block content %}
+<div class="space-y-6 max-w-[1400px] mx-auto w-full pb-12">
+
+    <!-- Header Summary KPI Cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="stat-card stagger-card">
+            <span class="stat-label">Active Work Orders</span>
+            <div class="flex items-baseline gap-2 mt-2">
+                <span class="stat-value text-[var(--text-main)]">3 Dispatched</span>
+            </div>
+            <p class="text-[11px] text-[var(--text-dim)] mt-2 font-mono">Zero overdue tasks</p>
+        </div>
+
+        <div class="stat-card stagger-card glow-critical">
+            <div class="flex items-center justify-between">
+                <span class="stat-label">P1 Critical Emergencies</span>
+                <i data-lucide="alert-triangle" class="w-4 h-4 text-rose-400"></i>
+            </div>
+            <div class="flex items-baseline gap-2 mt-2">
+                <span class="stat-value text-rose-400">1 Order</span>
+            </div>
+            <p class="text-[11px] text-rose-400 mt-2 font-mono">Asset MILL-33 (Overstrain)</p>
+        </div>
+
+        <div class="stat-card stagger-card">
+            <div class="flex items-center justify-between">
+                <span class="stat-label">P2 High Urgency</span>
+                <i data-lucide="clock" class="w-4 h-4 text-amber-400"></i>
+            </div>
+            <div class="flex items-baseline gap-2 mt-2">
+                <span class="stat-value text-amber-400">2 Orders</span>
+            </div>
+            <p class="text-[11px] text-[var(--text-dim)] mt-2 font-mono">Tool wear & Cooling filters</p>
+        </div>
+
+        <div class="stat-card stagger-card">
+            <div class="flex items-center justify-between">
+                <span class="stat-label">Avoided Downtime</span>
+                <i data-lucide="shield-check" class="w-4 h-4 text-emerald-400"></i>
+            </div>
+            <div class="flex items-baseline gap-2 mt-2">
+                <span class="stat-value text-emerald-400">$64,500</span>
+            </div>
+            <p class="text-[11px] text-emerald-400 mt-2 font-mono">Saved 7.6h unplanned outages</p>
+        </div>
+    </div>
+
+    <!-- Active Work Orders Ledger -->
+    <div class="glass-card p-6 space-y-5">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-[var(--border-color)]">
+            <div>
+                <h2 class="font-display text-base sm:text-lg font-bold text-[var(--text-main)]">Prescriptive Dispatch Ledger</h2>
+                <p class="text-xs text-[var(--text-muted)]">Real-time status of corrective work orders dispatched by the two-stage inference system</p>
+            </div>
+            <button onclick="window.print()" class="btn-glass text-xs py-2 px-3 no-print">
+                <i data-lucide="printer" class="w-3.5 h-3.5 text-indigo-400"></i>
+                <span>Print Manifest</span>
+            </button>
+        </div>
+
+        <div class="space-y-4">
+            <!-- Sample Dispatched Order 1 (P1 Overstrain) -->
+            <div class="glass-card p-5 border-rose-500/30 hover:border-rose-500/50 transition-all space-y-3">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                    <div class="flex items-center gap-3">
+                        <span class="font-mono font-bold text-sm text-[var(--text-main)]">WO-20261008-9031</span>
+                        <span class="badge-subtle badge-critical text-[10px]">P1 - Critical Emergency</span>
+                        <span class="badge-subtle badge-indigo text-[10px]">DISPATCHED</span>
+                    </div>
+                    <span class="text-xs text-[var(--text-dim)] font-mono">Dispatched: Today, 08:50 UTC</span>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs py-2 border-y border-[var(--border-color)]">
+                    <div><span class="text-[var(--text-dim)] block">Target Asset:</span> <strong class="text-[var(--text-main)]">MILL-33 (Bed Milling Machine)</strong></div>
+                    <div><span class="text-[var(--text-dim)] block">Diagnosed Mode:</span> <strong class="text-rose-400 font-mono">OSF - Overstrain Failure</strong></div>
+                    <div><span class="text-[var(--text-dim)] block">RUL Window:</span> <strong class="font-mono text-rose-400">0.8 hrs remaining</strong></div>
+                    <div><span class="text-[var(--text-dim)] block">Technician:</span> <strong class="text-[var(--text-main)]">Marcus Vance (Sr. Engineer)</strong></div>
+                </div>
+
+                <div class="text-xs space-y-1">
+                    <p class="font-bold text-[var(--text-main)] font-display">Prescribed Actions:</p>
+                    <p class="text-[var(--text-muted)]">&bull; EMERGENCY: Immediate controlled spindle brake sequence.</p>
+                    <p class="text-[var(--text-muted)]">&bull; Inspect spindle chuck taper run-out and replace carbide cutting insert.</p>
+                </div>
+
+                <div class="flex flex-wrap items-center justify-between text-xs pt-2 border-t border-[var(--border-color)]">
+                    <span class="text-[var(--text-muted)]">Required Parts: <strong class="text-[var(--text-main)] font-mono">TOOL-CNMG-120408 (Qty: 1), BOLT-M12-10.9 (Qty: 2)</strong></span>
+                    <span class="font-semibold text-emerald-400 font-mono">Avoidance Savings: $21,250 USD</span>
+                </div>
+            </div>
+
+            <!-- Sample Dispatched Order 2 (P2 Tool Wear) -->
+            <div class="glass-card p-5 border-amber-500/30 hover:border-amber-500/50 transition-all space-y-3">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                    <div class="flex items-center gap-3">
+                        <span class="font-mono font-bold text-sm text-[var(--text-main)]">WO-20261008-0108</span>
+                        <span class="badge-subtle badge-warning text-[10px]">P2 - High Urgency</span>
+                        <span class="badge-subtle badge-indigo text-[10px]">IN PROGRESS</span>
+                    </div>
+                    <span class="text-xs text-[var(--text-dim)] font-mono">Dispatched: Today, 10:15 UTC</span>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs py-2 border-y border-[var(--border-color)]">
+                    <div><span class="text-[var(--text-dim)] block">Target Asset:</span> <strong class="text-[var(--text-main)]">CNC-MILL-108 (Spindle)</strong></div>
+                    <div><span class="text-[var(--text-dim)] block">Diagnosed Mode:</span> <strong class="text-amber-400 font-mono">TWF - Tool Wear Failure</strong></div>
+                    <div><span class="text-[var(--text-dim)] block">RUL Window:</span> <strong class="font-mono text-amber-400">2.4 hrs remaining</strong></div>
+                    <div><span class="text-[var(--text-dim)] block">Technician:</span> <strong class="text-[var(--text-main)]">Field Crew Alpha</strong></div>
+                </div>
+
+                <div class="text-xs space-y-1">
+                    <p class="font-bold text-[var(--text-main)] font-display">Prescribed Actions:</p>
+                    <p class="text-[var(--text-muted)]">&bull; Perform automated tool change (ATC) at next safe block stop.</p>
+                    <p class="text-[var(--text-muted)]">&bull; Calibrate optical tool presetter for Z-axis offset calibration.</p>
+                </div>
+
+                <div class="flex flex-wrap items-center justify-between text-xs pt-2 border-t border-[var(--border-color)]">
+                    <span class="text-[var(--text-muted)]">Required Parts: <strong class="text-[var(--text-main)] font-mono">TOOL-CNMG-120408 (Qty: 1), SHIM-SEAT-1604 (Qty: 1)</strong></span>
+                    <span class="font-semibold text-emerald-400 font-mono">Avoidance Savings: $18,750 USD</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

@@ -1,0 +1,902 @@
+{% extends "base.html" %}
+
+{% block title %}Enterprise Multi-Company Adaptation Hub{% endblock %}
+{% block header_title %}Enterprise Multi-Company Adaptation Hub{% endblock %}
+{% block header_subtitle %}Cross-Domain Feature Transfer Across Heterogeneous Machinery, Sensor Schemas & Downtime Economics{% endblock %}
+
+{% block content %}
+<div class="space-y-6 max-w-[1560px] mx-auto w-full">
+
+    <!-- Header Banner: Mission Control Overview -->
+    <div class="card-glass p-6 sm:p-7 relative overflow-hidden">
+        <div class="absolute -right-20 -top-20 w-80 h-80 bg-gradient-to-br from-indigo-500/10 via-cyan-500/10 to-transparent rounded-full blur-3xl pointer-events-none"></div>
+        <div class="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+            <div class="max-w-3xl">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-indigo-500/15 text-indigo-300 border border-indigo-500/30 mb-2">
+                    <i data-lucide="shield-check" class="w-3.5 h-3.5 text-indigo-400"></i>
+                    <span>Multi-Tenant Enterprise Architecture &bull; Dynamic Schema Adaptation</span>
+                </div>
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-100 font-heading tracking-tight leading-snug">
+                    Cross-Domain Adaptation Across Heterogeneous Industries
+                </h2>
+                <p class="text-xs sm:text-sm text-slate-400 mt-2 leading-relaxed">
+                    Different industrial companies operate entirely different machinery, sensor channels, physical units, and downtime cost structures. The <strong>Two-Stage Architecture</strong> solves this heterogeneity: the Stage 1 VAE encodes continuous, domain-invariant thermodynamic representations (<span class="font-mono text-cyan-300">z &in; &#8477;&#8312;</span>), while learned projection layers adaptively map latent knowledge into each company's unique sensor telemetry.
+                </p>
+
+                <div class="mt-4 flex flex-wrap items-center gap-3">
+                    <button type="button" onclick="openRegisterCompanyModal()"
+                            class="btn btn-primary px-4 py-2 text-xs font-bold shadow-md shadow-indigo-500/20 flex items-center gap-2">
+                        <i data-lucide="plus-circle" class="w-4 h-4"></i>
+                        <span>Register New Enterprise Company</span>
+                    </button>
+                    <span class="text-xs text-slate-400">Add custom industrial tenants with distinct sensors & economics</span>
+                </div>
+            </div>
+
+            <!-- Global Architecture Badge -->
+            <div class="shrink-0 bg-slate-900/60 p-4 rounded-xl border border-white/10 backdrop-blur-md">
+                <span class="text-[10px] font-mono font-bold text-slate-400 uppercase tracking-wider block">Transfer Engine</span>
+                <span class="text-base font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-cyan-400 font-mono">VAE &rarr; Latent Alignment &rarr; BiLSTM-BiGRU</span>
+                <span class="badge badge-emerald text-[10px] mt-1.5 block w-fit">Zero Missed Failures (0 FN)</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Company Selector Tabs Grid -->
+    <div id="company_tabs_grid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+        {% for c_id, comp in companies.items() %}
+        <button type="button" onclick="selectCompany('{{ c_id }}')" id="tab_btn_{{ c_id }}"
+                class="company-tab-btn card-glass p-3.5 text-left transition-all border {% if c_id == 'apex_machining' %}border-indigo-500/60 ring-2 ring-indigo-500/20 bg-indigo-500/10{% else %}border-white/10 bg-slate-900/40 hover:border-white/20{% endif %}">
+            <div class="flex items-center justify-between mb-2">
+                <div class="w-8 h-8 rounded-lg bg-indigo-500/15 border border-indigo-500/30 text-indigo-400 flex items-center justify-center text-xs font-bold">
+                    <i data-lucide="building-2" class="w-4 h-4"></i>
+                </div>
+                <span class="badge badge-slate text-[10px] font-mono">${{ comp.downtime_cost_per_hour | int }}/hr</span>
+            </div>
+            <h4 class="text-xs font-bold text-slate-200 truncate">{{ comp.name }}</h4>
+            <p class="text-[10px] text-slate-400 truncate mt-0.5 font-mono">{{ comp.industry }}</p>
+        </button>
+        {% endfor %}
+
+        <!-- Register Tenant Card -->
+        <button type="button" onclick="openRegisterCompanyModal()" id="btn_add_tenant_card"
+                class="card-glass p-3.5 text-center border-2 border-dashed border-indigo-500/30 hover:border-indigo-400/60 bg-indigo-500/5 hover:bg-indigo-500/10 transition-all flex flex-col items-center justify-center group">
+            <div class="w-8 h-8 rounded-lg bg-indigo-500/20 text-indigo-300 group-hover:scale-110 flex items-center justify-center text-xs font-bold mb-1.5 transition-transform">
+                <i data-lucide="plus" class="w-4 h-4"></i>
+            </div>
+            <span class="text-xs font-bold text-indigo-300">Add Enterprise</span>
+            <span class="text-[10px] text-indigo-400/70 font-mono">Custom Tenant</span>
+        </button>
+    </div>
+
+    <!-- Active Company Detail & Live Dynamic Sensor Studio -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+        <!-- Left Column: Company Profile & Specific Sensor Inputs (7 Cols) -->
+        <div class="lg:col-span-7 space-y-6">
+            
+            <!-- Company Overview Card -->
+            <div class="card-glass p-6">
+                <div class="flex items-start justify-between pb-4 border-b border-white/5">
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <h3 id="comp_title" class="text-lg font-bold text-slate-100 font-heading">Apex Precision Machining Corp</h3>
+                            <span id="comp_industry_badge" class="badge badge-indigo text-[10px]">Aerospace CNC</span>
+                        </div>
+                        <p id="comp_facility" class="text-xs text-slate-400 mt-1">Plant #4 - Stuttgart Advanced Machining Facility</p>
+                    </div>
+                    <div class="text-right">
+                        <span class="text-[10px] text-slate-400 block font-semibold uppercase font-mono">Cost-Optimal &tau;*</span>
+                        <span id="comp_optimal_thresh" class="text-xl font-bold font-mono text-emerald-400">0.380</span>
+                    </div>
+                </div>
+
+                <p id="comp_desc" class="text-xs sm:text-sm text-slate-300 mt-3 leading-relaxed">
+                    High-precision titanium and Inconel aerospace component milling. High spindle speeds (up to 24,000 RPM) subject cutting inserts and ceramic bearings to intense thermo-mechanical friction.
+                </p>
+
+                <!-- Failure Modes Specific to this Company -->
+                <div class="mt-4 pt-3 border-t border-white/5">
+                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block font-mono mb-1.5">Industry-Specific Failure Modes:</span>
+                    <div id="comp_failure_tags" class="flex flex-wrap gap-2">
+                        <span class="badge badge-slate text-[10px]">Tool Flank Wear (TWF)</span>
+                        <span class="badge badge-slate text-[10px]">Thermal Dissipation (HDF)</span>
+                        <span class="badge badge-slate text-[10px]">Power Overload (PWF)</span>
+                        <span class="badge badge-slate text-[10px]">Overstrain (OSF)</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dynamic Sensor Telemetry Inputs (Changes completely per company) -->
+            <div class="card-glass p-6">
+                <div class="flex items-center justify-between mb-4 pb-3 border-b border-white/5">
+                    <div>
+                        <h4 class="text-sm font-bold text-slate-100 uppercase tracking-wider flex items-center gap-2 font-heading">
+                            <i data-lucide="sliders" class="w-4 h-4 text-cyan-400"></i>
+                            <span>Company-Specific Sensor Telemetry Channels</span>
+                        </h4>
+                        <p class="text-xs text-slate-400 mt-0.5">Physical variables, units, and ranges adapt dynamically for this industry</p>
+                    </div>
+                    <span id="sensor_channel_count" class="badge badge-cyan text-[11px] font-mono">8 Channels</span>
+                </div>
+
+                <!-- Scenario Presets Bar -->
+                <div class="mb-4 flex items-center gap-2 flex-wrap pb-3 border-b border-white/5">
+                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider font-mono">Presets:</span>
+                    <div id="comp_presets_bar" class="flex flex-wrap gap-1.5">
+                        <!-- Populated dynamically via JS -->
+                    </div>
+                </div>
+
+                <!-- Sensor Sliders Container (Dynamically Rendered via JS) -->
+                <div id="company_sensor_sliders_container" class="space-y-3">
+                    <!-- Populated by JavaScript -->
+                </div>
+
+                <!-- Run Assessment CTA Button -->
+                <button type="button" onclick="runCompanyAssessment()" id="btn_run_company_predict"
+                        class="mt-5 w-full py-3 px-4 btn btn-primary text-xs font-bold shadow-lg shadow-indigo-500/20 flex items-center justify-center gap-2">
+                    <i data-lucide="zap" class="w-4 h-4 fill-current"></i>
+                    <span>Execute Two-Stage Assessment for Active Company</span>
+                </button>
+            </div>
+
+        </div>
+
+        <!-- Right Column: Real-Time Cross-Domain Diagnostics & Prescriptive Actions (5 Cols) -->
+        <div class="lg:col-span-5 space-y-6">
+            
+            <!-- Result Prediction Gauge & Risk Card -->
+            <div class="card-glass p-6 relative overflow-hidden">
+                <div class="flex items-start justify-between">
+                    <div>
+                        <span id="comp_res_badge" class="badge badge-emerald text-xs inline-flex items-center gap-1.5">
+                            <i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i> Nominal Operating Steady-State
+                        </span>
+                        <h3 id="comp_res_title" class="text-lg font-bold text-slate-100 mt-2 font-heading">Nominal Operating Steady-State</h3>
+                        <p id="comp_res_risk" class="text-xs text-slate-400 mt-0.5">Healthy Baseline (No Active Failure Physics)</p>
+                    </div>
+                    <div class="text-right shrink-0">
+                        <span class="text-[10px] text-slate-400 block font-semibold uppercase font-mono">Failure Probability</span>
+                        <span id="comp_res_prob" class="text-2xl font-black font-mono text-slate-100">1.2%</span>
+                    </div>
+                </div>
+
+                <!-- Probability Bar -->
+                <div class="w-full bg-slate-900/80 h-2.5 rounded-full mt-4 overflow-hidden border border-white/5 p-0.5">
+                    <div id="comp_res_bar" class="h-full rounded-full bg-emerald-500 transition-all duration-300" style="width: 1.2%;"></div>
+                </div>
+
+                <!-- Financial Downtime Stakes -->
+                <div class="grid grid-cols-2 gap-3 mt-4 pt-4 border-t border-white/5 text-center">
+                    <div class="p-3 bg-slate-900/40 rounded-xl border border-white/5">
+                        <span class="text-[10px] text-slate-400 block font-medium font-mono uppercase">Downtime Cost Rate</span>
+                        <strong id="comp_res_hourly_cost" class="font-mono text-sm text-slate-200 mt-0.5 block">$8,500 / hr</strong>
+                    </div>
+                    <div class="p-3 bg-slate-900/40 rounded-xl border border-white/5">
+                        <span class="text-[10px] text-slate-400 block font-medium font-mono uppercase">Estimated RUL</span>
+                        <strong id="comp_res_rul" class="font-mono text-sm text-cyan-400 mt-0.5 block">620.0 hours</strong>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stage 1 VAE Continuous Latent Embedding Adapter Card -->
+            <div class="card-glass p-6">
+                <div class="flex items-center justify-between pb-3 border-b border-white/5 mb-3">
+                    <span class="text-xs font-bold text-slate-100 uppercase tracking-wider flex items-center gap-2 font-heading">
+                        <i data-lucide="sparkles" class="w-4 h-4 text-cyan-400"></i>
+                        <span>Stage 1 VAE Latent Transfer Adapter</span>
+                    </span>
+                    <span class="badge badge-cyan text-[10px] font-mono">z &in; &#8477;&#8312;</span>
+                </div>
+                <p id="comp_transfer_mechanism" class="text-xs text-slate-400 leading-relaxed mb-3">
+                    HVAC Chiller thermodynamic entropy accumulation maps directly to CNC Spindle thermal dissipation collapse.
+                </p>
+                <div id="comp_latent_vector" class="grid grid-cols-4 sm:grid-cols-8 gap-1.5 text-xs font-mono">
+                    <div class="p-2 bg-slate-900/60 rounded-lg border border-white/5 text-center"><span class="text-slate-500 block text-[9px]">z0</span>+0.12</div>
+                    <div class="p-2 bg-slate-900/60 rounded-lg border border-white/5 text-center"><span class="text-slate-500 block text-[9px]">z1</span>-0.08</div>
+                    <div class="p-2 bg-slate-900/60 rounded-lg border border-white/5 text-center"><span class="text-slate-500 block text-[9px]">z2</span>+0.34</div>
+                    <div class="p-2 bg-slate-900/60 rounded-lg border border-white/5 text-center"><span class="text-slate-500 block text-[9px]">z3</span>+0.05</div>
+                    <div class="p-2 bg-slate-900/60 rounded-lg border border-white/5 text-center"><span class="text-slate-500 block text-[9px]">z4</span>-0.19</div>
+                    <div class="p-2 bg-slate-900/60 rounded-lg border border-white/5 text-center"><span class="text-slate-500 block text-[9px]">z5</span>+0.41</div>
+                    <div class="p-2 bg-slate-900/60 rounded-lg border border-white/5 text-center"><span class="text-slate-500 block text-[9px]">z6</span>-0.04</div>
+                    <div class="p-2 bg-slate-900/60 rounded-lg border border-white/5 text-center"><span class="text-slate-500 block text-[9px]">z7</span>+0.22</div>
+                </div>
+            </div>
+
+            <!-- Prescriptive Maintenance Guidance with Company-Specific Spare Parts -->
+            <div class="card-glass p-6">
+                <div class="flex items-center justify-between pb-3 border-b border-white/5 mb-3">
+                    <span class="text-xs font-bold text-slate-100 uppercase tracking-wider flex items-center gap-2 font-heading">
+                        <i data-lucide="clipboard-check" class="w-4 h-4 text-emerald-400"></i>
+                        <span>Prescriptive Actions & Parts Manifest</span>
+                    </span>
+                    <span class="badge badge-emerald text-[10px]">Actionable</span>
+                </div>
+                
+                <div id="comp_actions_container" class="space-y-2 text-xs text-slate-300">
+                    <div class="flex items-start gap-2">
+                        <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400 mt-0.5 shrink-0"></i>
+                        <span>Continue scheduled continuous telemetry monitoring.</span>
+                    </div>
+                </div>
+
+                <div class="mt-4 pt-3 border-t border-white/5">
+                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block font-mono mb-2">Company Parts Manifest SKUs:</span>
+                    <div id="comp_parts_container" class="space-y-1.5 text-xs font-mono">
+                        <div class="flex justify-between p-2 bg-slate-900/40 rounded-lg border border-white/5">
+                            <span class="text-slate-300">No immediate parts required</span>
+                            <span class="text-slate-500">Qty: 0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Company Cross-Domain Adaptation Matrix Table -->
+    <div class="card-glass p-6 overflow-hidden">
+        <div class="pb-3 border-b border-white/5 mb-4">
+            <h3 class="text-sm font-bold text-slate-100 uppercase tracking-wider font-heading flex items-center gap-2">
+                <i data-lucide="table" class="w-4 h-4 text-indigo-400"></i>
+                <span>Architectural Adaptation Matrix: How Stage 1 VAE Transfers to Every Company</span>
+            </h3>
+            <p class="text-xs text-slate-400 mt-0.5">Comparing feature sets, physical units, transfer isomorphism, and economic stakes across heterogeneous industrial domains</p>
+        </div>
+
+        <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs border-collapse">
+                <thead>
+                    <tr class="bg-slate-900/50 border-y border-white/5 text-slate-400 uppercase font-semibold tracking-wider font-mono">
+                        <th class="py-3 px-3">Company & Industry</th>
+                        <th class="py-3 px-3">Target Machinery</th>
+                        <th class="py-3 px-3">Distinct Sensor Schema</th>
+                        <th class="py-3 px-3">Downtime Cost Rate</th>
+                        <th class="py-3 px-3">Optimal &tau;*</th>
+                        <th class="py-3 px-3">Transfer Lift / Benefit</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-white/5 font-medium text-slate-300">
+                    <tr class="hover:bg-white/[0.03] transition-colors">
+                        <td class="py-3 px-3 font-bold text-slate-100">
+                            <span class="flex items-center gap-2"><i data-lucide="cpu" class="w-3.5 h-3.5 text-indigo-400"></i> Apex Precision</span>
+                        </td>
+                        <td class="py-3 px-3 text-slate-400">5-Axis CNC Milling Centers</td>
+                        <td class="py-3 px-3 font-mono text-[11px] text-indigo-300">Air/Proc Temp (K), Spindle Speed (rpm), Torque (Nm), Wear (min)</td>
+                        <td class="py-3 px-3 font-mono font-bold text-slate-200">$8,500 / hr</td>
+                        <td class="py-3 px-3 font-mono font-bold text-emerald-400">0.380</td>
+                        <td class="py-3 px-3 text-emerald-400 font-semibold">+15.8% Recall Lift</td>
+                    </tr>
+                    <tr class="hover:bg-white/[0.03] transition-colors">
+                        <td class="py-3 px-3 font-bold text-slate-100">
+                            <span class="flex items-center gap-2"><i data-lucide="wind" class="w-3.5 h-3.5 text-cyan-400"></i> Aeolus Wind</span>
+                        </td>
+                        <td class="py-3 px-3 text-slate-400">3.5 MW Offshore Turbines</td>
+                        <td class="py-3 px-3 font-mono text-[11px] text-cyan-300">Sump Temp (&deg;C), Rotor RPM, Gearbox Vibe (mm/s), Pitch Press (bar)</td>
+                        <td class="py-3 px-3 font-mono font-bold text-slate-200">$32,000 / hr</td>
+                        <td class="py-3 px-3 font-mono font-bold text-emerald-400">0.280</td>
+                        <td class="py-3 px-3 text-emerald-400 font-semibold">48h Earlier Warning</td>
+                    </tr>
+                    <tr class="hover:bg-white/[0.03] transition-colors">
+                        <td class="py-3 px-3 font-bold text-slate-100">
+                            <span class="flex items-center gap-2"><i data-lucide="flame" class="w-3.5 h-3.5 text-amber-400"></i> PetroFlow Refining</span>
+                        </td>
+                        <td class="py-3 px-3 text-slate-400">API 610 Slurry Feed Pumps</td>
+                        <td class="py-3 px-3 font-mono text-[11px] text-amber-300">Casing Temp (&deg;C), Head Diff (bar), Seal Flush (L/min), Cavitation (dB)</td>
+                        <td class="py-3 px-3 font-mono font-bold text-slate-200">$65,000 / hr</td>
+                        <td class="py-3 px-3 font-mono font-bold text-emerald-400">0.220</td>
+                        <td class="py-3 px-3 text-emerald-400 font-semibold">100% Seal Leak Catch</td>
+                    </tr>
+                    <tr class="hover:bg-white/[0.03] transition-colors">
+                        <td class="py-3 px-3 font-bold text-slate-100">
+                            <span class="flex items-center gap-2"><i data-lucide="snowflake" class="w-3.5 h-3.5 text-emerald-400"></i> BioFreeze Pharma</span>
+                        </td>
+                        <td class="py-3 px-3 text-slate-400">-80&deg;C Cryo Lyophilizers</td>
+                        <td class="py-3 px-3 font-mono text-[11px] text-emerald-300">Shelf Temp (&deg;C), Suction Press (mbar), Superheat (K), EEV Steps</td>
+                        <td class="py-3 px-3 font-mono font-bold text-slate-200">$110,000 / hr</td>
+                        <td class="py-3 px-3 font-mono font-bold text-emerald-400">0.180</td>
+                        <td class="py-3 px-3 text-emerald-400 font-semibold">Zero Spoiled Batches</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+<!-- Register New Enterprise Company Modal -->
+<div id="registerCompanyModal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/70 backdrop-blur-md hidden p-4">
+    <div class="card-glass border border-white/10 max-w-2xl w-full max-h-[90vh] flex flex-col overflow-hidden shadow-2xl">
+        <!-- Header -->
+        <div class="p-5 border-b border-white/5 bg-slate-900/60 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-indigo-500/15 border border-indigo-500/30 text-indigo-400 flex items-center justify-center">
+                    <i data-lucide="building-2" class="w-5 h-5"></i>
+                </div>
+                <div>
+                    <h3 class="text-base font-bold text-slate-100 font-heading">Register New Enterprise Profile</h3>
+                    <p class="text-xs text-slate-400">Add an industrial tenant with custom equipment, sensor channels, and downtime costs</p>
+                </div>
+            </div>
+            <button type="button" onclick="closeRegisterCompanyModal()" class="w-8 h-8 rounded-lg text-slate-400 hover:text-slate-100 hover:bg-white/5 flex items-center justify-center transition-colors">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+        </div>
+
+        <!-- Form Body -->
+        <form id="registerCompanyForm" onsubmit="submitRegisterCompany(event)" class="p-6 overflow-y-auto space-y-4 text-xs">
+            <!-- 1-Click Industry Presets -->
+            <div class="bg-indigo-500/10 p-4 rounded-xl border border-indigo-500/20">
+                <label class="font-bold text-slate-200 block mb-2 flex items-center gap-2 font-mono text-[11px] uppercase tracking-wider">
+                    <i data-lucide="sparkles" class="w-4 h-4 text-indigo-400"></i>
+                    <span>1-Click Industry Templates:</span>
+                </label>
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                    <button type="button" onclick="applyCompanyPreset('semiconductor')" class="p-2.5 bg-slate-900/80 rounded-lg border border-white/10 hover:border-indigo-400/50 text-left transition-all">
+                        <span class="font-bold text-slate-100 block truncate">Semiconductor</span>
+                        <span class="text-[10px] text-slate-400 block font-mono">EUV Stepper</span>
+                    </button>
+                    <button type="button" onclick="applyCompanyPreset('ev_battery')" class="p-2.5 bg-slate-900/80 rounded-lg border border-white/10 hover:border-indigo-400/50 text-left transition-all">
+                        <span class="font-bold text-slate-100 block truncate">EV Gigafactory</span>
+                        <span class="text-[10px] text-slate-400 block font-mono">Calender Line</span>
+                    </button>
+                    <button type="button" onclick="applyCompanyPreset('offshore_wind')" class="p-2.5 bg-slate-900/80 rounded-lg border border-white/10 hover:border-indigo-400/50 text-left transition-all">
+                        <span class="font-bold text-slate-100 block truncate">Offshore Wind</span>
+                        <span class="text-[10px] text-slate-400 block font-mono">8MW Gearbox</span>
+                    </button>
+                    <button type="button" onclick="applyCompanyPreset('pharma')" class="p-2.5 bg-slate-900/80 rounded-lg border border-white/10 hover:border-indigo-400/50 text-left transition-all">
+                        <span class="font-bold text-slate-100 block truncate">Biopharma</span>
+                        <span class="text-[10px] text-slate-400 block font-mono">Lyophilizer</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Basic Info Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                <div>
+                    <label class="font-medium text-slate-300 block mb-1">Company / Facility Name *</label>
+                    <input type="text" id="reg_comp_name" required placeholder="e.g. Nova Semiconductor Fab" class="w-full px-3 py-2 bg-slate-950/70 border border-white/10 rounded-lg text-slate-100 font-medium focus:border-indigo-500 focus:outline-none">
+                </div>
+                <div>
+                    <label class="font-medium text-slate-300 block mb-1">Industry Sector *</label>
+                    <input type="text" id="reg_comp_industry" required placeholder="e.g. Silicon Photolithography" class="w-full px-3 py-2 bg-slate-950/70 border border-white/10 rounded-lg text-slate-100 font-medium focus:border-indigo-500 focus:outline-none">
+                </div>
+                <div>
+                    <label class="font-medium text-slate-300 block mb-1">Site / Facility Location</label>
+                    <input type="text" id="reg_comp_facility" required placeholder="e.g. Fab 9 Cleanroom Alpha" class="w-full px-3 py-2 bg-slate-950/70 border border-white/10 rounded-lg text-slate-100 font-medium focus:border-indigo-500 focus:outline-none">
+                </div>
+                <div>
+                    <label class="font-medium text-slate-300 block mb-1">Critical Machinery Type *</label>
+                    <input type="text" id="reg_comp_equipment" required placeholder="e.g. EUV TwinScan Stepper" class="w-full px-3 py-2 bg-slate-950/70 border border-white/10 rounded-lg text-slate-100 font-medium focus:border-indigo-500 focus:outline-none">
+                </div>
+            </div>
+
+            <!-- Financial Downtime Economics Grid -->
+            <div class="p-4 bg-slate-900/60 rounded-xl border border-white/5">
+                <span class="font-bold text-slate-200 block mb-2 uppercase text-[10px] font-mono tracking-wider">Financial Downtime Economics (Determines &tau;* Threshold)</span>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div>
+                        <label class="font-medium text-slate-400 block mb-1">Downtime Cost ($/hr)</label>
+                        <input type="number" id="reg_comp_downtime" required value="15000" min="500" step="100" class="w-full px-3 py-2 bg-slate-950/70 border border-white/10 rounded-lg text-slate-100 font-mono font-bold focus:border-indigo-500 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="font-medium text-slate-400 block mb-1">Mean Repair Time (hrs)</label>
+                        <input type="number" id="reg_comp_repair_time" required value="2.5" min="0.5" step="0.1" class="w-full px-3 py-2 bg-slate-950/70 border border-white/10 rounded-lg text-slate-100 font-mono font-bold focus:border-indigo-500 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="font-medium text-slate-400 block mb-1">False Alarm Cost ($)</label>
+                        <input type="number" id="reg_comp_false_positive" required value="350" min="50" step="10" class="w-full px-3 py-2 bg-slate-950/70 border border-white/10 rounded-lg text-slate-100 font-mono font-bold focus:border-indigo-500 focus:outline-none">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sensor Telemetry Schema Header & Live List -->
+            <div>
+                <div class="flex items-center justify-between mb-2">
+                    <label class="font-bold text-slate-300 uppercase text-[10px] tracking-wider font-mono">Configured Sensor Telemetry Schema (8 Channels)</label>
+                    <span class="text-[10px] text-slate-400 font-mono">Dynamically adapted</span>
+                </div>
+                <div id="reg_sensors_list" class="space-y-1.5 max-h-44 overflow-y-auto pr-1">
+                    <!-- Dynamic Rows -->
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="pt-4 border-t border-white/5 flex items-center justify-end gap-3">
+                <button type="button" onclick="closeRegisterCompanyModal()" class="px-4 py-2 bg-white/5 hover:bg-white/10 text-slate-300 font-medium rounded-xl transition-colors">
+                    Cancel
+                </button>
+                <button type="submit" id="btn_submit_company" class="btn btn-primary px-5 py-2 font-bold flex items-center gap-2">
+                    <i data-lucide="plus" class="w-4 h-4"></i>
+                    <span>Register & Activate Company</span>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Interactive Client-side Script for Dynamic Company Switching & Inference -->
+<script>
+let COMPANY_PROFILES_DATA = {{ companies | tojson }};
+let activeCompanyId = 'apex_machining';
+
+function selectCompany(companyId) {
+    activeCompanyId = companyId;
+    const comp = COMPANY_PROFILES_DATA[companyId];
+    if (!comp) return;
+
+    // Update active tab styles
+    document.querySelectorAll('.company-tab-btn').forEach(btn => {
+        btn.classList.remove('border-indigo-500/60', 'ring-2', 'ring-indigo-500/20', 'bg-indigo-500/10');
+        btn.classList.add('border-white/10', 'bg-slate-900/40');
+    });
+    const activeBtn = document.getElementById('tab_btn_' + companyId);
+    if (activeBtn) {
+        activeBtn.classList.remove('border-white/10', 'bg-slate-900/40');
+        activeBtn.classList.add('border-indigo-500/60', 'ring-2', 'ring-indigo-500/20', 'bg-indigo-500/10');
+    }
+
+    // Update Overview Card
+    document.getElementById('comp_title').innerText = comp.name;
+    document.getElementById('comp_industry_badge').innerText = comp.industry;
+    document.getElementById('comp_facility').innerText = comp.facility;
+    document.getElementById('comp_optimal_thresh').innerText = Number(comp.optimal_threshold || 0.38).toFixed(3);
+    document.getElementById('comp_desc').innerText = comp.description;
+    document.getElementById('comp_res_hourly_cost').innerText = '$' + Number(comp.downtime_cost_per_hour || 8500).toLocaleString() + ' / hr';
+    
+    const transMech = comp.cross_domain_adaptation?.source_transfer_mechanism 
+                   || 'HVAC Chiller thermodynamic entropy accumulation maps directly to equipment kinematics.';
+    document.getElementById('comp_transfer_mechanism').innerText = transMech;
+
+    // Update failure tags
+    const failureContainer = document.getElementById('comp_failure_tags');
+    if (failureContainer) {
+        failureContainer.innerHTML = '';
+        (comp.primary_failure_risks || ['Mechanical Fatigue', 'Thermal Breakdown']).forEach(risk => {
+            const span = document.createElement('span');
+            span.className = 'badge badge-slate text-[10px]';
+            span.innerText = risk;
+            failureContainer.appendChild(span);
+        });
+    }
+
+    // Populate Presets Bar
+    const presetsBar = document.getElementById('comp_presets_bar');
+    if (presetsBar && comp.scenarios) {
+        presetsBar.innerHTML = '';
+        for (const [sKey, sVal] of Object.entries(comp.scenarios)) {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.onclick = () => loadCompanyPreset(sKey);
+            
+            let colorClasses = 'bg-slate-900/60 hover:bg-slate-800 text-slate-300 border border-white/5';
+            if (sVal.badge === 'Safe') colorClasses = 'bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 border border-emerald-500/30';
+            else if (sVal.badge === 'Critical') colorClasses = 'bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 border border-rose-500/30';
+            else if (sVal.badge === 'Warning') colorClasses = 'bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 border border-amber-500/30';
+
+            btn.className = `px-2.5 py-1 text-[10px] font-semibold rounded-lg transition-all ${colorClasses}`;
+            btn.innerText = sVal.name;
+            presetsBar.appendChild(btn);
+        }
+    }
+
+    // Render Company-Specific Sensor Sliders
+    renderSensorSliders(comp);
+
+    // Reset prediction display to nominal
+    resetPredictionDisplay();
+
+    if (window.lucide) lucide.createIcons();
+}
+
+function loadCompanyPreset(scenarioKey) {
+    const comp = COMPANY_PROFILES_DATA[activeCompanyId];
+    if (!comp || !comp.scenarios || !comp.scenarios[scenarioKey]) return;
+
+    const scen = comp.scenarios[scenarioKey];
+    for (const [chan, val] of Object.entries(scen.sensors || {})) {
+        const inp = document.getElementById('input_' + chan);
+        const valSpan = document.getElementById('slider_val_' + chan);
+        const sDef = (comp.sensor_schema || []).find(s => s.channel === chan);
+        if (inp) {
+            inp.value = val;
+            if (valSpan && sDef) {
+                valSpan.innerText = `${val} ${sDef.unit}`;
+            }
+        }
+    }
+    runCompanyAssessment();
+}
+
+function renderSensorSliders(comp) {
+    const container = document.getElementById('company_sensor_sliders_container');
+    if (!container) return;
+    container.innerHTML = '';
+    const schema = comp.sensor_schema || [];
+    document.getElementById('sensor_channel_count').innerText = schema.length + ' Channels';
+
+    schema.forEach((sensor) => {
+        const div = document.createElement('div');
+        div.className = 'p-3 bg-slate-900/40 rounded-xl border border-white/5 text-xs';
+        
+        const minVal = sensor.min !== undefined ? sensor.min : 0;
+        const maxVal = sensor.max !== undefined ? sensor.max : 100;
+        const stepVal = sensor.step !== undefined ? sensor.step : 1;
+        const defVal = sensor.default !== undefined ? sensor.default : (minVal + maxVal) / 2;
+
+        div.innerHTML = `
+            <div class="flex items-center justify-between mb-1.5">
+                <div>
+                    <span class="font-bold text-slate-200">${sensor.name}</span>
+                    <span class="text-[10px] text-slate-400 block">${sensor.role || ''}</span>
+                </div>
+                <span id="slider_val_${sensor.channel}" class="font-mono font-bold text-cyan-400">${defVal} ${sensor.unit}</span>
+            </div>
+            <input type="range" id="input_${sensor.channel}" min="${minVal}" max="${maxVal}" step="${stepVal}" value="${defVal}"
+                   oninput="document.getElementById('slider_val_${sensor.channel}').innerText = this.value + ' ${sensor.unit}'"
+                   class="w-full h-1.5 bg-slate-800 rounded-lg cursor-pointer accent-indigo-500">
+        `;
+        container.appendChild(div);
+    });
+}
+
+function resetPredictionDisplay() {
+    document.getElementById('comp_res_badge').className = 'badge badge-emerald text-xs inline-flex items-center gap-1.5';
+    document.getElementById('comp_res_badge').innerHTML = '<i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i> Nominal Operating Steady-State';
+    document.getElementById('comp_res_title').innerText = 'Nominal Operating Steady-State';
+    document.getElementById('comp_res_risk').innerText = 'Healthy Baseline (No Active Failure Physics)';
+    document.getElementById('comp_res_prob').innerText = '1.2%';
+    document.getElementById('comp_res_bar').style.width = '1.2%';
+    document.getElementById('comp_res_bar').className = 'h-full rounded-full bg-emerald-500 transition-all duration-300';
+    document.getElementById('comp_res_rul').innerText = '620.0 hours';
+    if (window.lucide) lucide.createIcons();
+}
+
+async function runCompanyAssessment() {
+    const btn = document.getElementById('btn_run_company_predict');
+    if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<i data-lucide="loader" class="w-4 h-4 animate-spin mr-1.5 inline"></i> Running Two-Stage Inference...';
+        if (window.lucide) lucide.createIcons();
+    }
+
+    const comp = COMPANY_PROFILES_DATA[activeCompanyId] || Object.values(COMPANY_PROFILES_DATA)[0];
+    const sensorPayload = {};
+    (comp.sensor_schema || []).forEach(sensor => {
+        const inp = document.getElementById('input_' + sensor.channel);
+        if (inp) {
+            sensorPayload[sensor.channel] = parseFloat(inp.value);
+        } else {
+            sensorPayload[sensor.channel] = sensor.default;
+        }
+    });
+
+    try {
+        const resp = await fetch('/api/v1/companies/predict', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                company_id: activeCompanyId,
+                sensors: sensorPayload,
+                threshold: comp.optimal_threshold
+            })
+        });
+
+        const data = await resp.json();
+        if (data.status === 'SUCCESS') {
+            const res = data.result;
+
+            // Update Prediction UI
+            const isFail = Boolean(res.predicted_failure);
+            const probPct = ((res.failure_probability ?? 0.01) * 100).toFixed(1) + '%';
+            document.getElementById('comp_res_prob').innerText = probPct;
+            document.getElementById('comp_res_bar').style.width = probPct;
+
+            if (isFail) {
+                document.getElementById('comp_res_badge').className = 'badge badge-rose text-xs inline-flex items-center gap-1.5';
+                document.getElementById('comp_res_badge').innerHTML = '<i data-lucide="alert-triangle" class="w-3.5 h-3.5"></i> Failure Warning Detected';
+                document.getElementById('comp_res_title').innerText = res.primary_failure_risk || 'Equipment Degradation Flagged';
+                document.getElementById('comp_res_risk').innerText = 'Impending breakdown flagged via BiLSTM-BiGRU-VAE';
+                document.getElementById('comp_res_bar').className = 'h-full rounded-full bg-rose-500 transition-all duration-300';
+            } else {
+                document.getElementById('comp_res_badge').className = 'badge badge-emerald text-xs inline-flex items-center gap-1.5';
+                document.getElementById('comp_res_badge').innerHTML = '<i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i> Nominal Operating Steady-State';
+                document.getElementById('comp_res_title').innerText = 'Normal Operational State';
+                document.getElementById('comp_res_risk').innerText = 'All parameters within standard limits';
+                document.getElementById('comp_res_bar').className = 'h-full rounded-full bg-emerald-500 transition-all duration-300';
+            }
+
+            const rulVal = res.estimated_rul_hours ?? res.maintenance_guidance?.rul_hours ?? 620.0;
+            document.getElementById('comp_res_rul').innerText = Number(rulVal).toFixed(1) + ' hours';
+
+            // Update Actions
+            const actionsCont = document.getElementById('comp_actions_container');
+            if (actionsCont) {
+                actionsCont.innerHTML = '';
+                const actions = res.prescriptive_actions || res.maintenance_guidance?.action_plan || ["Continue regular telemetry monitoring."];
+                actions.forEach(action => {
+                    const item = document.createElement('div');
+                    item.className = 'flex items-start gap-2';
+                    item.innerHTML = `<i data-lucide="chevron-right" class="w-3.5 h-3.5 text-indigo-400 mt-0.5 shrink-0"></i><span>${action}</span>`;
+                    actionsCont.appendChild(item);
+                });
+            }
+
+            // Update Parts
+            const partsCont = document.getElementById('comp_parts_container');
+            if (partsCont) {
+                partsCont.innerHTML = '';
+                const parts = res.spare_parts_manifest || res.maintenance_guidance?.required_parts || [];
+                if (parts.length > 0 && parts[0].sku !== 'N/A') {
+                    parts.forEach(part => {
+                        const item = document.createElement('div');
+                        item.className = 'flex justify-between p-2 bg-slate-900/40 rounded-lg border border-white/5';
+                        item.innerHTML = `<span class="text-slate-200 font-bold">${part.name} (${part.sku})</span><span class="text-cyan-400">Qty: ${part.qty}</span>`;
+                        partsCont.appendChild(item);
+                    });
+                } else {
+                    partsCont.innerHTML = '<div class="text-slate-500 italic text-[11px]">No replacement components required at this stage.</div>';
+                }
+            }
+
+            // Update Latent Vector Display
+            const latentVec = res.stage1_vae_latent || res.stage1_vae?.latent_embeddings;
+            if (latentVec) {
+                const latentCont = document.getElementById('comp_latent_vector');
+                if (latentCont) {
+                    latentCont.innerHTML = '';
+                    latentVec.forEach((val, i) => {
+                        const block = document.createElement('div');
+                        block.className = 'p-2 bg-slate-900/60 rounded-lg border border-white/5 text-center';
+                        block.innerHTML = `<span class="text-slate-500 block text-[9px]">z${i}</span>${val >= 0 ? '+' : ''}${Number(val).toFixed(2)}`;
+                        latentCont.appendChild(block);
+                    });
+                }
+            }
+        }
+    } catch (e) {
+        console.error('Error executing company assessment:', e);
+    } finally {
+        if (btn) {
+            btn.disabled = false;
+            btn.innerHTML = '<i data-lucide="zap" class="w-4 h-4 fill-current"></i><span>Execute Two-Stage Assessment for Active Company</span>';
+        }
+        if (window.lucide) lucide.createIcons();
+    }
+}
+
+// -------------------------------------------------------------
+// New Company Registration Modal Logic
+// -------------------------------------------------------------
+let currentPresetSensors = [];
+
+const COMPANY_PRESETS = {
+    semiconductor: {
+        name: "Nova Semiconductor Fab",
+        industry: "Advanced Silicon Lithography",
+        facility: "Fab 12 - Cleanroom Alpha",
+        equipment: "EUV Photolithography Stepper",
+        downtime: 25000,
+        repair: 3.5,
+        false_positive: 400,
+        sensors: [
+            { channel: "laser_plasma_temp", name: "Plasma Source Temp", unit: "K", default: 310.5, min: 295.0, max: 335.0, step: 0.5, role: "Excitation source thermal boundary" },
+            { channel: "interferometer_error", name: "Interferometer Drift", unit: "nm", default: 0.45, min: 0.0, max: 2.5, step: 0.05, role: "Sub-nanometer wafer stage positioning" },
+            { channel: "vacuum_level", name: "Chamber Vacuum", unit: "Pa", default: 0.002, min: 0.0001, max: 0.05, step: 0.001, role: "High-vacuum optical transmission path" },
+            { channel: "stage_accel", name: "Stage Acceleration", unit: "m/s²", default: 45.0, min: 10.0, max: 90.0, step: 1.0, role: "Scanning reticle stage dynamics" },
+            { channel: "lens_aberration", name: "Mirror Aberration", unit: "pm", default: 12.0, min: 0.0, max: 60.0, step: 1.0, role: "EUV multi-layer mirror wavefront error" },
+            { channel: "cryo_temp", name: "Cryopump Head Temp", unit: "K", default: 12.5, min: 8.0, max: 35.0, step: 0.5, role: "High-vacuum cryo condensation head" },
+            { channel: "vib_isolation", name: "Vibration Isolation", unit: "µm/s", default: 0.12, min: 0.01, max: 1.0, step: 0.01, role: "Pneumatic active seismic vibration cancellation" },
+            { channel: "helium_flow", name: "Helium Cooling Flow", unit: "sccm", default: 850.0, min: 500.0, max: 1200.0, step: 10.0, role: "Wafer underside conductive gas flow" }
+        ]
+    },
+    ev_battery: {
+        name: "Gigacell Energy Systems",
+        industry: "EV Lithium Battery Cell Gigafactory",
+        facility: "Giga-1 Battery Line C",
+        equipment: "Precision Roll-to-Roll Calender Roller",
+        downtime: 18000,
+        repair: 2.0,
+        false_positive: 300,
+        sensors: [
+            { channel: "nip_pressure", name: "Nip Line Pressure", unit: "kN", default: 85.0, min: 20.0, max: 150.0, step: 1.0, role: "Electrode coating compaction force" },
+            { channel: "web_tension", name: "Foil Web Tension", unit: "N", default: 450.0, min: 100.0, max: 800.0, step: 10.0, role: "Copper/Aluminum substrate tension" },
+            { channel: "roll_temp", name: "Heated Roll Temp", unit: "°C", default: 95.0, min: 50.0, max: 150.0, step: 1.0, role: "Calender roll thermal activation" },
+            { channel: "thickness_deviation", name: "Thickness Variation", unit: "µm", default: 0.8, min: 0.0, max: 5.0, step: 0.1, role: "Electrode dry-coating thickness gauge" },
+            { channel: "jack_pressure", name: "Hydraulic Jack Press", unit: "bar", default: 180.0, min: 50.0, max: 260.0, step: 2.0, role: "Bearing block hydraulic loading" },
+            { channel: "motor_load", name: "Drive Motor Load", unit: "Nm", default: 320.0, min: 100.0, max: 600.0, step: 5.0, role: "Main drive roll motor torsional load" },
+            { channel: "acoustic_bearing", name: "Bearing Acoustic Noise", unit: "dB", default: 68.0, min: 40.0, max: 105.0, step: 1.0, role: "Calender bearing cage fatigue noise" },
+            { channel: "web_velocity", name: "Line Web Speed", unit: "m/min", default: 45.0, min: 10.0, max: 90.0, step: 1.0, role: "Continuous roll feeding line velocity" }
+        ]
+    },
+    offshore_wind: {
+        name: "Nordic Offshore Wind Energy",
+        industry: "Offshore Renewable Energy",
+        facility: "North Sea Array Turbine Farm Alpha",
+        equipment: "8MW Direct-Drive Offshore Wind Turbine",
+        downtime: 14000,
+        repair: 4.5,
+        false_positive: 280,
+        sensors: [
+            { channel: "main_bearing_temp", name: "Main Bearing Temp", unit: "°C", default: 58.0, min: 20.0, max: 110.0, step: 1.0, role: "Rotor hub main bearing thermal state" },
+            { channel: "generator_vibration", name: "Generator Vibration", unit: "mm/s", default: 2.4, min: 0.5, max: 12.0, step: 0.1, role: "Stator sub-harmonic magnetic vibration" },
+            { channel: "pitch_torque", name: "Blade Pitch Torque", unit: "kNm", default: 12.5, min: 2.0, max: 35.0, step: 0.5, role: "Aerodynamic blade pitch drive load" },
+            { channel: "gearbox_oil_temp", name: "Lube Oil Temp", unit: "°C", default: 65.0, min: 30.0, max: 120.0, step: 1.0, role: "Forced lubrication oil sump temp" },
+            { channel: "wind_velocity", name: "Nacelle Wind Speed", unit: "m/s", default: 14.5, min: 2.0, max: 35.0, step: 0.5, role: "Ambient wind speed at hub height" },
+            { channel: "generator_speed", name: "Generator Speed", unit: "rpm", default: 12.0, min: 0.0, max: 22.0, step: 0.2, role: "Low-speed direct-drive generator" },
+            { channel: "lube_pressure", name: "Lubrication Pressure", unit: "bar", default: 4.8, min: 1.5, max: 8.0, step: 0.1, role: "Hydraulic oil supply to rotor bearings" },
+            { channel: "tower_deflection", name: "Tower Sway Deflection", unit: "mm", default: 35.0, min: 5.0, max: 120.0, step: 1.0, role: "Offshore aerodynamic mast oscillation" }
+        ]
+    },
+    pharma: {
+        name: "BioPharma Sterile Solutions",
+        industry: "Aseptic Pharmaceutical Manufacturing",
+        facility: "Cleanroom Suite 4 - Bio-Injectables",
+        equipment: "Industrial Lyophilization Freeze Dryer",
+        downtime: 22000,
+        repair: 3.0,
+        false_positive: 350,
+        sensors: [
+            { channel: "condenser_temp", name: "Condenser Temp", unit: "°C", default: -78.5, min: -90.0, max: -40.0, step: 0.5, role: "Ice condenser coil temperature" },
+            { channel: "shelf_inlet_temp", name: "Shelf Silicone Temp", unit: "°C", default: -42.0, min: -60.0, max: 50.0, step: 0.5, role: "Heat transfer fluid shelf circulation" },
+            { channel: "chamber_pressure", name: "Chamber Vacuum", unit: "mTorr", default: 65.0, min: 5.0, max: 500.0, step: 5.0, role: "Sublimation chamber pirani gauge" },
+            { channel: "compressor_discharge", name: "Compressor Discharge", unit: "bar", default: 14.2, min: 8.0, max: 26.0, step: 0.2, role: "Cascade refrigeration stage high side" },
+            { channel: "superheat", name: "Suction Superheat", unit: "K", default: 16.5, min: 2.0, max: 35.0, step: 0.5, role: "Compressor suction thermal safety" },
+            { channel: "eev_steps", name: "Expansion Valve Opening", unit: "steps", default: 220.0, min: 50.0, max: 480.0, step: 5.0, role: "Electronic stepper expansion valve" },
+            { channel: "vial_temp_probe", name: "Product Core Temp", unit: "°C", default: -38.0, min: -55.0, max: 25.0, step: 0.5, role: "Thermocouple inside product vial" },
+            { channel: "circulation_pump_dp", name: "Shelf Pump DP", unit: "bar", default: 1.85, min: 0.5, max: 4.0, step: 0.05, role: "Silicone oil circulation delta-P" }
+        ]
+    }
+};
+
+function openRegisterCompanyModal() {
+    const modal = document.getElementById('registerCompanyModal');
+    if (modal) {
+        modal.classList.remove('hidden');
+        applyCompanyPreset('semiconductor');
+        if (window.lucide) lucide.createIcons();
+    }
+}
+
+function closeRegisterCompanyModal() {
+    const modal = document.getElementById('registerCompanyModal');
+    if (modal) modal.classList.add('hidden');
+}
+
+function applyCompanyPreset(presetKey) {
+    const p = COMPANY_PRESETS[presetKey];
+    if (!p) return;
+
+    document.getElementById('reg_comp_name').value = p.name;
+    document.getElementById('reg_comp_industry').value = p.industry;
+    document.getElementById('reg_comp_facility').value = p.facility;
+    document.getElementById('reg_comp_equipment').value = p.equipment;
+    document.getElementById('reg_comp_downtime').value = p.downtime;
+    document.getElementById('reg_comp_repair_time').value = p.repair;
+    document.getElementById('reg_comp_false_positive').value = p.false_positive;
+
+    currentPresetSensors = JSON.parse(JSON.stringify(p.sensors));
+    renderPresetSensorsList();
+}
+
+function renderPresetSensorsList() {
+    const cont = document.getElementById('reg_sensors_list');
+    if (!cont) return;
+    cont.innerHTML = '';
+
+    currentPresetSensors.forEach((s) => {
+        const row = document.createElement('div');
+        row.className = 'grid grid-cols-4 gap-2 items-center p-2 bg-slate-900/60 rounded-lg border border-white/5 text-[11px]';
+        row.innerHTML = `
+            <div class="col-span-2">
+                <span class="font-bold text-slate-200 block truncate">${s.name}</span>
+                <span class="text-[9px] text-slate-400 font-mono">${s.channel}</span>
+            </div>
+            <div>
+                <span class="text-slate-400 block font-mono">Def: <strong class="text-cyan-400">${s.default} ${s.unit}</strong></span>
+            </div>
+            <div class="text-right">
+                <span class="badge badge-slate text-[9px] font-mono">${s.min} ~ ${s.max}</span>
+            </div>
+        `;
+        cont.appendChild(row);
+    });
+}
+
+function addCompanyTab(newComp) {
+    const grid = document.getElementById('company_tabs_grid');
+    const addCard = document.getElementById('btn_add_tenant_card');
+    if (!grid) return;
+
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.onclick = () => selectCompany(newComp.id);
+    btn.id = 'tab_btn_' + newComp.id;
+    btn.className = 'company-tab-btn card-glass p-3.5 text-left transition-all border border-white/10 bg-slate-900/40 hover:border-white/20';
+    btn.innerHTML = `
+        <div class="flex items-center justify-between mb-2">
+            <div class="w-8 h-8 rounded-lg bg-indigo-500/15 border border-indigo-500/30 text-indigo-400 flex items-center justify-center text-xs font-bold">
+                <i data-lucide="building-2" class="w-4 h-4"></i>
+            </div>
+            <span class="badge badge-slate text-[10px] font-mono">$${Number(newComp.downtime_cost_per_hour).toLocaleString()}/hr</span>
+        </div>
+        <h4 class="text-xs font-bold text-slate-200 truncate">${newComp.name}</h4>
+        <p class="text-[10px] text-slate-400 truncate mt-0.5 font-mono">${newComp.industry}</p>
+    `;
+
+    if (addCard) {
+        grid.insertBefore(btn, addCard);
+    } else {
+        grid.appendChild(btn);
+    }
+    if (window.lucide) lucide.createIcons();
+}
+
+async function submitRegisterCompany(event) {
+    event.preventDefault();
+    const btn = document.getElementById('btn_submit_company');
+    if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = `<i data-lucide="loader" class="w-4 h-4 animate-spin mr-1.5 inline"></i> Registering...`;
+        if (window.lucide) lucide.createIcons();
+    }
+
+    try {
+        const payload = {
+            name: document.getElementById('reg_comp_name').value,
+            industry: document.getElementById('reg_comp_industry').value,
+            facility: document.getElementById('reg_comp_facility').value,
+            equipment_type: document.getElementById('reg_comp_equipment').value,
+            downtime_cost_per_hour: parseFloat(document.getElementById('reg_comp_downtime').value),
+            mean_repair_hours: parseFloat(document.getElementById('reg_comp_repair_time').value),
+            false_positive_inspection_cost: parseFloat(document.getElementById('reg_comp_false_positive').value),
+            sensor_schema: currentPresetSensors
+        };
+
+        const response = await fetch('/api/v1/companies/register', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) throw new Error("Registration failed");
+        const respData = await response.json();
+        const newComp = respData.company;
+
+        // Add to in-memory profile store
+        COMPANY_PROFILES_DATA[newComp.id] = newComp;
+
+        // Inject new tab
+        addCompanyTab(newComp);
+
+        closeRegisterCompanyModal();
+        if (typeof showToast === 'function') {
+            showToast(`Registered enterprise tenant: ${newComp.name}!`, "success");
+        }
+
+        // Immediately select new company
+        selectCompany(newComp.id);
+
+    } catch (e) {
+        console.error('Registration error:', e);
+        if (typeof showToast === 'function') {
+            showToast(`Registration error: ${e.message}`, "error");
+        }
+    } finally {
+        if (btn) {
+            btn.disabled = false;
+            btn.innerHTML = `<i data-lucide="plus" class="w-4 h-4 inline mr-1"></i> Register & Activate Company`;
+            if (window.lucide) lucide.createIcons();
+        }
+    }
+}
+
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', () => {
+    selectCompany('apex_machining');
+    if (window.lucide) lucide.createIcons();
+});
+</script>
+{% endblock %}

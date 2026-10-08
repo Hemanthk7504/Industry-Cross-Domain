@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Two-Stage Cross-Domain Predictive Maintenance{% endblock %} | Mission Control</title>
+
+    <!-- Tailwind CSS v3 CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Google Fonts: Inter, Space Grotesk, JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- FontAwesome 6 (Fallback for existing components) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- KaTeX CDN for academic math expressions -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+
+    <!-- Lenis Smooth Scroll -->
+    <script src="https://unpkg.com/lenis@1.1.9/dist/lenis.min.js"></script>
+
+    <!-- GSAP & ScrollTrigger -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+    <!-- Chart.js 4 -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+    <!-- Design System CSS -->
+    <link rel="stylesheet" href="/static/css/design-system.css">
+    <link rel="stylesheet" href="/static/css/custom.css">
+
+    <script>
+        // Apply theme immediately to prevent FOUC
+        (function() {
+            const saved = localStorage.getItem('cd_theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', saved);
+        })();
+
+        tailwind.config = {
+            darkMode: ['class', '[data-theme="dark"]'],
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+                        display: ['Space Grotesk', '-apple-system', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        mission: {
+                            bg: '#070B14',
+                            surface: '#0E1424',
+                            elevated: '#131A2E',
+                            border: 'rgba(255, 255, 255, 0.08)',
+                            indigo: '#6366F1',
+                            cyan: '#22D3EE',
+                            emerald: '#34D399',
+                            amber: '#FBBF24',
+                            rose: '#FB7185'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="h-full flex overflow-hidden font-sans antialiased select-none">
+
+    <!-- Ambient Aurora Mesh Background & Dot Matrix -->
+    <div class="aurora-bg"></div>
+    <div class="grid-overlay"></div>
+
+    <!-- Page Transition Overlay -->
+    <div id="page-curtain" class="page-transition-curtain"></div>
+
+    <!-- Toast Notification Container -->
+    <div id="toast-container" class="fixed top-5 right-5 z-50 flex flex-col gap-2 max-w-sm pointer-events-none"></div>
+
+    <!-- Mobile Sidebar Backdrop Overlay -->
+    <div id="mobile-sidebar-overlay" onclick="toggleMobileSidebar()" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-30 hidden lg:hidden"></div>
+
+    {% if user %}
+    <!-- Sidebar Navigation (Authenticated Mission Control Workspace) -->
+    <aside id="app-sidebar" class="sidebar flex flex-col shrink-0 z-30 shadow-2xl relative transition-all duration-300 -translate-x-full lg:translate-x-0 fixed lg:static inset-y-0 left-0">
+        <!-- Brand Header with Collapsed Toggle -->
+        <div class="h-16 flex items-center justify-between px-4 border-b border-[var(--border-color)] bg-[var(--bg-surface)]">
+            <a href="/" class="flex items-center gap-3 min-w-0 group">
+                <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-600 via-indigo-500 to-cyan-400 flex items-center justify-center text-white shadow-lg shadow-indigo-500/25 shrink-0 group-hover:scale-105 transition-transform">
+                    <i data-lucide="cpu" class="w-5 h-5"></i>
+                </div>
+                <div class="overflow-hidden min-w-0 sidebar-text">
+                    <div class="flex items-center gap-1.5">
+                        <span class="font-display font-bold text-sm tracking-tight text-[var(--text-main)] truncate">CrossDomain</span>
+                        <span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-indigo-500/20 text-indigo-400 border border-indigo-500/30">v2.4</span>
+                    </div>
+                    <span class="text-[11px] font-medium text-[var(--text-muted)] flex items-center gap-1.5 truncate">
+                        <span class="pulse-dot bg-emerald-400"></span>
+                        Hybrid VAE &bull; 0 FN
+                    </span>
+                </div>
+            </a>
+            <!-- Collapse Button (Desktop) -->
+            <button onclick="toggleSidebar()" class="hidden lg:flex w-7 h-7 rounded-lg items-center justify-center text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--bg-elevated)] transition-colors" title="Toggle Sidebar">
+                <i data-lucide="panel-left-close" class="w-4 h-4"></i>
+            </button>
+        </div>
+
+        <!-- Navigation Links (Spacious, Hierarchical, Lucide Icons) -->
+        <nav class="flex-1 overflow-y-auto px-3 py-4 space-y-4">
+            <!-- Group 1: Operations -->
+            <div>
+                <div class="text-[10px] font-bold text-[var(--text-dim)] uppercase tracking-wider px-3 mb-2 sidebar-section-title">Operations</div>
+                <div class="space-y-1">
+                    <a href="/" class="sidebar-link flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition-all {% if active_page == 'home' %}nav-active-pill font-bold{% else %}text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--bg-elevated)]{% endif %}">
+                        <div class="flex items-center gap-3 min-w-0">
+                            <i data-lucide="home" class="w-4 h-4 shrink-0 {% if active_page == 'home' %}text-indigo-400{% endif %}"></i>
+                            <span class="sidebar-text truncate">Home Architecture</span>
+                        </div>
+                    </a>
+
+                    <a href="/dashboard" class="sidebar-link flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition-all {% if active_page == 'dashboard' %}nav-active-pill font-bold{% else %}text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--bg-elevated)]{% endif %}">
+                        <div class="flex items-center gap-3 min-w-0">
+                            <i data-lucide="layout-dashboard" class="w-4 h-4 shrink-0 {% if active_page == 'dashboard' %}text-indigo-400{% endif %}"></i>
+                            <span class="sidebar-text truncate">Plant Fleet Overview</span>
+                        </div>
+                    </a>
+
+                    <a href="/datasets" class="sidebar-link flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition-all {% if active_page == 'datasets' %}nav-active-pill font-bold{% else %}text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--bg-elevated)]{% endif %}">
+                        <div class="flex items-center gap-3 min-w-0">
+                            <i data-lucide="database" class="w-4 h-4 shrink-0 {% if active_page == 'datasets' %}text-indigo-400{% endif %}"></i>
+                            <span class="sidebar-text truncate">Datasets Studio</span>
+                        </div>
+                        <span class="sidebar-badge badge-subtle badge-cyan text-[10px]">2 DBs</span>
+                    </a>
+
+                    <a href="/live-prediction" class="sidebar-link flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition-all {% if active_page == 'live_prediction' %}nav-active-pill font-bold{% else %}text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--bg-elevated)]{% endif %}">
+                        <div class="flex items-center gap-3 min-w-0">
+                            <i data-lucide="zap" class="w-4 h-4 shrink-0 {% if active_page == 'live_prediction' %}text-indigo-400{% endif %}"></i>
+                            <span class="sidebar-text truncate">Live Inference Lab</span>
+                        </div>
+                        <span class="sidebar-badge badge-subtle badge-indigo text-[10px]">2-Stage</span>
+                    </a>
+
+                    <a href="/digital-twin" class="sidebar-link flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition-all {% if active_page == 'digital_twin' %}nav-active-pill font-bold{% else %}text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--bg-elevated)]{% endif %}">
+                        <div class="flex items-center gap-3 min-w-0">
+                            <i data-lucide="activity" class="w-4 h-4 shrink-0 {% if active_page == 'digital_twin' %}text-indigo-400{% endif %}"></i>
+                            <span class="sidebar-text truncate">Digital Twin Stream</span>
+                        </div>
+                        <span class="sidebar-badge badge-subtle badge-critical text-[10px]">Live</span>
+                    </a>
+
+                    <a href="/batch-analysis" class="sidebar-link flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition-all {% if active_page == 'batch_analysis' %}nav-active-pill font-bold{% else %}text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--bg-elevated)]{% endif %}">
+                        <div class="flex items-center gap-3 min-w-0">
+                            <i data-lucide="file-spreadsheet" class="w-4 h-4 shrink-0 {% if active_page == 'batch_analysis' %}text-indigo-400{% endif %}"></i>
+                            <span class="sidebar-text truncate">Batch CSV Ingestion</span>
+                        </div>
+                    </a>
+
+                    <a href="/work-orders" class="sidebar-link flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition-all {% if active_page == 'work_orders' %}nav-active-pill font-bold{% else %}text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--bg-elevated)]{% endif %}">
+                        <div class="flex items-center gap-3 min-w-0">
+                            <i data-lucide="clipboard-list" class="w-4 h-4 shrink-0 {% if active_page == 'work_orders' %}text-indigo-400{% endif %}"></i>
+                            <span class="sidebar-text truncate">Prescriptive Orders</span>
+                        </div>
+                    </a>
+
+                    <a href="/company-profiles" class="sidebar-link flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition-all {% if active_page == 'company_profiles' %}nav-active-pill font-bold{% else %}text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--bg-elevated)]{% endif %}">
+                        <div class="flex items-center gap-3 min-w-0">
+                            <i data-lucide="building-2" class="w-4 h-4 shrink-0 {% if active_page == 'company_profiles' %}text-indigo-400{% endif %}"></i>
+                            <span class="sidebar-text truncate">Enterprise Companies</span>
+                        </div>
+                        <span class="sidebar-badge badge-subtle badge-indigo text-[10px]">4 Orgs</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Group 2: Intelligence & Benchmarks -->
+            <div>
+                <div class="text-[10px] font-bold text-[var(--text-dim)] uppercase tracking-wider px-3 mb-2 sidebar-section-title">Model Intelligence</div>
+                <div class="space-y-1">
+                    <a href="/model-metrics" class="sidebar-link flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition-all {% if active_page == 'model_metrics' %}nav-active-pill font-bold{% else %}text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--bg-elevated)]{% endif %}">
+                        <div class="flex items-center gap-3 min-w-0">
+                            <i data-lucide="line-chart" class="w-4 h-4 shrink-0 {% if active_page == 'model_metrics' %}text-indigo-400{% endif %}"></i>
+                            <span class="sidebar-text truncate">Training & Metrics</span>
+                        </div>
+                    </a>
+
+                    <a href="/training" class="sidebar-link flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition-all {% if active_page == 'training' %}nav-active-pill font-bold{% else %}text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--bg-elevated)]{% endif %}">
+                        <div class="flex items-center gap-3 min-w-0">
+                            <i data-lucide="cpu" class="w-4 h-4 shrink-0 {% if active_page == 'training' %}text-indigo-400{% endif %}"></i>
+                            <span class="sidebar-text truncate">Retraining Studio</span>
+                        </div>
+                    </a>
+
+                    <a href="/stage1-benchmark" class="sidebar-link flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition-all {% if active_page == 'stage1_benchmark' %}nav-active-pill font-bold{% else %}text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--bg-elevated)]{% endif %}">
+                        <div class="flex items-center gap-3 min-w-0">
+                            <i data-lucide="pie-chart" class="w-4 h-4 shrink-0 {% if active_page == 'stage1_benchmark' %}text-indigo-400{% endif %}"></i>
+                            <span class="sidebar-text truncate">Stage 1: Anomaly Studio</span>
+                        </div>
+                    </a>
+
+                    <a href="/stage2-benchmark" class="sidebar-link flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition-all {% if active_page == 'stage2_benchmark' %}nav-active-pill font-bold{% else %}text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--bg-elevated)]{% endif %}">
+                        <div class="flex items-center gap-3 min-w-0">
+                            <i data-lucide="trophy" class="w-4 h-4 shrink-0 {% if active_page == 'stage2_benchmark' %}text-indigo-400{% endif %}"></i>
+                            <span class="sidebar-text truncate">Stage 2: Leaderboard</span>
+                        </div>
+                        <span class="sidebar-badge badge-subtle badge-healthy text-[10px]">98.7%</span>
+                    </a>
+
+                    <a href="/explainability" class="sidebar-link flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition-all {% if active_page == 'explainability' %}nav-active-pill font-bold{% else %}text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--bg-elevated)]{% endif %}">
+                        <div class="flex items-center gap-3 min-w-0">
+                            <i data-lucide="sparkles" class="w-4 h-4 shrink-0 {% if active_page == 'explainability' %}text-indigo-400{% endif %}"></i>
+                            <span class="sidebar-text truncate">Quad-XAI Diagnostics</span>
+                        </div>
+                        <span class="sidebar-badge badge-subtle badge-indigo text-[10px]">SHAP</span>
+                    </a>
+
+                    <a href="/threshold-ablation" class="sidebar-link flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition-all {% if active_page == 'threshold_ablation' %}nav-active-pill font-bold{% else %}text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--bg-elevated)]{% endif %}">
+                        <div class="flex items-center gap-3 min-w-0">
+                            <i data-lucide="sliders" class="w-4 h-4 shrink-0 {% if active_page == 'threshold_ablation' %}text-indigo-400{% endif %}"></i>
+                            <span class="sidebar-text truncate">Threshold & Ablation</span>
+                        </div>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Group 3: Governance & Specs -->
+            <div>
+                <div class="text-[10px] font-bold text-[var(--text-dim)] uppercase tracking-wider px-3 mb-2 sidebar-section-title">Governance</div>
+                <div class="space-y-1">
+                    <a href="/audit-log" class="sidebar-link flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition-all {% if active_page == 'audit_log' %}nav-active-pill font-bold{% else %}text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--bg-elevated)]{% endif %}">
+                        <div class="flex items-center gap-3 min-w-0">
+                            <i data-lucide="shield-check" class="w-4 h-4 shrink-0 {% if active_page == 'audit_log' %}text-indigo-400{% endif %}"></i>
+                            <span class="sidebar-text truncate">Audit & Drift Ledger</span>
+                        </div>
+                        <span class="sidebar-badge badge-subtle text-[10px]">SHA-256</span>
+                    </a>
+
+                    <a href="/api-docs" class="sidebar-link flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition-all {% if active_page == 'api_docs' %}nav-active-pill font-bold{% else %}text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--bg-elevated)]{% endif %}">
+                        <div class="flex items-center gap-3 min-w-0">
+                            <i data-lucide="code-2" class="w-4 h-4 shrink-0 {% if active_page == 'api_docs' %}text-indigo-400{% endif %}"></i>
+                            <span class="sidebar-text truncate">REST API Specs</span>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Current User Profile Footer -->
+        <div class="p-3 border-t border-[var(--border-color)] bg-[var(--bg-surface)]">
+            <div class="flex items-center gap-3 p-2 rounded-xl bg-[var(--bg-elevated)] border border-[var(--border-color)]">
+                <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-indigo-600 to-cyan-500 text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-md">
+                    {{ user.avatar }}
+                </div>
+                <div class="overflow-hidden flex-1 min-w-0 sidebar-text">
+                    <p class="text-xs font-bold text-[var(--text-main)] truncate">{{ user.name }}</p>
+                    <p class="text-[10px] text-[var(--text-muted)] truncate">{{ user.role_title }}</p>
+                </div>
+                <a href="/logout" title="Sign Out" class="text-[var(--text-muted)] hover:text-rose-400 p-1.5 rounded-lg hover:bg-[var(--bg-surface)] transition-colors">
+                    <i data-lucide="log-out" class="w-4 h-4"></i>
+                </a>
+            </div>
+        </div>
+    </aside>
+    {% endif %}
+
+    <!-- Main Content Shell -->
+    <div class="flex-1 flex flex-col min-w-0 overflow-hidden relative z-10">
+        <!-- Top Navbar -->
+        <header class="h-16 bg-[var(--bg-surface)]/80 backdrop-blur-md border-b border-[var(--border-color)] flex items-center justify-between px-4 sm:px-6 lg:px-8 shrink-0 sticky top-0 z-20">
+            {% if user %}
+            <!-- Left Header: Mobile Toggle & Title -->
+            <div class="flex items-center gap-3 min-w-0">
+                <button onclick="toggleMobileSidebar()" class="lg:hidden p-2 rounded-lg text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--bg-elevated)]">
+                    <i data-lucide="menu" class="w-5 h-5"></i>
+                </button>
+                <div class="flex items-center gap-2 text-xs font-semibold text-[var(--text-muted)]">
+                    <span>CrossDomain</span>
+                    <span>/</span>
+                </div>
+                <h1 class="font-display text-sm sm:text-base font-bold text-[var(--text-main)] tracking-tight truncate">{% block header_title %}Plant Operations Center{% endblock %}</h1>
+                <span class="hidden md:inline text-[var(--border-color)]">|</span>
+                <span class="hidden md:inline text-xs text-[var(--text-muted)] font-medium truncate">{% block header_subtitle %}Two-Stage Hybrid Telemetry & Failure Prediction{% endblock %}</span>
+            </div>
+
+            <!-- Right Header Controls -->
+            <div class="flex items-center gap-2.5 shrink-0">
+                <!-- Command Palette Shortcut Button -->
+                <button onclick="openCommandPalette()" class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-xl border border-[var(--border-color)] bg-[var(--bg-elevated)] hover:bg-[var(--bg-elevated-hover)] text-xs text-[var(--text-muted)] hover:text-[var(--text-main)] transition-all shadow-sm">
+                    <i data-lucide="search" class="w-3.5 h-3.5 text-indigo-400"></i>
+                    <span>Search routes...</span>
+                    <kbd class="ml-2 font-mono text-[10px] bg-[var(--bg-surface)] px-1.5 py-0.5 rounded border border-[var(--border-color)] text-[var(--text-muted)]">⌘K</kbd>
+                </button>
+
+                <!-- Model Champion Pill -->
+                <div class="hidden xl:flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/25">
+                    <span class="pulse-dot bg-emerald-400"></span>
+                    <span>Champion BiLSTM-BiGRU (98.7% Acc | 0 FN)</span>
+                </div>
+
+                <!-- Theme Toggle Button -->
+                <button onclick="toggleTheme()" class="theme-toggle-btn w-9 h-9 rounded-xl flex items-center justify-center border border-[var(--border-color)] bg-[var(--bg-elevated)] hover:bg-[var(--bg-elevated-hover)] text-[var(--text-muted)] hover:text-[var(--text-main)] transition-all shadow-sm" title="Toggle Theme">
+                    <i data-lucide="sun-medium" class="w-4 h-4 hidden [data-theme='light']_&:inline"></i>
+                    <i data-lucide="moon" class="w-4 h-4 [data-theme='light']_&:hidden"></i>
+                </button>
+
+                <!-- Fast Role Switcher Dropdown -->
+                <div class="relative group">
+                    <button class="flex items-center gap-2 text-xs font-semibold px-3 py-1.5 rounded-xl border border-[var(--border-color)] bg-[var(--bg-elevated)] hover:bg-[var(--bg-elevated-hover)] text-[var(--text-main)] transition-all shadow-sm">
+                        <i data-lucide="user-cog" class="w-3.5 h-3.5 text-indigo-400"></i>
+                        <span class="hidden md:inline">{{ user.role_title }}</span>
+                        <i data-lucide="chevron-down" class="w-3 h-3 text-[var(--text-muted)]"></i>
+                    </button>
+                    <div class="absolute right-0 mt-2 w-64 bg-[var(--bg-surface)] border border-[var(--border-color)] rounded-2xl shadow-2xl p-1.5 hidden group-hover:block z-50 backdrop-blur-xl">
+                        <div class="px-3 py-2 text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-wider border-b border-[var(--border-color)]">Switch Operational Role</div>
+                        <a href="/switch-role?role=engineer" class="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs hover:bg-[var(--bg-elevated)] text-[var(--text-main)] transition-colors">
+                            <div class="w-6 h-6 rounded-lg bg-indigo-500/15 text-indigo-400 flex items-center justify-center font-bold text-[10px]">MV</div>
+                            <div>
+                                <strong class="block font-semibold">Maintenance Engineer</strong>
+                                <span class="text-[10px] text-[var(--text-muted)]">Full operational telemetry controls</span>
+                            </div>
+                        </a>
+                        <a href="/switch-role?role=lead" class="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs hover:bg-[var(--bg-elevated)] text-[var(--text-main)] transition-colors">
+                            <div class="w-6 h-6 rounded-lg bg-indigo-500/15 text-indigo-400 flex items-center justify-center font-bold text-[10px]">ER</div>
+                            <div>
+                                <strong class="block font-semibold">Reliability Lead</strong>
+                                <span class="text-[10px] text-[var(--text-muted)]">XAI diagnostics & ablation access</span>
+                            </div>
+                        </a>
+                        <a href="/switch-role?role=manager" class="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs hover:bg-[var(--bg-elevated)] text-[var(--text-main)] transition-colors">
+                            <div class="w-6 h-6 rounded-lg bg-cyan-500/15 text-cyan-400 flex items-center justify-center font-bold text-[10px]">AP</div>
+                            <div>
+                                <strong class="block font-semibold">Plant Operations Director</strong>
+                                <span class="text-[10px] text-[var(--text-muted)]">Fleet overview & work orders</span>
+                            </div>
+                        </a>
+                        <a href="/switch-role?role=auditor" class="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs hover:bg-[var(--bg-elevated)] text-[var(--text-main)] transition-colors">
+                            <div class="w-6 h-6 rounded-lg bg-emerald-500/15 text-emerald-400 flex items-center justify-center font-bold text-[10px]">CL</div>
+                            <div>
+                                <strong class="block font-semibold">Compliance Auditor</strong>
+                                <span class="text-[10px] text-[var(--text-muted)]">SHA-256 ledger & KS-drift</span>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- API Docs Swagger Link -->
+                <a href="/docs" target="_blank" class="w-9 h-9 rounded-xl flex items-center justify-center border border-[var(--border-color)] bg-[var(--bg-elevated)] hover:bg-[var(--bg-elevated-hover)] text-[var(--text-muted)] hover:text-[var(--text-main)] transition-all shadow-sm" title="Interactive Swagger Docs">
+                    <i data-lucide="book-open" class="w-4 h-4 text-cyan-400"></i>
+                </a>
+            </div>
+
+            {% else %}
+            <!-- Public / Guest Header (When unauthenticated) -->
+            <div class="flex items-center gap-6 min-w-0">
+                <a href="/" class="flex items-center gap-3 group">
+                    <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-600 via-indigo-500 to-cyan-400 flex items-center justify-center text-white shadow-lg shadow-indigo-500/25 shrink-0 group-hover:scale-105 transition-transform">
+                        <i data-lucide="cpu" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <span class="font-display font-extrabold text-sm tracking-tight text-[var(--text-main)] block">CrossDomain AI</span>
+                        <span class="text-[10px] font-medium text-[var(--text-muted)] block">Two-Stage Hybrid Architecture v2.4</span>
+                    </div>
+                </a>
+
+                <!-- Public Nav Links -->
+                <nav class="hidden md:flex items-center gap-1 text-xs font-semibold text-[var(--text-muted)]">
+                    <a href="/" class="px-3 py-1.5 rounded-lg hover:text-[var(--text-main)] hover:bg-[var(--bg-elevated)] transition-colors {% if active_page == 'home' %}text-indigo-400 font-bold{% endif %}">Architecture</a>
+                    <a href="/datasets" class="px-3 py-1.5 rounded-lg hover:text-[var(--text-main)] hover:bg-[var(--bg-elevated)] transition-colors {% if active_page == 'datasets' %}text-indigo-400 font-bold{% endif %}">Datasets Studio</a>
+                    <a href="/model-metrics" class="px-3 py-1.5 rounded-lg hover:text-[var(--text-main)] hover:bg-[var(--bg-elevated)] transition-colors {% if active_page == 'model_metrics' %}text-indigo-400 font-bold{% endif %}">Training & Metrics</a>
+                    <a href="/company-profiles" class="px-3 py-1.5 rounded-lg hover:text-[var(--text-main)] hover:bg-[var(--bg-elevated)] transition-colors {% if active_page == 'company_profiles' %}text-indigo-400 font-bold{% endif %}">Enterprise Companies</a>
+                    <a href="/api-docs" class="px-3 py-1.5 rounded-lg hover:text-[var(--text-main)] hover:bg-[var(--bg-elevated)] transition-colors {% if active_page == 'api_docs' %}text-indigo-400 font-bold{% endif %}">REST API</a>
+                </nav>
+            </div>
+
+            <!-- Public Action Controls -->
+            <div class="flex items-center gap-3 shrink-0">
+                <!-- Theme Toggle Button -->
+                <button onclick="toggleTheme()" class="theme-toggle-btn w-9 h-9 rounded-xl flex items-center justify-center border border-[var(--border-color)] bg-[var(--bg-elevated)] hover:bg-[var(--bg-elevated-hover)] text-[var(--text-muted)] hover:text-[var(--text-main)] transition-all shadow-sm" title="Toggle Theme">
+                    <i data-lucide="sun-medium" class="w-4 h-4 hidden [data-theme='light']_&:inline"></i>
+                    <i data-lucide="moon" class="w-4 h-4 [data-theme='light']_&:hidden"></i>
+                </button>
+
+                <div class="flex items-center gap-2">
+                    <a href="/register" class="btn-glass text-xs py-1.5 px-3">
+                        <i data-lucide="user-plus" class="w-3.5 h-3.5 text-indigo-400"></i>
+                        <span>Register</span>
+                    </a>
+                    <a href="/login" class="btn-primary text-xs py-1.5 px-3.5">
+                        <i data-lucide="log-in" class="w-3.5 h-3.5"></i>
+                        <span>Sign In</span>
+                    </a>
+                </div>
+            </div>
+            {% endif %}
+        </header>
+
+        <!-- Main Scrollable Body -->
+        <main class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 main-content" id="main-content-scroll">
+            <div class="max-w-[1400px] mx-auto w-full">
+                {% block content %}{% endblock %}
+            </div>
+        </main>
+    </div>
+
+    <!-- Global Command Palette (Cmd+K / Ctrl+K) Modal -->
+    <div id="cmd-backdrop" class="cmd-backdrop" onclick="if(event.target === this) closeCommandPalette()">
+        <div class="cmd-palette">
+            <div class="cmd-input-wrap">
+                <i data-lucide="search" class="w-5 h-5 text-indigo-400 shrink-0"></i>
+                <input type="text" id="cmd-input" class="cmd-input" placeholder="Jump to page or tool... (Type to search, ESC to close)" autocomplete="off">
+                <kbd class="font-mono text-xs px-2 py-0.5 rounded bg-[var(--bg-elevated)] border border-[var(--border-color)] text-[var(--text-muted)]">ESC</kbd>
+            </div>
+            <div id="cmd-results" class="cmd-results">
+                <!-- Dynamically populated by app.js -->
+            </div>
+            <div class="p-3 border-t border-[var(--border-color)] bg-[var(--bg-elevated)] flex items-center justify-between text-[11px] text-[var(--text-muted)] font-mono">
+                <span>Navigate: &uarr;&darr; &bull; Select: ENTER</span>
+                <span>CrossDomain AI Command Palette</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Global Asset Diagnostics Slide-Over Drawer -->
+    <div id="asset-drawer-backdrop" class="drawer-backdrop" onclick="if(event.target === this) closeAssetDrawer()">
+        <div class="drawer-panel p-6 overflow-y-auto">
+            <div class="flex items-center justify-between pb-4 border-b border-[var(--border-color)]">
+                <div>
+                    <span class="badge-subtle badge-indigo text-[10px] mb-1">ASSET DIAGNOSTICS</span>
+                    <h3 id="drawer-asset-title" class="font-display text-xl font-bold text-[var(--text-main)]">CNC Spindle Unit</h3>
+                    <p id="drawer-asset-id" class="text-xs font-mono text-[var(--text-muted)]">CNC-SPINDLE-402</p>
+                </div>
+                <button onclick="closeAssetDrawer()" class="w-8 h-8 rounded-lg flex items-center justify-center text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--bg-elevated)]">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
+            </div>
+
+            <div class="py-6 space-y-6">
+                <!-- Health Metric Banner -->
+                <div class="p-4 rounded-2xl bg-[var(--bg-elevated)] border border-[var(--border-color)] flex items-center justify-between">
+                    <div>
+                        <span class="text-xs text-[var(--text-muted)] uppercase tracking-wider block font-bold">Health Index</span>
+                        <div id="drawer-health-score" class="font-display text-3xl font-extrabold text-emerald-400">92%</div>
+                    </div>
+                    <div class="text-right">
+                        <span class="text-xs text-[var(--text-muted)] uppercase tracking-wider block font-bold">Assigned Profile</span>
+                        <div id="drawer-failure-mode" class="text-xs font-medium text-slate-300">Normal Operating Envelope</div>
+                    </div>
+                </div>
+
+                <!-- Fast Actions -->
+                <div class="space-y-3">
+                    <h4 class="text-xs font-bold text-[var(--text-muted)] uppercase tracking-wider">Operational Actions</h4>
+                    <a href="/live-prediction" class="w-full btn-primary text-xs py-2.5">
+                        <i data-lucide="zap" class="w-4 h-4"></i>
+                        <span>Run 2-Stage Cross-Domain Inference</span>
+                    </a>
+                    <a href="/explainability" class="w-full btn-glass text-xs py-2.5">
+                        <i data-lucide="sparkles" class="w-4 h-4 text-indigo-400"></i>
+                        <span>Inspect Quad-XAI Attributions (SHAP)</span>
+                    </a>
+                    <a href="/work-orders" class="w-full btn-glass text-xs py-2.5">
+                        <i data-lucide="clipboard-list" class="w-4 h-4 text-cyan-400"></i>
+                        <span>Generate Prescriptive Work Order</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Core Scripts -->
+    <script src="/static/js/app.js"></script>
+    <script src="/static/js/main.js"></script>
+    <script src="/static/js/xai.js"></script>
+    <script src="/static/js/dashboard.js"></script>
+    {% block scripts %}{% endblock %}
+
+    <script>
+        // Init Lucide Icons after template load
+        document.addEventListener('DOMContentLoaded', () => {
+            if (window.lucide) window.lucide.createIcons();
+        });
+    </script>
+</body>
+</html>
