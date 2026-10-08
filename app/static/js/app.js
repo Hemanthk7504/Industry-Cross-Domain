@@ -65,7 +65,7 @@
     };
 
     // =========================================================================
-    // 2. LENIS SMOOTH SCROLLING
+    // 2. LENIS SMOOTH SCROLLING (Global Window + GSAP Ticker Sync)
     // =========================================================================
     let lenis = null;
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -73,28 +73,28 @@
     if (!prefersReducedMotion && typeof Lenis !== 'undefined') {
         try {
             lenis = new Lenis({
-                duration: 1.15,
+                duration: 1.0,
                 easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
                 direction: 'vertical',
                 gestureDirection: 'vertical',
                 smooth: true,
                 smoothTouch: false,
-                touchMultiplier: 2,
+                touchMultiplier: 1.5,
             });
 
-            function raf(time) {
-                lenis.raf(time);
-                requestAnimationFrame(raf);
-            }
-            requestAnimationFrame(raf);
-
-            // Connect Lenis to GSAP ScrollTrigger if available
-            if (window.ScrollTrigger) {
+            // Single RAF ticker loop to prevent delta collision & freezing
+            if (window.ScrollTrigger && window.gsap) {
                 lenis.on('scroll', ScrollTrigger.update);
                 gsap.ticker.add((time) => {
                     lenis.raf(time * 1000);
                 });
                 gsap.ticker.lagSmoothing(0);
+            } else {
+                function raf(time) {
+                    lenis.raf(time);
+                    requestAnimationFrame(raf);
+                }
+                requestAnimationFrame(raf);
             }
         } catch (e) {
             console.warn('Lenis smooth scroll initialization skipped:', e);

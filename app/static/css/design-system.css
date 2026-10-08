@@ -109,16 +109,24 @@ Strict Dark-First Philosophy with Instant Responsive Light Mode Fallback.
   box-sizing: border-box;
 }
 
-html, body {
+html {
   margin: 0;
   padding: 0;
-  height: 100%;
+  min-height: 100%;
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
   background-color: var(--bg-app);
   color: var(--text-main);
   font-family: var(--font-sans);
   letter-spacing: -0.015em;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
@@ -175,12 +183,13 @@ html, body {
 
 /* Subtle Grid Dot Matrix */
 .grid-overlay {
-  position: absolute;
+  position: fixed;
   inset: 0;
   background-image: radial-gradient(rgba(255, 255, 255, 0.07) 1px, transparent 1px);
   background-size: 24px 24px;
   pointer-events: none;
   opacity: 0.7;
+  z-index: 0;
 }
 [data-theme="light"] .grid-overlay {
   background-image: radial-gradient(rgba(15, 23, 42, 0.06) 1px, transparent 1px);
