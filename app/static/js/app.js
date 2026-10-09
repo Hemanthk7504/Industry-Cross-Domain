@@ -7,6 +7,8 @@
 (function () {
     'use strict';
 
+    const prefersReducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
     // =========================================================================
     // 1. THEME MANAGER (Dark-First "Mission Control" + LocalStorage Sync)
     // =========================================================================
@@ -134,38 +136,47 @@
         const elements = document.querySelectorAll('[data-countup]');
         if (!elements.length) return;
 
-        const observer = new IntersectionObserver((entries, obs) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    const el = entry.target;
-                    obs.unobserve(el);
+        function runCountUp(el) {
+            const rawTarget = el.getAttribute('data-countup');
+            const targetVal = parseFloat(rawTarget !== null ? rawTarget : el.innerText.replace(/[^0-9.-]/g, ''));
+            const prefix = el.getAttribute('data-prefix') || '';
+            const suffix = el.getAttribute('data-suffix') || '';
+            const decimalsAttr = el.getAttribute('data-decimals');
+            const decimals = decimalsAttr !== null ? parseInt(decimalsAttr) : (rawTarget && rawTarget.includes('.') ? rawTarget.split('.')[1].length : 0);
+            const duration = parseFloat(el.getAttribute('data-duration') || 1.6);
 
-                    const targetVal = parseFloat(el.getAttribute('data-countup') || el.innerText.replace(/[^0-9.-]/g, ''));
-                    const prefix = el.getAttribute('data-prefix') || '';
-                    const suffix = el.getAttribute('data-suffix') || '';
-                    const decimals = parseInt(el.getAttribute('data-decimals') || (el.getAttribute('data-countup')?.includes('.') ? el.getAttribute('data-countup').split('.')[1].length : 0));
-                    const duration = parseFloat(el.getAttribute('data-duration') || 1.6);
+            if (isNaN(targetVal)) return;
 
-                    if (isNaN(targetVal)) return;
-
-                    const obj = { val: 0 };
-                    if (window.gsap && !prefersReducedMotion) {
-                        gsap.to(obj, {
-                            val: targetVal,
-                            duration: duration,
-                            ease: 'power3.out',
-                            onUpdate: () => {
-                                el.innerText = `${prefix}${obj.val.toFixed(decimals)}${suffix}`;
-                            }
-                        });
-                    } else {
-                        el.innerText = `${prefix}${targetVal.toFixed(decimals)}${suffix}`;
+            if (window.gsap && !prefersReducedMotion) {
+                const obj = { val: 0 };
+                gsap.to(obj, {
+                    val: targetVal,
+                    duration: duration,
+                    ease: 'power3.out',
+                    onUpdate: () => {
+                        el.innerText = `${prefix}${obj.val.toFixed(decimals)}${suffix}`;
                     }
-                }
-            });
-        }, { threshold: 0.15 });
+                });
+            } else {
+                el.innerText = `${prefix}${targetVal.toFixed(decimals)}${suffix}`;
+            }
+        }
 
-        elements.forEach(el => observer.observe(el));
+        if ('IntersectionObserver' in window) {
+            const observer = new IntersectionObserver((entries, obs) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const el = entry.target;
+                        obs.unobserve(el);
+                        runCountUp(el);
+                    }
+                });
+            }, { threshold: 0.05 });
+
+            elements.forEach(el => observer.observe(el));
+        } else {
+            elements.forEach(runCountUp);
+        }
     }
 
     // =========================================================================
@@ -396,11 +407,11 @@
             });
         }
 
-        // Init UI Modules
-        initSpotlights();
-        initTiltCards();
-        initCountUps();
-        initGsapReveals();
+        // Init UI Modules safely
+        try { initSpotlights(); } catch (e) { console.warn('Spotlights error:', e); }
+        try { initTiltCards(); } catch (e) { console.warn('Tilt error:', e); }
+        try { initCountUps(); } catch (e) { console.warn('CountUps error:', e); }
+        try { initGsapReveals(); } catch (e) { console.warn('Reveals error:', e); }
 
         // Bind Command Palette Search
         const cmdInput = document.getElementById('cmd-input');
