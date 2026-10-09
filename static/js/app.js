@@ -1,7 +1,7 @@
 /**
  * CrossDomain AI — Global Application Animation & Interactive Engine
  * Linear / Vercel / Stripe Standard
- * Vanilla JS + GSAP + Lenis + Lucide + KaTeX
+ * Vanilla JS + GSAP + ScrollTrigger + Lucide + KaTeX
  */
 
 (function () {
@@ -65,41 +65,9 @@
     };
 
     // =========================================================================
-    // 2. LENIS SMOOTH SCROLLING (Global Window + GSAP Ticker Sync)
+    // 2. SCROLL & MOTION ENGINE
     // =========================================================================
-    let lenis = null;
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-    if (!prefersReducedMotion && typeof Lenis !== 'undefined') {
-        try {
-            lenis = new Lenis({
-                duration: 1.0,
-                easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-                direction: 'vertical',
-                gestureDirection: 'vertical',
-                smooth: true,
-                smoothTouch: false,
-                touchMultiplier: 1.5,
-            });
-
-            // Single RAF ticker loop to prevent delta collision & freezing
-            if (window.ScrollTrigger && window.gsap) {
-                lenis.on('scroll', ScrollTrigger.update);
-                gsap.ticker.add((time) => {
-                    lenis.raf(time * 1000);
-                });
-                gsap.ticker.lagSmoothing(0);
-            } else {
-                function raf(time) {
-                    lenis.raf(time);
-                    requestAnimationFrame(raf);
-                }
-                requestAnimationFrame(raf);
-            }
-        } catch (e) {
-            console.warn('Lenis smooth scroll initialization skipped:', e);
-        }
-    }
+    // Hardware-accelerated native smooth scroll managed by browser engine.
 
     // =========================================================================
     // 3. CURSOR SPOTLIGHT EFFECT (Mouse Glow on Glass Cards)
