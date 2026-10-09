@@ -5,38 +5,38 @@
 {% block header_subtitle %}Epoch Loss Convergence Curves, ROC Overlays, and Quantitative Benchmark Metrics for Stage 1 & Stage 2 Deep Models{% endblock %}
 
 {% block content %}
-<div class="space-y-6 max-w-[1560px] mx-auto w-full">
+<div class="space-y-6 max-w-[1560px] mx-auto w-full pb-12">
 
     <!-- Mission Control Overview Banner -->
-    <div class="card-glass p-6 sm:p-7 relative overflow-hidden">
+    <div class="glass-card spotlight-card p-6 sm:p-7 relative overflow-hidden border border-[var(--border-color)]">
         <div class="absolute -right-16 -top-16 w-80 h-80 bg-gradient-to-br from-indigo-500/10 to-cyan-500/10 rounded-full blur-3xl pointer-events-none"></div>
         <div class="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
             <div>
                 <div class="flex items-center gap-2 mb-2">
-                    <span class="badge badge-indigo text-xs">
+                    <span class="badge-subtle badge-indigo text-xs">
                         <i data-lucide="cpu" class="w-3.5 h-3.5"></i>
                         Empirical Deep Learning Hub
                     </span>
-                    <span class="badge badge-cyan text-xs">
+                    <span class="badge-subtle badge-cyan text-xs">
                         <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
                         Dual-Stage Pipeline
                     </span>
                 </div>
-                <h2 class="text-2xl font-bold font-heading text-slate-100 tracking-tight">Training Optimization Curves & Full Architectural Metrics</h2>
-                <p class="text-sm text-slate-400 mt-2 max-w-3xl leading-relaxed">
-                    Explore complete convergence histories, validation curves, and comprehensive evaluation metrics for all <strong>8 Stage 1 Anomaly Representation models</strong> and all <strong>7 Stage 2 Predictive Maintenance models</strong>. The proposed champion <strong class="text-indigo-400 font-mono">BiLSTM-BiGRU-VAE</strong> achieves balanced state-of-the-art results: <strong class="text-emerald-400">98.7% accuracy, 0.980 precision, 1.000 recall, 0.990 F1, and 0.999 AUC</strong>.
+                <h2 class="text-2xl font-bold font-display text-[var(--text-main)] tracking-tight">Training Optimization Curves & Full Architectural Metrics</h2>
+                <p class="text-sm text-[var(--text-muted)] mt-2 max-w-3xl leading-relaxed">
+                    Explore complete convergence histories, validation curves, and comprehensive evaluation metrics for all <strong class="text-[var(--text-main)]">8 Stage 1 Anomaly Representation models</strong> and all <strong class="text-[var(--text-main)]">7 Stage 2 Predictive Maintenance models</strong>. The proposed champion <strong class="text-indigo-400 font-mono">BiLSTM-BiGRU-VAE</strong> achieves balanced state-of-the-art results: <strong class="text-emerald-400">98.7% accuracy, 0.980 precision, 1.000 recall, 0.990 F1, and 0.999 AUC</strong>.
                 </p>
             </div>
-            <div class="shrink-0 flex items-center gap-4 bg-slate-900/60 p-4 rounded-xl border border-white/10 backdrop-blur-md">
+            <div class="shrink-0 flex items-center gap-4 bg-[var(--bg-elevated)] p-4 rounded-xl border border-[var(--border-color)] shadow-sm">
                 <div class="w-12 h-12 rounded-lg bg-indigo-500/15 border border-indigo-500/30 flex items-center justify-center text-indigo-400">
                     <i data-lucide="award" class="w-6 h-6"></i>
                 </div>
                 <div>
-                    <span class="text-[11px] font-mono text-slate-400 block uppercase tracking-wider font-semibold">Champion Model</span>
+                    <span class="text-[11px] font-mono text-[var(--text-muted)] block uppercase tracking-wider font-semibold">Champion Model</span>
                     <span class="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-cyan-400 font-mono">BiLSTM-BiGRU-VAE</span>
                     <div class="flex items-center gap-2 mt-1">
-                        <span class="badge badge-emerald text-[10px]">Zero Missed Failures (0 FN)</span>
-                        <span class="badge badge-purple text-[10px]">0.999 AUC</span>
+                        <span class="badge-subtle badge-healthy text-[10px]">Zero Missed Failures (0 FN)</span>
+                        <span class="badge-subtle badge-indigo text-[10px]">0.999 AUC</span>
                     </div>
                 </div>
             </div>
@@ -46,17 +46,17 @@
     <!-- Section 1: Training Loss Convergence Curves (Stage 1 & Stage 2) -->
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
         <!-- Stage 1 VAE Training Convergence (6 Cols) -->
-        <div class="lg:col-span-6 card-glass p-6 flex flex-col justify-between">
+        <div class="lg:col-span-6 glass-card spotlight-card p-6 flex flex-col justify-between border border-[var(--border-color)]">
             <div>
-                <div class="flex items-center justify-between mb-4 pb-3 border-b border-white/5">
+                <div class="flex items-center justify-between mb-4 pb-3 border-b border-[var(--border-color)]">
                     <div>
-                        <h3 class="text-sm font-bold text-slate-100 uppercase tracking-wider flex items-center gap-2 font-heading">
+                        <h3 class="text-sm font-bold text-[var(--text-main)] uppercase tracking-wider flex items-center gap-2 font-display">
                             <i data-lucide="git-merge" class="w-4 h-4 text-cyan-400"></i>
                             Stage 1: VAE Loss Convergence
                         </h3>
-                        <p class="text-xs text-slate-400 mt-0.5">Epoch vs Total ELBO Loss, Reconstruction MSE, and KL Divergence</p>
+                        <p class="text-xs text-[var(--text-muted)] mt-0.5">Epoch vs Total ELBO Loss, Reconstruction MSE, and KL Divergence</p>
                     </div>
-                    <span class="badge badge-cyan text-[11px] font-mono">35 Epochs</span>
+                    <span class="badge-subtle badge-cyan text-[11px] font-mono">35 Epochs</span>
                 </div>
 
                 <div class="h-64 relative">
@@ -64,34 +64,34 @@
                 </div>
             </div>
 
-            <div class="grid grid-cols-3 gap-3 mt-4 pt-3 border-t border-white/5 text-center text-xs">
-                <div class="bg-slate-900/40 p-2.5 rounded-lg border border-white/5">
-                    <span class="text-[11px] text-slate-400 block mb-0.5">Final ELBO Loss</span>
-                    <strong class="font-mono text-slate-200 text-sm">0.029 nats</strong>
+            <div class="grid grid-cols-3 gap-3 mt-4 pt-3 border-t border-[var(--border-color)] text-center text-xs">
+                <div class="bg-[var(--bg-elevated)] p-3 rounded-xl border border-[var(--border-color)] shadow-sm">
+                    <span class="text-[11px] text-[var(--text-muted)] block mb-0.5 font-mono">Final ELBO Loss</span>
+                    <strong class="font-mono text-[var(--text-main)] text-sm">0.029 nats</strong>
                 </div>
-                <div class="bg-slate-900/40 p-2.5 rounded-lg border border-white/5">
-                    <span class="text-[11px] text-slate-400 block mb-0.5">Recon MSE</span>
+                <div class="bg-[var(--bg-elevated)] p-3 rounded-xl border border-[var(--border-color)] shadow-sm">
+                    <span class="text-[11px] text-[var(--text-muted)] block mb-0.5 font-mono">Recon MSE</span>
                     <strong class="font-mono text-cyan-400 text-sm">0.0108</strong>
                 </div>
-                <div class="bg-slate-900/40 p-2.5 rounded-lg border border-white/5">
-                    <span class="text-[11px] text-slate-400 block mb-0.5">KL Divergence</span>
+                <div class="bg-[var(--bg-elevated)] p-3 rounded-xl border border-[var(--border-color)] shadow-sm">
+                    <span class="text-[11px] text-[var(--text-muted)] block mb-0.5 font-mono">KL Divergence</span>
                     <strong class="font-mono text-emerald-400 text-sm">0.018 nats</strong>
                 </div>
             </div>
         </div>
 
         <!-- Stage 2 BiLSTM-BiGRU vs Baselines Training Validation (6 Cols) -->
-        <div class="lg:col-span-6 card-glass p-6 flex flex-col justify-between">
+        <div class="lg:col-span-6 glass-card spotlight-card p-6 flex flex-col justify-between border border-[var(--border-color)]">
             <div>
-                <div class="flex items-center justify-between mb-4 pb-3 border-b border-white/5">
+                <div class="flex items-center justify-between mb-4 pb-3 border-b border-[var(--border-color)]">
                     <div>
-                        <h3 class="text-sm font-bold text-slate-100 uppercase tracking-wider flex items-center gap-2 font-heading">
+                        <h3 class="text-sm font-bold text-[var(--text-main)] uppercase tracking-wider flex items-center gap-2 font-display">
                             <i data-lucide="trending-up" class="w-4 h-4 text-indigo-400"></i>
                             Stage 2: Validation Accuracy & Loss Curves
                         </h3>
-                        <p class="text-xs text-slate-400 mt-0.5">BiLSTM-BiGRU-VAE vs Baseline LSTM across 30 training epochs</p>
+                        <p class="text-xs text-[var(--text-muted)] mt-0.5">BiLSTM-BiGRU-VAE vs Baseline LSTM across 30 training epochs</p>
                     </div>
-                    <span class="badge badge-indigo text-[11px] font-mono">30 Epochs</span>
+                    <span class="badge-subtle badge-indigo text-[11px] font-mono">30 Epochs</span>
                 </div>
 
                 <div class="h-64 relative">
@@ -99,34 +99,34 @@
                 </div>
             </div>
 
-            <div class="grid grid-cols-3 gap-3 mt-4 pt-3 border-t border-white/5 text-center text-xs">
-                <div class="bg-slate-900/40 p-2.5 rounded-lg border border-white/5">
-                    <span class="text-[11px] text-slate-400 block mb-0.5">BiLSTM-BiGRU Acc</span>
+            <div class="grid grid-cols-3 gap-3 mt-4 pt-3 border-t border-[var(--border-color)] text-center text-xs">
+                <div class="bg-[var(--bg-elevated)] p-3 rounded-xl border border-[var(--border-color)] shadow-sm">
+                    <span class="text-[11px] text-[var(--text-muted)] block mb-0.5 font-mono">BiLSTM-BiGRU Acc</span>
                     <strong class="font-mono text-emerald-400 text-sm">98.7%</strong>
                 </div>
-                <div class="bg-slate-900/40 p-2.5 rounded-lg border border-white/5">
-                    <span class="text-[11px] text-slate-400 block mb-0.5">Validation AUC</span>
+                <div class="bg-[var(--bg-elevated)] p-3 rounded-xl border border-[var(--border-color)] shadow-sm">
+                    <span class="text-[11px] text-[var(--text-muted)] block mb-0.5 font-mono">Validation AUC</span>
                     <strong class="font-mono text-amber-400 text-sm">0.999</strong>
                 </div>
-                <div class="bg-slate-900/40 p-2.5 rounded-lg border border-white/5">
-                    <span class="text-[11px] text-slate-400 block mb-0.5">Standard LSTM Acc</span>
-                    <strong class="font-mono text-slate-400 text-sm">93.4%</strong>
+                <div class="bg-[var(--bg-elevated)] p-3 rounded-xl border border-[var(--border-color)] shadow-sm">
+                    <span class="text-[11px] text-[var(--text-muted)] block mb-0.5 font-mono">Standard LSTM Acc</span>
+                    <strong class="font-mono text-[var(--text-dim)] text-sm">93.4%</strong>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Section 2: Overlaid ROC Curves for All 7 Stage 2 Failure Models -->
-    <div class="card-glass p-6">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-4 pb-3 border-b border-white/5 gap-2">
+    <div class="glass-card spotlight-card p-6 border border-[var(--border-color)]">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-4 pb-3 border-b border-[var(--border-color)] gap-2">
             <div>
-                <h3 class="text-base font-bold text-slate-100 flex items-center gap-2 font-heading">
+                <h3 class="text-base font-bold text-[var(--text-main)] flex items-center gap-2 font-display">
                     <i data-lucide="git-branch" class="w-5 h-5 text-indigo-400"></i>
                     Overlaid ROC Curves for All 7 Stage 2 Predictive Maintenance Models
                 </h3>
-                <p class="text-xs text-slate-400 mt-0.5">Comparative sensitivity (True Positive Rate) vs False Positive Rate highlighting the 0.999 AUC Champion</p>
+                <p class="text-xs text-[var(--text-muted)] mt-0.5">Comparative sensitivity (True Positive Rate) vs False Positive Rate highlighting the 0.999 AUC Champion</p>
             </div>
-            <span class="badge badge-emerald text-xs">Full Multi-Model Overlay</span>
+            <span class="badge-subtle badge-healthy text-xs">Full Multi-Model Overlay</span>
         </div>
 
         <div class="h-80 relative">
@@ -135,16 +135,16 @@
     </div>
 
     <!-- Section 3: Comparative Bar Chart (Accuracy, Recall, & ROC-AUC Comparison) -->
-    <div class="card-glass p-6">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-4 pb-3 border-b border-white/5 gap-2">
+    <div class="glass-card spotlight-card p-6 border border-[var(--border-color)]">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-4 pb-3 border-b border-[var(--border-color)] gap-2">
             <div>
-                <h3 class="text-base font-bold text-slate-100 flex items-center gap-2 font-heading">
+                <h3 class="text-base font-bold text-[var(--text-main)] flex items-center gap-2 font-display">
                     <i data-lucide="bar-chart-3" class="w-5 h-5 text-cyan-400"></i>
                     Accuracy & Recall Comparison Across All 7 Models
                 </h3>
-                <p class="text-xs text-slate-400 mt-0.5">Highlighting the champion's balanced 98.7% Accuracy and 100% Recall (Zero missed failures)</p>
+                <p class="text-xs text-[var(--text-muted)] mt-0.5">Highlighting the champion's balanced 98.7% Accuracy and 100% Recall (Zero missed failures)</p>
             </div>
-            <span class="badge badge-indigo text-xs font-mono">Test Set N=3,000</span>
+            <span class="badge-subtle badge-indigo text-xs font-mono">Test Set N=3,000</span>
         </div>
 
         <div class="h-72 relative">
@@ -153,55 +153,55 @@
     </div>
 
     <!-- Section 4: Stage 1 Comprehensive Metrics Table (8 Models) -->
-    <div class="card-glass p-6">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-4 pb-3 border-b border-white/5 gap-2">
+    <div class="glass-card spotlight-card p-6 border border-[var(--border-color)]">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-4 pb-3 border-b border-[var(--border-color)] gap-2">
             <div>
-                <h3 class="text-base font-bold text-slate-100 font-heading">Stage 1 Anomaly Representation Models &mdash; Full Metrics Table</h3>
-                <p class="text-xs text-slate-400 mt-0.5">Evaluated on 2,500 HVAC operational records (10 thermodynamic channels)</p>
+                <h3 class="text-base font-bold text-[var(--text-main)] font-display">Stage 1 Anomaly Representation Models &mdash; Full Metrics Table</h3>
+                <p class="text-xs text-[var(--text-muted)] mt-0.5">Evaluated on 2,500 HVAC operational records (10 thermodynamic channels)</p>
             </div>
-            <span class="badge badge-cyan text-xs">8 Models Evaluated</span>
+            <span class="badge-subtle badge-cyan text-xs">8 Models Evaluated</span>
         </div>
 
-        <div class="overflow-x-auto">
-            <table class="w-full text-left text-xs border-collapse">
+        <div class="overflow-x-auto rounded-xl border border-[var(--border-color)]">
+            <table class="table-mission font-mono text-xs">
                 <thead>
-                    <tr class="bg-slate-900/50 border-y border-white/5 text-slate-400 uppercase font-semibold tracking-wider font-mono">
-                        <th class="py-3 px-3">Architecture</th>
-                        <th class="py-3 px-3">Representation Paradigm</th>
-                        <th class="py-3 px-2 text-center">Latent Dim</th>
-                        <th class="py-3 px-2 text-center">ROC-AUC</th>
-                        <th class="py-3 px-2 text-center">PR-AUC</th>
-                        <th class="py-3 px-2 text-center">Precision</th>
-                        <th class="py-3 px-2 text-center">Recall</th>
-                        <th class="py-3 px-2 text-center">F1-Score</th>
-                        <th class="py-3 px-2 text-center">Specificity</th>
-                        <th class="py-3 px-2 text-center">Recon MSE</th>
-                        <th class="py-3 px-2 text-center">Latency (ms)</th>
-                        <th class="py-3 px-2 text-center">Train Time</th>
+                    <tr>
+                        <th>Architecture</th>
+                        <th>Representation Paradigm</th>
+                        <th class="text-center">Latent Dim</th>
+                        <th class="text-center">ROC-AUC</th>
+                        <th class="text-center">PR-AUC</th>
+                        <th class="text-center">Precision</th>
+                        <th class="text-center">Recall</th>
+                        <th class="text-center">F1-Score</th>
+                        <th class="text-center">Specificity</th>
+                        <th class="text-center">Recon MSE</th>
+                        <th class="text-center">Latency</th>
+                        <th class="text-center">Train Time</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-white/5 font-medium text-slate-300">
+                <tbody>
                     {% for m in stage1_metrics %}
-                    <tr class="hover:bg-white/[0.03] transition-colors {% if m.id == 'vae' %}bg-indigo-500/10 font-bold text-slate-100 border-l-2 border-indigo-400{% endif %}">
-                        <td class="py-3 px-3 flex items-center gap-2">
+                    <tr class="{% if m.id == 'vae' %}bg-indigo-500/10 font-bold border-l-2 border-indigo-500 text-[var(--text-main)]{% endif %}">
+                        <td class="font-sans flex items-center gap-2">
                             {% if m.id == 'vae' %}
                             <i data-lucide="crown" class="w-4 h-4 text-amber-400 shrink-0"></i>
-                            <span class="text-indigo-300 font-extrabold font-mono">{{ m.name }}</span>
+                            <span class="text-indigo-400 font-extrabold font-mono">{{ m.name }}</span>
                             {% else %}
-                            <span class="font-mono text-slate-300">{{ m.name }}</span>
+                            <span class="font-mono text-[var(--text-main)]">{{ m.name }}</span>
                             {% endif %}
                         </td>
-                        <td class="py-3 px-3 text-slate-400">{{ m.paradigm }}</td>
-                        <td class="py-3 px-2 text-center font-mono">{{ m.latent_dim }}</td>
-                        <td class="py-3 px-2 text-center font-mono {% if m.id == 'vae' %}text-cyan-400 font-extrabold{% endif %}">{{ "%.3f"|format(m.roc_auc) }}</td>
-                        <td class="py-3 px-2 text-center font-mono">{{ "%.3f"|format(m.pr_auc) }}</td>
-                        <td class="py-3 px-2 text-center font-mono">{{ "%.3f"|format(m.precision) }}</td>
-                        <td class="py-3 px-2 text-center font-mono">{{ "%.3f"|format(m.recall) }}</td>
-                        <td class="py-3 px-2 text-center font-mono">{{ "%.3f"|format(m.f1_score) }}</td>
-                        <td class="py-3 px-2 text-center font-mono">{{ "%.3f"|format(m.specificity) }}</td>
-                        <td class="py-3 px-2 text-center font-mono text-slate-400">{{ "%.4f"|format(m.recon_mse) if m.recon_mse else 'N/A' }}</td>
-                        <td class="py-3 px-2 text-center font-mono text-slate-400">{{ m.latency_ms }}</td>
-                        <td class="py-3 px-2 text-center font-mono text-slate-400">{{ m.train_time_s }}s</td>
+                        <td class="text-[var(--text-muted)] font-sans">{{ m.paradigm }}</td>
+                        <td class="text-center">{{ m.latent_dim }}</td>
+                        <td class="text-center {% if m.id == 'vae' %}text-cyan-400 font-extrabold{% endif %}">{{ "%.3f"|format(m.roc_auc) }}</td>
+                        <td class="text-center">{{ "%.3f"|format(m.pr_auc) }}</td>
+                        <td class="text-center">{{ "%.3f"|format(m.precision) }}</td>
+                        <td class="text-center">{{ "%.3f"|format(m.recall) }}</td>
+                        <td class="text-center">{{ "%.3f"|format(m.f1_score) }}</td>
+                        <td class="text-center">{{ "%.3f"|format(m.specificity) }}</td>
+                        <td class="text-center text-[var(--text-muted)]">{{ "%.4f"|format(m.recon_mse) if m.recon_mse else 'N/A' }}</td>
+                        <td class="text-center text-[var(--text-muted)]">{{ m.latency_ms }} ms</td>
+                        <td class="text-center text-[var(--text-muted)]">{{ m.train_time_s }}s</td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -210,57 +210,57 @@
     </div>
 
     <!-- Section 5: Stage 2 Comprehensive Metrics Table (7 Models) -->
-    <div class="card-glass p-6">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-4 pb-3 border-b border-white/5 gap-2">
+    <div class="glass-card spotlight-card p-6 border border-[var(--border-color)]">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-4 pb-3 border-b border-[var(--border-color)] gap-2">
             <div>
-                <h3 class="text-base font-bold text-slate-100 font-heading">Stage 2 Predictive Maintenance Models &mdash; Full Metrics Table</h3>
-                <p class="text-xs text-slate-400 mt-0.5">Evaluated on 3,500 test records across 5 physics-based failure mechanisms (TWF, HDF, PWF, OSF, RNF)</p>
+                <h3 class="text-base font-bold text-[var(--text-main)] font-display">Stage 2 Predictive Maintenance Models &mdash; Full Metrics Table</h3>
+                <p class="text-xs text-[var(--text-muted)] mt-0.5">Evaluated on 3,500 test records across 5 physics-based failure mechanisms (TWF, HDF, PWF, OSF, RNF)</p>
             </div>
-            <span class="badge badge-indigo text-xs">7 Models Evaluated</span>
+            <span class="badge-subtle badge-indigo text-xs">7 Models Evaluated</span>
         </div>
 
-        <div class="overflow-x-auto">
-            <table class="w-full text-left text-xs border-collapse">
+        <div class="overflow-x-auto rounded-xl border border-[var(--border-color)]">
+            <table class="table-mission font-mono text-xs">
                 <thead>
-                    <tr class="bg-slate-900/50 border-y border-white/5 text-slate-400 uppercase font-semibold tracking-wider font-mono">
-                        <th class="py-3 px-3">Architecture</th>
-                        <th class="py-3 px-3">Model Type</th>
-                        <th class="py-3 px-2 text-center">Accuracy</th>
-                        <th class="py-3 px-2 text-center">Precision</th>
-                        <th class="py-3 px-2 text-center">Recall</th>
-                        <th class="py-3 px-2 text-center">F1-Score</th>
-                        <th class="py-3 px-2 text-center">ROC-AUC</th>
-                        <th class="py-3 px-2 text-center">PR-AUC</th>
-                        <th class="py-3 px-2 text-center">Specificity</th>
-                        <th class="py-3 px-2 text-center">Missed Failures</th>
-                        <th class="py-3 px-2 text-center">Latency</th>
-                        <th class="py-3 px-2 text-center">Train Time</th>
+                    <tr>
+                        <th>Architecture</th>
+                        <th>Model Type</th>
+                        <th class="text-center">Accuracy</th>
+                        <th class="text-center">Precision</th>
+                        <th class="text-center">Recall</th>
+                        <th class="text-center">F1-Score</th>
+                        <th class="text-center">ROC-AUC</th>
+                        <th class="text-center">PR-AUC</th>
+                        <th class="text-center">Specificity</th>
+                        <th class="text-center">Missed Failures</th>
+                        <th class="text-center">Latency</th>
+                        <th class="text-center">Train Time</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-white/5 font-medium text-slate-300">
+                <tbody>
                     {% for m in stage2_metrics %}
-                    <tr class="hover:bg-white/[0.03] transition-colors {% if m.id == 'bilstm_bigru_vae' %}bg-indigo-500/10 font-bold text-slate-100 border-l-2 border-indigo-400{% endif %}">
-                        <td class="py-3 px-3 flex items-center gap-2">
+                    <tr class="{% if m.id == 'bilstm_bigru_vae' %}bg-indigo-500/10 font-bold border-l-2 border-indigo-500 text-[var(--text-main)]{% endif %}">
+                        <td class="font-sans flex items-center gap-2">
                             {% if m.id == 'bilstm_bigru_vae' %}
                             <i data-lucide="crown" class="w-4 h-4 text-amber-400 shrink-0"></i>
-                            <span class="text-indigo-300 font-extrabold font-mono">{{ m.name }}</span>
+                            <span class="text-indigo-400 font-extrabold font-mono">{{ m.name }}</span>
                             {% else %}
-                            <span class="font-mono text-slate-300">{{ m.name }}</span>
+                            <span class="font-mono text-[var(--text-main)]">{{ m.name }}</span>
                             {% endif %}
                         </td>
-                        <td class="py-3 px-3 text-slate-400">{{ m.type }}</td>
-                        <td class="py-3 px-2 text-center font-mono {% if m.id == 'bilstm_bigru_vae' %}text-cyan-400 font-extrabold{% endif %}">{{ "%.1f"|format(m.accuracy * 100) }}%</td>
-                        <td class="py-3 px-2 text-center font-mono">{{ "%.3f"|format(m.precision) }}</td>
-                        <td class="py-3 px-2 text-center font-mono {% if m.recall == 1.0 %}text-emerald-400 font-extrabold{% endif %}">{{ "%.3f"|format(m.recall) }}</td>
-                        <td class="py-3 px-2 text-center font-mono">{{ "%.3f"|format(m.f1_score) }}</td>
-                        <td class="py-3 px-2 text-center font-mono {% if m.id == 'bilstm_bigru_vae' %}text-amber-400 font-extrabold{% endif %}">{{ "%.3f"|format(m.roc_auc) }}</td>
-                        <td class="py-3 px-2 text-center font-mono">{{ "%.3f"|format(m.pr_auc) }}</td>
-                        <td class="py-3 px-2 text-center font-mono">{{ "%.3f"|format(m.specificity) }}</td>
-                        <td class="py-3 px-2 text-center font-mono {% if m.missed_failures == 0 %}text-emerald-400 font-extrabold{% else %}text-rose-400{% endif %}">
+                        <td class="text-[var(--text-muted)] font-sans">{{ m.type }}</td>
+                        <td class="text-center {% if m.id == 'bilstm_bigru_vae' %}text-cyan-400 font-extrabold{% endif %}">{{ "%.1f"|format(m.accuracy * 100) }}%</td>
+                        <td class="text-center">{{ "%.3f"|format(m.precision) }}</td>
+                        <td class="text-center {% if m.recall == 1.0 %}text-emerald-400 font-extrabold{% endif %}">{{ "%.3f"|format(m.recall) }}</td>
+                        <td class="text-center">{{ "%.3f"|format(m.f1_score) }}</td>
+                        <td class="text-center {% if m.id == 'bilstm_bigru_vae' %}text-amber-400 font-extrabold{% endif %}">{{ "%.3f"|format(m.roc_auc) }}</td>
+                        <td class="text-center">{{ "%.3f"|format(m.pr_auc) }}</td>
+                        <td class="text-center">{{ "%.3f"|format(m.specificity) }}</td>
+                        <td class="text-center {% if m.missed_failures == 0 %}text-emerald-400 font-extrabold{% else %}text-rose-400{% endif %}">
                             {{ m.missed_failures }}
                         </td>
-                        <td class="py-3 px-2 text-center font-mono text-slate-400">{{ m.latency_ms }} ms</td>
-                        <td class="py-3 px-2 text-center font-mono text-slate-400">{{ m.train_time_s }}s</td>
+                        <td class="text-center text-[var(--text-muted)]">{{ m.latency_ms }} ms</td>
+                        <td class="text-center text-[var(--text-muted)]">{{ m.train_time_s }}s</td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -276,14 +276,22 @@
     document.addEventListener('DOMContentLoaded', () => {
         if (window.lucide) lucide.createIcons();
 
-        const isDark = document.documentElement.classList.contains('dark') || !document.documentElement.classList.contains('light');
-        const gridColor = isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.06)';
-        const tickColor = isDark ? '#8A94B2' : '#64748B';
-        const titleColor = isDark ? '#CBD5E1' : '#334155';
-        const fontMono = "'JetBrains Mono', monospace";
-        const fontSans = "'Inter', sans-serif";
+        function getThemeConfig() {
+            const isDark = document.documentElement.getAttribute('data-theme') !== 'light';
+            return {
+                isDark,
+                gridColor: isDark ? 'rgba(255, 255, 255, 0.06)' : 'rgba(15, 23, 42, 0.08)',
+                tickColor: isDark ? '#94A3B8' : '#475569',
+                titleColor: isDark ? '#E2E8F0' : '#0F172A',
+                fontMono: "'JetBrains Mono', monospace",
+                fontSans: "'Inter', sans-serif"
+            };
+        }
 
+        const themeCfg = getThemeConfig();
         const vaeData = {{ training_data | tojson }};
+        const rocData = {{ roc_curves | tojson }};
+        const s2Models = {{ stage2_metrics | tojson }};
 
         // 1. Stage 1 VAE Training Convergence Chart
         const vaeCtx = document.getElementById('vaeConvergenceChart')?.getContext('2d');
@@ -328,20 +336,20 @@
                     maintainAspectRatio: false,
                     scales: {
                         x: { 
-                            grid: { color: gridColor }, 
-                            ticks: { color: tickColor, font: { family: fontMono, size: 10 } },
-                            title: { display: true, text: 'Training Epoch', color: titleColor, font: { family: fontSans, size: 11 } } 
+                            grid: { color: themeCfg.gridColor }, 
+                            ticks: { color: themeCfg.tickColor, font: { family: themeCfg.fontMono, size: 10 } },
+                            title: { display: true, text: 'Training Epoch', color: themeCfg.titleColor, font: { family: themeCfg.fontSans, size: 11, weight: 600 } } 
                         },
                         y: { 
-                            grid: { color: gridColor }, 
-                            ticks: { color: tickColor, font: { family: fontMono, size: 10 } },
-                            title: { display: true, text: 'Loss Value', color: titleColor, font: { family: fontSans, size: 11 } } 
+                            grid: { color: themeCfg.gridColor }, 
+                            ticks: { color: themeCfg.tickColor, font: { family: themeCfg.fontMono, size: 10 } },
+                            title: { display: true, text: 'Loss Value', color: themeCfg.titleColor, font: { family: themeCfg.fontSans, size: 11, weight: 600 } } 
                         }
                     },
                     plugins: { 
                         legend: { 
                             position: 'top', 
-                            labels: { color: titleColor, boxWidth: 12, font: { family: fontSans, size: 11 } } 
+                            labels: { color: themeCfg.titleColor, boxWidth: 12, font: { family: themeCfg.fontSans, size: 11 } } 
                         } 
                     }
                 }
@@ -388,22 +396,22 @@
                     maintainAspectRatio: false,
                     scales: {
                         x: { 
-                            grid: { color: gridColor }, 
-                            ticks: { color: tickColor, font: { family: fontMono, size: 10 } },
-                            title: { display: true, text: 'Training Epoch', color: titleColor, font: { family: fontSans, size: 11 } } 
+                            grid: { color: themeCfg.gridColor }, 
+                            ticks: { color: themeCfg.tickColor, font: { family: themeCfg.fontMono, size: 10 } },
+                            title: { display: true, text: 'Training Epoch', color: themeCfg.titleColor, font: { family: themeCfg.fontSans, size: 11, weight: 600 } } 
                         },
                         y: { 
                             min: 0.8, 
                             max: 1.0, 
-                            grid: { color: gridColor }, 
-                            ticks: { color: tickColor, font: { family: fontMono, size: 10 } },
-                            title: { display: true, text: 'Score', color: titleColor, font: { family: fontSans, size: 11 } } 
+                            grid: { color: themeCfg.gridColor }, 
+                            ticks: { color: themeCfg.tickColor, font: { family: themeCfg.fontMono, size: 10 } },
+                            title: { display: true, text: 'Score', color: themeCfg.titleColor, font: { family: themeCfg.fontSans, size: 11, weight: 600 } } 
                         }
                     },
                     plugins: { 
                         legend: { 
                             position: 'top', 
-                            labels: { color: titleColor, boxWidth: 12, font: { family: fontSans, size: 11 } } 
+                            labels: { color: themeCfg.titleColor, boxWidth: 12, font: { family: themeCfg.fontSans, size: 11 } } 
                         } 
                     }
                 }
@@ -412,7 +420,6 @@
 
         // 3. Overlaid ROC Curves for All 7 Stage 2 Models
         const rocCtx = document.getElementById('overlaidRocChart')?.getContext('2d');
-        const rocData = {{ roc_curves | tojson }};
         if (rocCtx && rocData) {
             const datasets = [];
             for (const [key, m] of Object.entries(rocData.models)) {
@@ -425,13 +432,12 @@
                     pointRadius: 0
                 });
             }
-            // Random baseline
             datasets.push({
-                label: 'Random Classifier (AUC=0.500)',
+                label: 'Random Baseline (AUC=0.500)',
                 data: rocData.fpr_grid,
-                borderColor: '#475569',
-                borderWidth: 1,
-                borderDash: [2, 2],
+                borderColor: themeCfg.isDark ? '#475569' : '#94a3b8',
+                borderWidth: 1.5,
+                borderDash: [3, 3],
                 pointRadius: 0
             });
 
@@ -446,22 +452,22 @@
                     maintainAspectRatio: false,
                     scales: {
                         x: { 
-                            grid: { color: gridColor }, 
-                            ticks: { color: tickColor, font: { family: fontMono, size: 10 } },
-                            title: { display: true, text: 'False Positive Rate (FPR)', color: titleColor, font: { family: fontSans, size: 11 } } 
+                            grid: { color: themeCfg.gridColor }, 
+                            ticks: { color: themeCfg.tickColor, font: { family: themeCfg.fontMono, size: 10 } },
+                            title: { display: true, text: 'False Positive Rate (FPR)', color: themeCfg.titleColor, font: { family: themeCfg.fontSans, size: 11, weight: 600 } } 
                         },
                         y: { 
                             min: 0, 
                             max: 1.0, 
-                            grid: { color: gridColor }, 
-                            ticks: { color: tickColor, font: { family: fontMono, size: 10 } },
-                            title: { display: true, text: 'True Positive Rate (TPR / Sensitivity)', color: titleColor, font: { family: fontSans, size: 11 } } 
+                            grid: { color: themeCfg.gridColor }, 
+                            ticks: { color: themeCfg.tickColor, font: { family: themeCfg.fontMono, size: 10 } },
+                            title: { display: true, text: 'True Positive Rate (TPR / Sensitivity)', color: themeCfg.titleColor, font: { family: themeCfg.fontSans, size: 11, weight: 600 } } 
                         }
                     },
                     plugins: { 
                         legend: { 
                             position: 'bottom', 
-                            labels: { color: titleColor, boxWidth: 12, font: { family: fontSans, size: 11 } } 
+                            labels: { color: themeCfg.titleColor, boxWidth: 12, font: { family: themeCfg.fontSans, size: 11 } } 
                         } 
                     }
                 }
@@ -470,7 +476,6 @@
 
         // 4. Bar Chart for Accuracy and Recall across 7 models
         const barCtx = document.getElementById('metricsBarChart')?.getContext('2d');
-        const s2Models = {{ stage2_metrics | tojson }};
         if (barCtx && s2Models) {
             new Chart(barCtx, {
                 type: 'bar',
@@ -509,20 +514,20 @@
                     scales: {
                         x: { 
                             grid: { display: false },
-                            ticks: { color: tickColor, font: { family: fontSans, size: 11 } }
+                            ticks: { color: themeCfg.tickColor, font: { family: themeCfg.fontSans, size: 11 } }
                         },
                         y: { 
                             min: 80, 
                             max: 100, 
-                            grid: { color: gridColor }, 
-                            ticks: { color: tickColor, font: { family: fontMono, size: 10 } },
-                            title: { display: true, text: 'Score Percentage (%)', color: titleColor, font: { family: fontSans, size: 11 } } 
+                            grid: { color: themeCfg.gridColor }, 
+                            ticks: { color: themeCfg.tickColor, font: { family: themeCfg.fontMono, size: 10 } },
+                            title: { display: true, text: 'Score Percentage (%)', color: themeCfg.titleColor, font: { family: themeCfg.fontSans, size: 11, weight: 600 } } 
                         }
                     },
                     plugins: { 
                         legend: { 
                             position: 'top', 
-                            labels: { color: titleColor, boxWidth: 12, font: { family: fontSans, size: 11 } } 
+                            labels: { color: themeCfg.titleColor, boxWidth: 12, font: { family: themeCfg.fontSans, size: 11 } } 
                         } 
                     }
                 }

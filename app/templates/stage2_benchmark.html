@@ -197,10 +197,10 @@
     document.addEventListener('DOMContentLoaded', () => {
         if (window.lucide) lucide.createIcons();
 
-        const isDark = document.documentElement.classList.contains('dark') || !document.documentElement.classList.contains('light');
-        const gridColor = isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.06)';
-        const tickColor = isDark ? '#8A94B2' : '#64748B';
-        const titleColor = isDark ? '#CBD5E1' : '#334155';
+        const isDark = document.documentElement.getAttribute('data-theme') !== 'light';
+        const gridColor = isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(15, 23, 42, 0.08)';
+        const tickColor = isDark ? '#8A94B2' : '#475569';
+        const titleColor = isDark ? '#CBD5E1' : '#0F172A';
         const fontSans = "'Inter', sans-serif";
         const fontMono = "'JetBrains Mono', monospace";
 

@@ -174,11 +174,11 @@
     document.addEventListener('DOMContentLoaded', () => {
         if (window.lucide) lucide.createIcons();
 
-        const isDark = document.documentElement.classList.contains('dark') || !document.documentElement.classList.contains('light');
-        const gridColor = isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.08)';
-        const angleLineColor = isDark ? 'rgba(255, 255, 255, 0.12)' : 'rgba(0, 0, 0, 0.12)';
-        const pointLabelColor = isDark ? '#CBD5E1' : '#334155';
-        const tickColor = isDark ? '#8A94B2' : '#64748B';
+        const isDark = document.documentElement.getAttribute('data-theme') !== 'light';
+        const gridColor = isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(15, 23, 42, 0.08)';
+        const angleLineColor = isDark ? 'rgba(255, 255, 255, 0.12)' : 'rgba(15, 23, 42, 0.12)';
+        const pointLabelColor = isDark ? '#CBD5E1' : '#0F172A';
+        const tickColor = isDark ? '#8A94B2' : '#475569';
         const fontSans = "'Inter', sans-serif";
 
         const ctx = document.getElementById('stage1RadarChart')?.getContext('2d');

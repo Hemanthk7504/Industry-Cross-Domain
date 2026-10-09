@@ -73,35 +73,35 @@ Strict Dark-First Philosophy with Instant Responsive Light Mode Fallback.
   --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Light Mode Overrides */
+/* Light Mode Overrides (Crisp High-Contrast Industrial Standard) */
 [data-theme="light"] {
-  --bg-app: #F8FAFC;
+  --bg-app: #F1F5F9;
   --bg-surface: #FFFFFF;
-  --bg-elevated: #F1F5F9;
-  --bg-elevated-hover: #E2E8F0;
-  --bg-glass: rgba(255, 255, 255, 0.85);
-  --bg-glass-elevated: rgba(241, 245, 249, 0.9);
+  --bg-elevated: #E2E8F0;
+  --bg-elevated-hover: #CBD5E1;
+  --bg-glass: #FFFFFF;
+  --bg-glass-elevated: #F8FAFC;
 
-  --border-color: rgba(15, 23, 42, 0.08);
-  --border-subtle: rgba(15, 23, 42, 0.04);
-  --border-hover: rgba(99, 102, 241, 0.5);
-  --border-glow: rgba(99, 102, 241, 0.15);
+  --border-color: rgba(15, 23, 42, 0.14);
+  --border-subtle: rgba(15, 23, 42, 0.08);
+  --border-hover: rgba(99, 102, 241, 0.6);
+  --border-glow: rgba(99, 102, 241, 0.2);
 
   --text-main: #0F172A;
-  --text-muted: #64748B;
-  --text-dim: #94A3B8;
+  --text-muted: #475569;
+  --text-dim: #64748B;
   --text-inverse: #FFFFFF;
 
-  --tint-indigo: rgba(99, 102, 241, 0.08);
-  --tint-cyan: rgba(34, 211, 238, 0.08);
-  --tint-emerald: rgba(16, 185, 129, 0.08);
-  --tint-amber: rgba(245, 158, 11, 0.08);
-  --tint-rose: rgba(244, 63, 94, 0.08);
+  --tint-indigo: rgba(99, 102, 241, 0.12);
+  --tint-cyan: rgba(6, 182, 212, 0.12);
+  --tint-emerald: rgba(16, 185, 129, 0.12);
+  --tint-amber: rgba(245, 158, 11, 0.12);
+  --tint-rose: rgba(244, 63, 94, 0.12);
 
-  --gradient-surface: linear-gradient(180deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.9) 100%);
-  --shadow-sm: 0 1px 2px 0 rgba(15, 23, 42, 0.05);
-  --shadow-md: 0 4px 16px -2px rgba(15, 23, 42, 0.08), 0 2px 4px -2px rgba(15, 23, 42, 0.04);
-  --shadow-lg: 0 12px 32px -4px rgba(15, 23, 42, 0.12), 0 4px 12px -2px rgba(15, 23, 42, 0.06);
+  --gradient-surface: #FFFFFF;
+  --shadow-sm: 0 1px 3px 0 rgba(15, 23, 42, 0.08);
+  --shadow-md: 0 4px 16px -2px rgba(15, 23, 42, 0.1), 0 2px 4px -2px rgba(15, 23, 42, 0.06);
+  --shadow-lg: 0 12px 32px -4px rgba(15, 23, 42, 0.14), 0 4px 12px -2px rgba(15, 23, 42, 0.08);
 }
 
 /* Base Document Reset & Body */

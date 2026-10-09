@@ -31,9 +31,9 @@
     <!-- Chart.js 4 -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 
-    <!-- Design System CSS (Cache Busted v2.5.0) -->
-    <link rel="stylesheet" href="/static/css/design-system.css?v=2.5.0">
-    <link rel="stylesheet" href="/static/css/custom.css?v=2.5.0">
+    <!-- Design System CSS (Cache Busted v2.5.2) -->
+    <link rel="stylesheet" href="/static/css/design-system.css?v=2.5.2">
+    <link rel="stylesheet" href="/static/css/custom.css?v=2.5.2">
 
     <script>
         // Apply theme immediately to prevent FOUC
@@ -303,9 +303,9 @@
                 </div>
 
                 <!-- Theme Toggle Button -->
-                <button onclick="toggleTheme()" class="theme-toggle-btn w-9 h-9 rounded-xl flex items-center justify-center border border-[var(--border-color)] bg-[var(--bg-elevated)] hover:bg-[var(--bg-elevated-hover)] text-[var(--text-muted)] hover:text-[var(--text-main)] transition-all shadow-sm" title="Toggle Theme">
-                    <i data-lucide="sun-medium" class="w-4 h-4 hidden [data-theme='light']_&:inline"></i>
-                    <i data-lucide="moon" class="w-4 h-4 [data-theme='light']_&:hidden"></i>
+                <button onclick="toggleTheme()" class="theme-toggle-btn w-9 h-9 rounded-xl flex items-center justify-center border border-[var(--border-color)] bg-[var(--bg-elevated)] hover:bg-[var(--bg-elevated-hover)] text-[var(--text-muted)] hover:text-[var(--text-main)] transition-all shadow-sm" title="Toggle Theme" aria-label="Toggle Theme">
+                    <i data-lucide="sun-medium" class="w-4 h-4 theme-icon-sun"></i>
+                    <i data-lucide="moon" class="w-4 h-4 theme-icon-moon"></i>
                 </button>
 
                 <!-- Fast Role Switcher Dropdown -->
@@ -380,9 +380,9 @@
             <!-- Public Action Controls -->
             <div class="flex items-center gap-3 shrink-0">
                 <!-- Theme Toggle Button -->
-                <button onclick="toggleTheme()" class="theme-toggle-btn w-9 h-9 rounded-xl flex items-center justify-center border border-[var(--border-color)] bg-[var(--bg-elevated)] hover:bg-[var(--bg-elevated-hover)] text-[var(--text-muted)] hover:text-[var(--text-main)] transition-all shadow-sm" title="Toggle Theme">
-                    <i data-lucide="sun-medium" class="w-4 h-4 hidden [data-theme='light']_&:inline"></i>
-                    <i data-lucide="moon" class="w-4 h-4 [data-theme='light']_&:hidden"></i>
+                <button onclick="toggleTheme()" class="theme-toggle-btn w-9 h-9 rounded-xl flex items-center justify-center border border-[var(--border-color)] bg-[var(--bg-elevated)] hover:bg-[var(--bg-elevated-hover)] text-[var(--text-muted)] hover:text-[var(--text-main)] transition-all shadow-sm" title="Toggle Theme" aria-label="Toggle Theme">
+                    <i data-lucide="sun-medium" class="w-4 h-4 theme-icon-sun"></i>
+                    <i data-lucide="moon" class="w-4 h-4 theme-icon-moon"></i>
                 </button>
 
                 <div class="flex items-center gap-2">

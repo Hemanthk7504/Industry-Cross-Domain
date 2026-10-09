@@ -37,11 +37,23 @@
             Object.values(window.Chart.instances).forEach(inst => {
                 try {
                     const isDark = theme === 'dark';
+                    const gridColor = isDark ? 'rgba(255, 255, 255, 0.06)' : 'rgba(15, 23, 42, 0.08)';
+                    const tickColor = isDark ? '#8A94B2' : '#475569';
+                    const titleColor = isDark ? '#E2E8F0' : '#0F172A';
+
                     if (inst.options && inst.options.scales) {
                         Object.values(inst.options.scales).forEach(scale => {
-                            if (scale.grid) scale.grid.color = isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(15, 23, 42, 0.06)';
-                            if (scale.ticks) scale.ticks.color = isDark ? '#8A94B2' : '#64748B';
+                            if (scale.grid) scale.grid.color = gridColor;
+                            if (scale.ticks) scale.ticks.color = tickColor;
+                            if (scale.title) scale.title.color = titleColor;
+                            if (scale.pointLabels) scale.pointLabels.color = titleColor;
+                            if (scale.angleLines) scale.angleLines.color = isDark ? 'rgba(255, 255, 255, 0.12)' : 'rgba(15, 23, 42, 0.12)';
                         });
+                    }
+                    if (inst.options && inst.options.plugins && inst.options.plugins.legend) {
+                        if (inst.options.plugins.legend.labels) {
+                            inst.options.plugins.legend.labels.color = titleColor;
+                        }
                     }
                     inst.update('none');
                 } catch (e) { }

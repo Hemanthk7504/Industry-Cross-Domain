@@ -4,40 +4,89 @@
    Strict Dark-First Mission Control with instant Light Theme toggle.
    ========================================================================== */
 
-/* Universal Card Adapters */
-.card-clean {
+/* Universal Card Adapters (Ensures .card-glass, .glass-card, .card-clean are visible in both themes) */
+.card-glass, .glass-card, .card-clean, .card-interactive {
   background: var(--bg-glass);
   backdrop-filter: var(--card-blur);
   -webkit-backdrop-filter: var(--card-blur);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-lg);
-  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.05), var(--shadow-sm);
   color: var(--text-main);
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.05), var(--shadow-sm);
   transition: all 0.25s var(--ease-spring);
   position: relative;
 }
 
-.card-clean:hover {
+[data-theme="light"] .card-glass,
+[data-theme="light"] .glass-card,
+[data-theme="light"] .card-clean,
+[data-theme="light"] .card-interactive {
+  background: #FFFFFF !important;
+  border-color: rgba(15, 23, 42, 0.12) !important;
+  color: var(--text-main) !important;
+  box-shadow: 0 4px 16px -2px rgba(15, 23, 42, 0.06), 0 1px 3px rgba(15, 23, 42, 0.04) !important;
+}
+
+.card-glass:hover, .glass-card:hover, .card-clean:hover {
   border-color: var(--border-hover);
   box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.08), var(--shadow-md);
-}
-
-.card-interactive {
-  background: var(--bg-glass);
-  backdrop-filter: var(--card-blur);
-  -webkit-backdrop-filter: var(--card-blur);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-sm);
-  color: var(--text-main);
-  transition: all 0.25s var(--ease-spring);
-  position: relative;
 }
 
 .card-interactive:hover {
   border-color: var(--accent-indigo);
   transform: translateY(-2px);
   box-shadow: var(--shadow-md), 0 0 20px -5px rgba(99, 102, 241, 0.3);
+}
+
+/* ==========================================================================
+   Universal High-Contrast Color Normalization
+   Eliminates white-on-white text in Light Mode and washed out text in Dark Mode
+   ========================================================================== */
+.text-slate-100, .text-slate-200, .text-slate-50, .text-white {
+  color: var(--text-main) !important;
+}
+
+.text-slate-300 {
+  color: var(--text-main) !important;
+  opacity: 0.95;
+}
+
+.text-slate-400, .text-slate-500 {
+  color: var(--text-muted) !important;
+}
+
+.font-heading {
+  font-family: var(--font-display) !important;
+}
+
+/* Universal Elevated Container Normalization */
+.bg-slate-900\/60, .bg-slate-900\/50, .bg-slate-900\/40, 
+.bg-slate-900\/80, .bg-slate-950\/60, .bg-slate-900\/30,
+.bg-slate-900 {
+  background-color: var(--bg-elevated) !important;
+  border-color: var(--border-color) !important;
+  color: var(--text-main) !important;
+}
+
+[data-theme="light"] .bg-slate-900\/60,
+[data-theme="light"] .bg-slate-900\/50,
+[data-theme="light"] .bg-slate-900\/40,
+[data-theme="light"] .bg-slate-900\/80,
+[data-theme="light"] .bg-slate-950\/60,
+[data-theme="light"] .bg-slate-900\/30,
+[data-theme="light"] .bg-slate-900 {
+  background-color: #F1F5F9 !important;
+  border-color: rgba(15, 23, 42, 0.12) !important;
+  color: #0F172A !important;
+}
+
+.border-white\/10, .border-white\/5 {
+  border-color: var(--border-color) !important;
+}
+
+[data-theme="light"] .border-white\/10,
+[data-theme="light"] .border-white\/5 {
+  border-color: rgba(15, 23, 42, 0.1) !important;
 }
 
 /* Stat & KPI Cards */
@@ -52,6 +101,12 @@
   transition: all 0.25s var(--ease-spring);
   position: relative;
   overflow: hidden;
+}
+
+[data-theme="light"] .stat-card {
+  background: #FFFFFF !important;
+  border-color: rgba(15, 23, 42, 0.12) !important;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04) !important;
 }
 
 .stat-card::before {
@@ -86,6 +141,11 @@
   transition: all 0.25s var(--ease-spring);
 }
 
+[data-theme="light"] .flow-node {
+  background: #F8FAFC !important;
+  border-color: rgba(15, 23, 42, 0.12) !important;
+}
+
 .flow-node:hover {
   border-color: var(--border-hover);
   box-shadow: var(--shadow-md);
@@ -93,7 +153,7 @@
 }
 
 /* Status Badges */
-.badge-pill {
+.badge, .badge-pill {
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
@@ -107,40 +167,46 @@
   letter-spacing: 0.02em;
 }
 
-.badge-emerald {
-  background: var(--tint-emerald);
-  color: var(--accent-emerald);
-  border: 1px solid rgba(52, 211, 153, 0.3);
+.badge-emerald, .badge-healthy {
+  background: var(--tint-emerald) !important;
+  color: var(--accent-emerald) !important;
+  border: 1px solid rgba(52, 211, 153, 0.3) !important;
 }
 
 .badge-blue, .badge-indigo {
-  background: var(--tint-indigo);
-  color: var(--accent-indigo);
-  border: 1px solid rgba(99, 102, 241, 0.3);
+  background: var(--tint-indigo) !important;
+  color: var(--accent-indigo) !important;
+  border: 1px solid rgba(99, 102, 241, 0.3) !important;
 }
 
 .badge-cyan {
-  background: var(--tint-cyan);
-  color: var(--accent-cyan);
-  border: 1px solid rgba(34, 211, 238, 0.3);
+  background: var(--tint-cyan) !important;
+  color: var(--accent-cyan) !important;
+  border: 1px solid rgba(34, 211, 238, 0.3) !important;
 }
 
-.badge-amber, .badge-orange {
-  background: var(--tint-amber);
-  color: var(--accent-amber);
-  border: 1px solid rgba(251, 191, 36, 0.3);
+.badge-amber, .badge-orange, .badge-warning {
+  background: var(--tint-amber) !important;
+  color: var(--accent-amber) !important;
+  border: 1px solid rgba(251, 191, 36, 0.3) !important;
 }
 
-.badge-rose {
-  background: var(--tint-rose);
-  color: var(--accent-rose);
-  border: 1px solid rgba(251, 113, 133, 0.3);
+.badge-rose, .badge-critical {
+  background: var(--tint-rose) !important;
+  color: var(--accent-rose) !important;
+  border: 1px solid rgba(251, 113, 133, 0.3) !important;
+}
+
+.badge-purple {
+  background: rgba(168, 85, 247, 0.12) !important;
+  color: #A855F7 !important;
+  border: 1px solid rgba(168, 85, 247, 0.3) !important;
 }
 
 .badge-slate {
-  background: var(--bg-elevated);
-  color: var(--text-muted);
-  border: 1px solid var(--border-color);
+  background: var(--bg-elevated) !important;
+  color: var(--text-muted) !important;
+  border: 1px solid var(--border-color) !important;
 }
 
 /* Interactive Sliders & Inputs */
@@ -161,6 +227,19 @@ input[type="range"] {
 /* Table Enhancements */
 table {
   color: var(--text-main);
+}
+
+/* Rock-Solid Theme Switcher Icons */
+[data-theme="dark"] .theme-icon-sun { display: none !important; }
+[data-theme="dark"] .theme-icon-moon { display: inline-block !important; }
+[data-theme="light"] .theme-icon-sun { display: inline-block !important; }
+[data-theme="light"] .theme-icon-moon { display: none !important; }
+
+/* Light Theme Container Normalization for Legacy Classes */
+[data-theme="light"] .bg-white\/\[0\.02\],
+[data-theme="light"] .bg-white\/5,
+[data-theme="light"] .bg-white\/10 {
+  background-color: #F1F5F9 !important;
 }
 
 /* Print Optimization */

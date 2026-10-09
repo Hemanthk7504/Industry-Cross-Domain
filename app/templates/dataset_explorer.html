@@ -8,7 +8,7 @@
 <div class="space-y-6 max-w-[1400px] mx-auto w-full pb-12">
 
     <!-- Overview Banner -->
-    <div class="glass-card spotlight-card p-6 sm:p-8 relative overflow-hidden">
+    <div class="glass-card spotlight-card p-6 sm:p-8 relative overflow-hidden border border-[var(--border-color)]">
         <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative z-10">
             <div class="space-y-2 max-w-3xl">
                 <span class="badge-subtle badge-cyan text-xs">CROSS-DOMAIN DATA INFRASTRUCTURE</span>
@@ -16,7 +16,7 @@
                     Source & Target Domain Telemetry Explorer
                 </h1>
                 <p class="text-xs sm:text-sm text-[var(--text-muted)] leading-relaxed">
-                    This cross-domain architecture utilizes an <strong>HVAC anomaly dataset (2,500 records)</strong> as the source domain to train self-supervised thermodynamic representations, and an <strong>industrial milling predictive maintenance dataset (3,500 records)</strong> as the target domain to predict mechanical failure. Below are the physical sensor schemas, distributions, and downloadable raw CSV files.
+                    This cross-domain architecture utilizes an <strong class="text-[var(--text-main)]">HVAC anomaly dataset (2,500 records)</strong> as the source domain to train self-supervised thermodynamic representations, and an <strong class="text-[var(--text-main)]">industrial milling predictive maintenance dataset (3,500 records)</strong> as the target domain to predict mechanical failure. Below are the physical sensor schemas, distributions, and downloadable raw CSV files.
                 </p>
             </div>
 
@@ -35,7 +35,7 @@
     </div>
 
     <!-- Domain 1: Source HVAC Dataset Breakdown -->
-    <div class="glass-card p-6 space-y-6">
+    <div class="glass-card spotlight-card p-6 space-y-6 border border-[var(--border-color)]">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-[var(--border-color)]">
             <div>
                 <div class="flex items-center gap-2">
@@ -50,23 +50,23 @@
             </div>
             <div class="flex items-center gap-2">
                 <span class="badge-subtle badge-cyan text-[10px]">2,500 Records</span>
-                <span class="badge-subtle text-[10px]">12% Anomaly Ratio</span>
+                <span class="badge-subtle badge-warning text-[10px]">12% Anomaly Ratio</span>
             </div>
         </div>
 
         <!-- Sensor Attribute Grid -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-3">
             {% for key, meta in hvac_meta.items() %}
-            <div class="glass-card p-3.5 space-y-2 border-[var(--border-color)] hover:border-cyan-500/40 transition-colors">
+            <div class="bg-[var(--bg-elevated)] p-4 rounded-xl space-y-2 border border-[var(--border-color)] hover:border-cyan-500/50 hover:shadow-md transition-all">
                 <div class="flex items-center justify-between">
                     <span class="font-bold text-xs text-[var(--text-main)] truncate" title="{{ meta.name }}">{{ meta.name }}</span>
                     <span class="font-mono text-[10px] text-cyan-400 font-semibold">{{ meta.unit }}</span>
                 </div>
                 <div class="text-[11px] text-[var(--text-muted)] space-y-1 font-mono">
                     <div class="flex justify-between"><span>Normal:</span> <strong class="text-[var(--text-main)]">{{ meta.normal }} {{ meta.unit }}</strong></div>
-                    <div class="flex justify-between text-[var(--text-dim)]"><span>Range:</span> <span>{{ meta.min }} - {{ meta.max }}</span></div>
+                    <div class="flex justify-between text-[var(--text-muted)]"><span>Range:</span> <span>{{ meta.min }} - {{ meta.max }}</span></div>
                 </div>
-                <p class="text-[10px] text-[var(--text-dim)] line-clamp-2 leading-relaxed pt-1 border-t border-[var(--border-color)]">{{ meta.desc }}</p>
+                <p class="text-[10px] text-[var(--text-muted)] line-clamp-2 leading-relaxed pt-1 border-t border-[var(--border-color)]">{{ meta.desc }}</p>
             </div>
             {% endfor %}
         </div>
@@ -91,11 +91,11 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr><td class="text-[var(--text-dim)]">1</td><td>22.4</td><td>24.2</td><td>14.5</td><td>6.8</td><td>7.2</td><td>1.8</td><td>3,240</td><td>320</td><td class="text-center"><span class="badge-subtle badge-healthy text-[10px]">Normal (0)</span></td></tr>
-                        <tr><td class="text-[var(--text-dim)]">2</td><td>22.6</td><td>24.4</td><td>14.6</td><td>6.9</td><td>7.1</td><td>1.9</td><td>3,180</td><td>315</td><td class="text-center"><span class="badge-subtle badge-healthy text-[10px]">Normal (0)</span></td></tr>
-                        <tr><td class="text-[var(--text-dim)]">3</td><td>26.8</td><td>29.5</td><td>18.4</td><td>10.2</td><td>14.5</td><td>6.2</td><td>1,820</td><td>480</td><td class="text-center"><span class="badge-subtle badge-critical text-[10px]">Fault (1)</span></td></tr>
-                        <tr><td class="text-[var(--text-dim)]">4</td><td>22.3</td><td>24.1</td><td>14.4</td><td>6.7</td><td>7.0</td><td>1.7</td><td>3,210</td><td>322</td><td class="text-center"><span class="badge-subtle badge-healthy text-[10px]">Normal (0)</span></td></tr>
-                        <tr><td class="text-[var(--text-dim)]">5</td><td>27.4</td><td>30.8</td><td>19.2</td><td>11.0</td><td>15.1</td><td>7.1</td><td>1,650</td><td>510</td><td class="text-center"><span class="badge-subtle badge-critical text-[10px]">Fault (1)</span></td></tr>
+                        <tr><td class="text-[var(--text-muted)]">1</td><td>22.4</td><td>24.2</td><td>14.5</td><td>6.8</td><td>7.2</td><td>1.8</td><td>3,240</td><td>320</td><td class="text-center"><span class="badge-subtle badge-healthy text-[10px]">Normal (0)</span></td></tr>
+                        <tr><td class="text-[var(--text-muted)]">2</td><td>22.6</td><td>24.4</td><td>14.6</td><td>6.9</td><td>7.1</td><td>1.9</td><td>3,180</td><td>315</td><td class="text-center"><span class="badge-subtle badge-healthy text-[10px]">Normal (0)</span></td></tr>
+                        <tr><td class="text-[var(--text-muted)]">3</td><td>26.8</td><td>29.5</td><td>18.4</td><td>10.2</td><td>14.5</td><td>6.2</td><td>1,820</td><td>480</td><td class="text-center"><span class="badge-subtle badge-critical text-[10px]">Fault (1)</span></td></tr>
+                        <tr><td class="text-[var(--text-muted)]">4</td><td>22.3</td><td>24.1</td><td>14.4</td><td>6.7</td><td>7.0</td><td>1.7</td><td>3,210</td><td>322</td><td class="text-center"><span class="badge-subtle badge-healthy text-[10px]">Normal (0)</span></td></tr>
+                        <tr><td class="text-[var(--text-muted)]">5</td><td>27.4</td><td>30.8</td><td>19.2</td><td>11.0</td><td>15.1</td><td>7.1</td><td>1,650</td><td>510</td><td class="text-center"><span class="badge-subtle badge-critical text-[10px]">Fault (1)</span></td></tr>
                     </tbody>
                 </table>
             </div>
@@ -103,7 +103,7 @@
     </div>
 
     <!-- Domain 2: Target Machinery Dataset Breakdown -->
-    <div class="glass-card p-6 space-y-6">
+    <div class="glass-card spotlight-card p-6 space-y-6 border border-[var(--border-color)]">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-[var(--border-color)]">
             <div>
                 <div class="flex items-center gap-2">
@@ -125,26 +125,26 @@
         <!-- Sensor Attribute Grid -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
             {% for key, meta in maint_meta.items() %}
-            <div class="glass-card p-3.5 space-y-2 border-[var(--border-color)] hover:border-indigo-500/40 transition-colors">
+            <div class="bg-[var(--bg-elevated)] p-4 rounded-xl space-y-2 border border-[var(--border-color)] hover:border-indigo-500/50 hover:shadow-md transition-all">
                 <div class="flex items-center justify-between">
                     <span class="font-bold text-xs text-[var(--text-main)] truncate" title="{{ meta.name }}">{{ meta.name }}</span>
                     <span class="font-mono text-[10px] text-indigo-400 font-semibold">{{ meta.unit }}</span>
                 </div>
                 <div class="text-[11px] text-[var(--text-muted)] space-y-1 font-mono">
                     <div class="flex justify-between"><span>Nominal:</span> <strong class="text-[var(--text-main)]">{{ meta.normal }} {{ meta.unit }}</strong></div>
-                    <div class="flex justify-between text-[var(--text-dim)]"><span>Range:</span> <span>{{ meta.min }} - {{ meta.max }}</span></div>
+                    <div class="flex justify-between text-[var(--text-muted)]"><span>Range:</span> <span>{{ meta.min }} - {{ meta.max }}</span></div>
                 </div>
-                <p class="text-[10px] text-[var(--text-dim)] line-clamp-2 leading-relaxed pt-1 border-t border-[var(--border-color)]">{{ meta.desc }}</p>
+                <p class="text-[10px] text-[var(--text-muted)] line-clamp-2 leading-relaxed pt-1 border-t border-[var(--border-color)]">{{ meta.desc }}</p>
             </div>
             {% endfor %}
         </div>
 
         <!-- Failure Modes Table Breakdown -->
-        <div class="glass-card p-4 space-y-3 bg-[var(--bg-elevated)] border-[var(--border-color)]">
+        <div class="bg-[var(--bg-elevated)] p-5 rounded-2xl space-y-3 border border-[var(--border-color)]">
             <h3 class="text-xs font-bold text-[var(--text-muted)] uppercase tracking-wider font-display">Physics-Based Failure Modes Present in Target Dataset</h3>
             <div class="grid grid-cols-1 md:grid-cols-5 gap-3">
                 {% for code, fm in failure_modes.items() %}
-                <div class="glass-card p-3 space-y-1.5 border-[var(--border-color)]">
+                <div class="bg-[var(--bg-surface)] p-3.5 rounded-xl space-y-1.5 border border-[var(--border-color)] shadow-sm hover:border-[var(--border-hover)] transition-all">
                     <div class="flex items-center justify-between">
                         <strong class="text-[var(--text-main)] font-mono text-xs">{{ code }}</strong>
                         <span class="badge-subtle text-[9px] {% if fm.severity == 'CRITICAL' %}badge-critical{% elif fm.severity == 'HIGH' %}badge-warning{% else %}badge-indigo{% endif %}">{{ fm.severity }}</span>
@@ -176,11 +176,11 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr><td class="text-[var(--text-dim)]">1</td><td>298.1</td><td>308.6</td><td>1,540</td><td>40.2</td><td>42.0</td><td>1.85</td><td>58.2</td><td>4.65</td><td class="text-center"><span class="badge-subtle badge-healthy text-[10px]">None</span></td></tr>
-                        <tr><td class="text-[var(--text-dim)]">2</td><td>299.4</td><td>310.8</td><td>1,395</td><td>56.4</td><td>224.0</td><td>5.40</td><td>86.5</td><td>4.10</td><td class="text-center"><span class="badge-subtle badge-critical text-[10px]">TWF</span></td></tr>
-                        <tr><td class="text-[var(--text-dim)]">3</td><td>302.5</td><td>309.2</td><td>1,240</td><td>64.8</td><td>142.0</td><td>4.15</td><td>71.0</td><td>3.10</td><td class="text-center"><span class="badge-subtle badge-warning text-[10px]">HDF</span></td></tr>
-                        <tr><td class="text-[var(--text-dim)]">4</td><td>299.8</td><td>311.2</td><td>1,310</td><td>71.5</td><td>195.0</td><td>7.80</td><td>89.2</td><td>2.75</td><td class="text-center"><span class="badge-subtle badge-critical text-[10px]">OSF</span></td></tr>
-                        <tr><td class="text-[var(--text-dim)]">5</td><td>298.9</td><td>309.8</td><td>2,620</td><td>74.2</td><td>90.0</td><td>6.90</td><td>82.4</td><td>2.90</td><td class="text-center"><span class="badge-subtle badge-warning text-[10px]">PWF</span></td></tr>
+                        <tr><td class="text-[var(--text-muted)]">1</td><td>298.1</td><td>308.6</td><td>1,540</td><td>40.2</td><td>42.0</td><td>1.85</td><td>58.2</td><td>4.65</td><td class="text-center"><span class="badge-subtle badge-healthy text-[10px]">None</span></td></tr>
+                        <tr><td class="text-[var(--text-muted)]">2</td><td>299.4</td><td>310.8</td><td>1,395</td><td>56.4</td><td>224.0</td><td>5.40</td><td>86.5</td><td>4.10</td><td class="text-center"><span class="badge-subtle badge-critical text-[10px]">TWF</span></td></tr>
+                        <tr><td class="text-[var(--text-muted)]">3</td><td>302.5</td><td>309.2</td><td>1,240</td><td>64.8</td><td>142.0</td><td>4.15</td><td>71.0</td><td>3.10</td><td class="text-center"><span class="badge-subtle badge-warning text-[10px]">HDF</span></td></tr>
+                        <tr><td class="text-[var(--text-muted)]">4</td><td>299.8</td><td>311.2</td><td>1,310</td><td>71.5</td><td>195.0</td><td>7.80</td><td>89.2</td><td>2.75</td><td class="text-center"><span class="badge-subtle badge-critical text-[10px]">OSF</span></td></tr>
+                        <tr><td class="text-[var(--text-muted)]">5</td><td>298.9</td><td>309.8</td><td>2,620</td><td>74.2</td><td>90.0</td><td>6.90</td><td>82.4</td><td>2.90</td><td class="text-center"><span class="badge-subtle badge-warning text-[10px]">PWF</span></td></tr>
                     </tbody>
                 </table>
             </div>
@@ -188,26 +188,26 @@
     </div>
 
     <!-- Cross-Domain Correspondence Mapping -->
-    <div class="glass-card p-6 space-y-4">
+    <div class="glass-card spotlight-card p-6 space-y-4 border border-[var(--border-color)]">
         <h2 class="font-display text-base font-bold text-[var(--text-main)]">
             Cross-Domain Thermodynamic & Electro-Mechanical Transfer Mapping
         </h2>
         <p class="text-xs text-[var(--text-muted)]">How HVAC operational stress dynamics map into rotating machine degradation modes via the VAE latent manifold:</p>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div class="glass-card p-4 space-y-1.5 border-[var(--border-color)]">
+            <div class="bg-[var(--bg-elevated)] p-4 rounded-xl space-y-1.5 border border-[var(--border-color)] hover:border-indigo-500/40 transition-all">
                 <span class="font-bold text-xs text-[var(--text-main)] block font-display">1. Thermal Delta Dynamics</span>
                 <p class="text-[var(--text-muted)] text-xs leading-relaxed">
                     HVAC Chilled Water Delta (Leaving vs Entering water temp) maps to Spindle Thermal Gradient (Process temp - Air temp), detecting Heat Dissipation Failure (HDF).
                 </p>
             </div>
-            <div class="glass-card p-4 space-y-1.5 border-[var(--border-color)]">
+            <div class="bg-[var(--bg-elevated)] p-4 rounded-xl space-y-1.5 border border-[var(--border-color)] hover:border-indigo-500/40 transition-all">
                 <span class="font-bold text-xs text-[var(--text-main)] block font-display">2. Electro-Mechanical Power Stress</span>
                 <p class="text-[var(--text-muted)] text-xs leading-relaxed">
                     HVAC Supply Fan Motor Power & Compressor Vibration velocity map to Spindle Torque & Mechanical Vibration Index, identifying Power Failure (PWF) and Overstrain (OSF).
                 </p>
             </div>
-            <div class="glass-card p-4 space-y-1.5 border-[var(--border-color)]">
+            <div class="bg-[var(--bg-elevated)] p-4 rounded-xl space-y-1.5 border border-[var(--border-color)] hover:border-indigo-500/40 transition-all">
                 <span class="font-bold text-xs text-[var(--text-main)] block font-display">3. Progressive Wear & Restriction</span>
                 <p class="text-[var(--text-muted)] text-xs leading-relaxed">
                     Duct Static Pressure and Air Flow restriction (filter choking) map to cumulative Tool Wear friction and high-frequency acoustic emission rise, identifying Tool Wear Failure (TWF).

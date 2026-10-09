@@ -5,29 +5,29 @@
 {% block header_subtitle %}Train Stage 1 VAE and Stage 2 BiLSTM-BiGRU-VAE models on physical CSV datasets & save checkpoints{% endblock %}
 
 {% block content %}
-<div class="space-y-6 max-w-[1560px] mx-auto w-full">
+<div class="space-y-6 max-w-[1560px] mx-auto w-full pb-12">
 
     <!-- Training Control Banner -->
-    <div class="card-glass p-6 sm:p-7 relative overflow-hidden">
+    <div class="glass-card spotlight-card p-6 sm:p-7 relative overflow-hidden border border-[var(--border-color)]">
         <div class="absolute -right-20 -top-20 w-80 h-80 bg-gradient-to-br from-indigo-500/10 to-cyan-500/10 rounded-full blur-3xl pointer-events-none"></div>
         <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div>
                 <div class="flex items-center gap-2 mb-2">
-                    <span class="badge badge-emerald text-xs">
+                    <span class="badge-subtle badge-healthy text-xs">
                         <i data-lucide="cpu" class="w-3.5 h-3.5"></i>
                         Live PyTorch & Scikit-Learn Training
                     </span>
-                    <span class="badge badge-indigo text-xs">Automated Pipeline</span>
+                    <span class="badge-subtle badge-indigo text-xs">Automated Pipeline</span>
                 </div>
-                <h2 class="text-2xl font-bold font-heading text-slate-100 tracking-tight">End-to-End Model Training Pipeline</h2>
-                <p class="text-xs sm:text-sm text-slate-400 mt-2 max-w-3xl leading-relaxed">
-                    Trigger physical model training across both domains. Stage 1 optimizes the <strong>Variational Autoencoder (VAE)</strong> on <code class="text-cyan-300 font-mono">hvac_source_dataset.csv</code> (35 epochs). Stage 2 aligns latent anomaly embeddings and trains the champion <strong>BiLSTM-BiGRU-VAE</strong> on <code class="text-indigo-300 font-mono">maintenance_target_dataset.csv</code> (30 epochs).
+                <h2 class="text-2xl font-bold font-display text-[var(--text-main)] tracking-tight">End-to-End Model Training Pipeline</h2>
+                <p class="text-xs sm:text-sm text-[var(--text-muted)] mt-2 max-w-3xl leading-relaxed">
+                    Trigger physical model training across both domains. Stage 1 optimizes the <strong class="text-[var(--text-main)]">Variational Autoencoder (VAE)</strong> on <code class="text-cyan-400 font-mono">hvac_source_dataset.csv</code> (35 epochs). Stage 2 aligns latent anomaly embeddings and trains the champion <strong class="text-[var(--text-main)]">BiLSTM-BiGRU-VAE</strong> on <code class="text-indigo-400 font-mono">maintenance_target_dataset.csv</code> (30 epochs).
                 </p>
             </div>
 
             <!-- Start Training CTA -->
             <div class="flex items-center gap-3 shrink-0">
-                <button id="btn_trigger_train" onclick="runModelTraining()" class="btn btn-primary px-6 py-3 text-sm font-bold shadow-lg shadow-indigo-500/20 flex items-center gap-2.5">
+                <button id="btn_trigger_train" onclick="runModelTraining()" class="btn-primary px-6 py-3 text-sm font-bold shadow-lg shadow-indigo-500/20 flex items-center gap-2.5">
                     <i data-lucide="play" class="w-4 h-4 fill-current"></i>
                     <span>Start End-to-End Training</span>
                 </button>
@@ -36,30 +36,30 @@
     </div>
 
     <!-- Live Training Progress Bar & Status -->
-    <div id="training_progress_card" class="card-glass p-6" style="display: none;">
+    <div id="training_progress_card" class="glass-card p-6 border border-[var(--border-color)]" style="display: none;">
         <div class="flex items-center justify-between mb-3">
-            <span id="training_status_text" class="text-xs font-bold text-slate-200 uppercase tracking-wider flex items-center gap-2 font-mono">
+            <span id="training_status_text" class="text-xs font-bold text-[var(--text-main)] uppercase tracking-wider flex items-center gap-2 font-mono">
                 <i data-lucide="loader" class="w-4 h-4 text-cyan-400 animate-spin"></i>
                 Training in progress...
             </span>
             <span id="training_step_pct" class="text-xs font-bold text-cyan-400 font-mono">0%</span>
         </div>
-        <div class="w-full bg-slate-900/80 h-3 rounded-full overflow-hidden p-0.5 border border-white/10">
+        <div class="w-full bg-[var(--bg-elevated)] h-3 rounded-full overflow-hidden p-0.5 border border-[var(--border-color)]">
             <div id="training_progress_bar" class="h-full bg-gradient-to-r from-indigo-500 to-cyan-400 rounded-full transition-all duration-300 shadow-sm" style="width: 0%;"></div>
         </div>
     </div>
 
     <!-- Training Terminal / Console Output -->
-    <div class="card-glass p-6 overflow-hidden">
-        <div class="flex items-center justify-between pb-3 mb-3 border-b border-white/5">
+    <div class="glass-card spotlight-card p-6 overflow-hidden border border-[var(--border-color)]">
+        <div class="flex items-center justify-between pb-3 mb-3 border-b border-[var(--border-color)]">
             <div class="flex items-center gap-2.5">
                 <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 inline-block animate-pulse shadow-sm shadow-emerald-400/50"></span>
-                <span class="font-mono text-xs text-slate-200 font-semibold tracking-wide">Training Engine Terminal (PyTorch 2.4 / CUDA / CPU)</span>
+                <span class="font-mono text-xs text-[var(--text-main)] font-semibold tracking-wide">Training Engine Terminal (PyTorch 2.4 / CUDA / CPU)</span>
             </div>
-            <span class="text-[11px] text-slate-400 font-mono bg-slate-900/60 px-2.5 py-1 rounded border border-white/5">Artifacts: saved_models/</span>
+            <span class="text-[11px] text-[var(--text-muted)] font-mono bg-[var(--bg-elevated)] px-2.5 py-1 rounded-lg border border-[var(--border-color)]">Artifacts: saved_models/</span>
         </div>
 
-        <pre id="train_log_console" class="font-mono text-xs text-emerald-400 bg-slate-950/80 p-5 rounded-xl border border-white/5 overflow-x-auto max-h-80 leading-relaxed shadow-inner">
+        <pre id="train_log_console" class="font-mono text-xs text-emerald-400 bg-[var(--bg-surface)] p-5 rounded-xl border border-[var(--border-color)] overflow-x-auto max-h-80 leading-relaxed shadow-inner">
 [Ready] System standing by. Click 'Start End-to-End Training' or inspect pre-trained checkpoints below.
 [Checkpoint Found] saved_models/vae_stage1.pt (21.4 KB)
 [Checkpoint Found] saved_models/bilstm_bigru_stage2.pt (358.0 KB)
@@ -70,100 +70,100 @@
     </div>
 
     <!-- Saved Model Checkpoints Grid -->
-    <div class="card-glass p-6">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-4 pb-3 border-b border-white/5 gap-2">
+    <div class="glass-card spotlight-card p-6 border border-[var(--border-color)]">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-4 pb-3 border-b border-[var(--border-color)] gap-2">
             <div>
-                <h3 class="text-base font-bold text-slate-100 font-heading">Physical Model Checkpoints & Weights</h3>
-                <p class="text-xs text-slate-400 mt-0.5">Persisted PyTorch state_dict tensors and serialized model weights in <code class="text-cyan-300 font-mono">saved_models/</code></p>
+                <h3 class="text-base font-bold text-[var(--text-main)] font-display">Physical Model Checkpoints & Weights</h3>
+                <p class="text-xs text-[var(--text-muted)] mt-0.5">Persisted PyTorch state_dict tensors and serialized model weights in <code class="text-cyan-400 font-mono">saved_models/</code></p>
             </div>
-            <span class="badge badge-emerald text-xs">5 Checkpoints Ready</span>
+            <span class="badge-subtle badge-healthy text-xs">5 Checkpoints Ready</span>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <!-- Checkpoint 1: Champion -->
-            <div class="p-5 rounded-xl border border-indigo-500/30 bg-indigo-500/10 flex flex-col justify-between">
+            <div class="p-5 rounded-xl border border-indigo-500/40 bg-indigo-500/10 flex flex-col justify-between shadow-sm">
                 <div>
                     <div class="flex items-center justify-between mb-2">
-                        <span class="badge badge-indigo text-[10px] font-mono">STAGE 2 CHAMPION</span>
+                        <span class="badge-subtle badge-indigo text-[10px] font-mono">STAGE 2 CHAMPION</span>
                         <i data-lucide="crown" class="w-4 h-4 text-amber-400"></i>
                     </div>
-                    <h4 class="text-sm font-bold text-slate-100 font-mono">bilstm_bigru_stage2.pt</h4>
-                    <p class="text-xs text-slate-400 mt-1">PyTorch weights (358 KB)</p>
+                    <h4 class="text-sm font-bold text-[var(--text-main)] font-mono">bilstm_bigru_stage2.pt</h4>
+                    <p class="text-xs text-[var(--text-muted)] mt-1">PyTorch weights (358 KB)</p>
                 </div>
-                <div class="mt-4 pt-3 border-t border-white/5 space-y-1 text-xs font-mono">
+                <div class="mt-4 pt-3 border-t border-[var(--border-color)] space-y-1 text-xs font-mono">
                     <div class="flex justify-between">
-                        <span class="text-slate-400">Accuracy:</span>
-                        <strong class="text-indigo-300">98.7%</strong>
+                        <span class="text-[var(--text-muted)]">Accuracy:</span>
+                        <strong class="text-indigo-400">98.7%</strong>
                     </div>
                     <div class="flex justify-between">
-                        <span class="text-slate-400">Recall:</span>
+                        <span class="text-[var(--text-muted)]">Recall:</span>
                         <strong class="text-emerald-400">1.000 (0 FN)</strong>
                     </div>
                 </div>
             </div>
 
             <!-- Checkpoint 2: Stage 1 VAE -->
-            <div class="p-5 rounded-xl border border-cyan-500/30 bg-cyan-500/10 flex flex-col justify-between">
+            <div class="p-5 rounded-xl border border-cyan-500/40 bg-cyan-500/10 flex flex-col justify-between shadow-sm">
                 <div>
                     <div class="flex items-center justify-between mb-2">
-                        <span class="badge badge-cyan text-[10px] font-mono">STAGE 1 VAE</span>
+                        <span class="badge-subtle badge-cyan text-[10px] font-mono">STAGE 1 VAE</span>
                         <i data-lucide="sparkles" class="w-4 h-4 text-cyan-400"></i>
                     </div>
-                    <h4 class="text-sm font-bold text-slate-100 font-mono">vae_stage1.pt</h4>
-                    <p class="text-xs text-slate-400 mt-1">PyTorch weights (21.4 KB)</p>
+                    <h4 class="text-sm font-bold text-[var(--text-main)] font-mono">vae_stage1.pt</h4>
+                    <p class="text-xs text-[var(--text-muted)] mt-1">PyTorch weights (21.4 KB)</p>
                 </div>
-                <div class="mt-4 pt-3 border-t border-white/5 space-y-1 text-xs font-mono">
+                <div class="mt-4 pt-3 border-t border-[var(--border-color)] space-y-1 text-xs font-mono">
                     <div class="flex justify-between">
-                        <span class="text-slate-400">Latent Space:</span>
-                        <strong class="text-cyan-300">8D Gaussian</strong>
+                        <span class="text-[var(--text-muted)]">Latent Space:</span>
+                        <strong class="text-cyan-400">8D Gaussian</strong>
                     </div>
                     <div class="flex justify-between">
-                        <span class="text-slate-400">Recon MSE:</span>
-                        <strong class="text-slate-200">0.0108</strong>
+                        <span class="text-[var(--text-muted)]">Recon MSE:</span>
+                        <strong class="text-[var(--text-main)]">0.0108</strong>
                     </div>
                 </div>
             </div>
 
             <!-- Checkpoint 3: Random Forest -->
-            <div class="p-5 rounded-xl border border-white/10 bg-slate-900/40 flex flex-col justify-between">
+            <div class="p-5 rounded-xl border border-[var(--border-color)] bg-[var(--bg-elevated)] flex flex-col justify-between shadow-sm">
                 <div>
                     <div class="flex items-center justify-between mb-2">
-                        <span class="badge badge-slate text-[10px] font-mono">BASELINE TREE</span>
-                        <i data-lucide="binary" class="w-4 h-4 text-slate-400"></i>
+                        <span class="badge-subtle text-[10px] font-mono">BASELINE TREE</span>
+                        <i data-lucide="binary" class="w-4 h-4 text-[var(--text-muted)]"></i>
                     </div>
-                    <h4 class="text-sm font-bold text-slate-100 font-mono">random_forest.joblib</h4>
-                    <p class="text-xs text-slate-400 mt-1">Scikit-Learn (290 KB)</p>
+                    <h4 class="text-sm font-bold text-[var(--text-main)] font-mono">random_forest.joblib</h4>
+                    <p class="text-xs text-[var(--text-muted)] mt-1">Scikit-Learn (290 KB)</p>
                 </div>
-                <div class="mt-4 pt-3 border-t border-white/5 space-y-1 text-xs font-mono">
+                <div class="mt-4 pt-3 border-t border-[var(--border-color)] space-y-1 text-xs font-mono">
                     <div class="flex justify-between">
-                        <span class="text-slate-400">Accuracy:</span>
-                        <strong class="text-slate-200">89.2%</strong>
+                        <span class="text-[var(--text-muted)]">Accuracy:</span>
+                        <strong class="text-[var(--text-main)]">89.2%</strong>
                     </div>
                     <div class="flex justify-between">
-                        <span class="text-slate-400">Recall:</span>
+                        <span class="text-[var(--text-muted)]">Recall:</span>
                         <strong class="text-amber-400">0.842</strong>
                     </div>
                 </div>
             </div>
 
             <!-- Checkpoint 4: XGBoost -->
-            <div class="p-5 rounded-xl border border-white/10 bg-slate-900/40 flex flex-col justify-between">
+            <div class="p-5 rounded-xl border border-[var(--border-color)] bg-[var(--bg-elevated)] flex flex-col justify-between shadow-sm">
                 <div>
                     <div class="flex items-center justify-between mb-2">
-                        <span class="badge badge-slate text-[10px] font-mono">BASELINE BOOSTING</span>
+                        <span class="badge-subtle text-[10px] font-mono">BASELINE BOOSTING</span>
                         <i data-lucide="zap" class="w-4 h-4 text-amber-400"></i>
                     </div>
-                    <h4 class="text-sm font-bold text-slate-100 font-mono">xgboost_baseline.json</h4>
-                    <p class="text-xs text-slate-400 mt-1">XGBoost model (81.4 KB)</p>
+                    <h4 class="text-sm font-bold text-[var(--text-main)] font-mono">xgboost_baseline.json</h4>
+                    <p class="text-xs text-[var(--text-muted)] mt-1">XGBoost model (81.4 KB)</p>
                 </div>
-                <div class="mt-4 pt-3 border-t border-white/5 space-y-1 text-xs font-mono">
+                <div class="mt-4 pt-3 border-t border-[var(--border-color)] space-y-1 text-xs font-mono">
                     <div class="flex justify-between">
-                        <span class="text-slate-400">Accuracy:</span>
-                        <strong class="text-slate-200">94.8%</strong>
+                        <span class="text-[var(--text-muted)]">Accuracy:</span>
+                        <strong class="text-[var(--text-main)]">94.8%</strong>
                     </div>
                     <div class="flex justify-between">
-                        <span class="text-slate-400">ROC-AUC:</span>
-                        <strong class="text-slate-200">0.965</strong>
+                        <span class="text-[var(--text-muted)]">ROC-AUC:</span>
+                        <strong class="text-[var(--text-main)]">0.965</strong>
                     </div>
                 </div>
             </div>
